@@ -1,9 +1,5 @@
 {
   "type": "module",
-  "presets": [
-    "@babel/preset-env",
-    "@babel/preset-react"
-  ],
   "scripts": {
     "eslint": "eslint src",
     "client-dist": "NODE_ENV=production webpack --progress --colors",
