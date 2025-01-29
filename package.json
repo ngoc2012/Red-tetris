@@ -2,12 +2,12 @@
   "type": "module",
   "scripts": {
     "eslint": "eslint src",
-    "client-dist": "NODE_ENV=production webpack --progress --colors",
+    "client-dist": "NODE_ENV=production webpack --progress --color",
     "client-dev": "webpack-dev-server --color --hot --host 0.0.0.0 --port 8080",
     "srv-dev": "DEBUG=tetris:* babel-watch -w src src/server/main.js",
     "srv-dist": "DEBUG=tetris:* babel src --out-dir dist",
     "test": "mocha --require @babel/register --reporter spec",
-    "coverage": "NODE_ENV=test nyc --include src --all -r text -r lcov -r text --require @babel/register mocha "
+    "coverage": "NODE_ENV=test nyc --include src --all -r text -r lcov -r text --require @babel/register mocha"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.1",
@@ -32,5 +32,21 @@
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.0"
+  },
+  "nyc": {
+    "extension": [
+      ".jsx",
+      ".mjs"
+    ],
+    "exclude": [
+      "build"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ],
+    "plugins": []
   }
 }
