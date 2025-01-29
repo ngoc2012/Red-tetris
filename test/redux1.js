@@ -1,11 +1,11 @@
-import {configureStore} from './helpers/server'
-import rootReducer from '../src/client/reducers'
-import {ALERT_POP, alert} from '../src/client/actions/alert'
-import chai from "chai"
+import {configureStore} from './helpers/server.js'
+import rootReducer from '../src/client/reducers/index.js'
+import {ALERT_POP, alert} from '../src/client/actions/alert.js'
+import {should} from "chai"
 
 const MESSAGE = "message"
 
-chai.should()
+should()
 
 describe('Fake redux test', function(){
   it('alert it', function(done){

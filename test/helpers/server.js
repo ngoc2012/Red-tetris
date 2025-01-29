@@ -1,6 +1,6 @@
-import * as server from '../../src/server/index'
+import * as server from '../../src/server/index.js'
 import { createStore, applyMiddleware } from 'redux'
-import thunk from 'redux-thunk'
+import {thunk} from 'redux-thunk'
 
 export const startServer = (params, cb) => {
   server.create(params)

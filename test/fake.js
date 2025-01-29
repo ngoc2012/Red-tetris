@@ -1,6 +1,6 @@
-import chai from "chai"
+import {should} from "chai"
 
-chai.should()
+should()
 
 describe('Check Sum', () => {
   it('1+1 == 2', () => {

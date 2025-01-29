@@ -1,11 +1,11 @@
-import chai from "chai"
-import {startServer, configureStore} from './helpers/server'
-import rootReducer from '../src/client/reducers'
-import {ping} from '../src/client/actions/server'
-import io from 'socket.io-client'
-import params from '../params'
+import {should} from "chai"
+import {startServer, configureStore} from './helpers/server.js'
+import rootReducer from '../src/client/reducers/index.js'
+import {ping} from '../src/client/actions/server.js'
+import {io} from 'socket.io-client'
+import params from '../params.js'
 
-chai.should()
+should()
 
 describe('Fake server test', function(){
   let tetrisServer
