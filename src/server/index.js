@@ -43,21 +43,26 @@ import { Server as SocketIO } from 'socket.io';
 
 export function create(params){
   const promise = new Promise( (resolve, reject) => {
-    const app = createServer();
-    initApp(app, params, () => {
-      const io = new SocketIO(app);
-      const stop = (cb) => {
-        io.close();
-        app.close( () => {
-          app.unref();
-        });
-        loginfo(`Engine stopped.`);
-        cb();
-      };
-
-      initEngine(io);
-      resolve({stop});
-    });
+    try {
+      const app = createServer();
+      initApp(app, params, () => {
+        const io = new SocketIO(app);
+        const stop = (cb) => {
+          io.close();
+          app.close( () => {
+            app.unref();
+          });
+          loginfo(`Engine stopped.`);
+          cb();
+        };
+  
+        initEngine(io);
+        resolve({stop});
+      });
+    } catch (error) {
+      // Reject if any error occurs during initialization
+      reject(`Error while creating the app: ${error.message}`);
+    }
   });
   return promise;
 }
