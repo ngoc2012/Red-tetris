@@ -44,7 +44,7 @@ import { Server as SocketIO } from 'socket.io';
 export function create(params){
   const promise = new Promise( (resolve, reject) => {
     const app = createServer();
-    initApp(app, params, () =>{
+    initApp(app, params, () => {
       const io = new SocketIO(app);
       const stop = (cb) => {
         io.close()
