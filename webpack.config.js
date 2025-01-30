@@ -5,7 +5,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default {
-  entry: './src/client/index.js',
+  entry: './src/client/index.jsx',
 
   output: {
     path: path.join(__dirname, 'build'),
@@ -16,7 +16,7 @@ export default {
 
   module: {
     rules: [{
-      test: /\.js$/,
+      test: /\.(js|jsx)$/,
       exclude: /node_modules/,
       loader: 'babel-loader',
       options: {

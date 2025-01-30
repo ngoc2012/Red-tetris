@@ -6,7 +6,7 @@ import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'                                                                                                                                                    
 import {storeStateMiddleWare} from './middleware/storeStateMiddleWare.js'
 import reducer from './reducers/index.js'
-import App from './containers/app.js'
+import App from './containers/app.jsx'
 import {alert} from './actions/alert.js'
 
 const initialState = {}

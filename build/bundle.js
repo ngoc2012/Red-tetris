@@ -9,6 +9,28 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/client/containers/app.jsx":
+/*!***************************************!*\
+  !*** ./src/client/containers/app.jsx ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/dist/react-redux.mjs\");\n\n\nvar App = function App(_ref) {\n  var message = _ref.message;\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"span\", null, message);\n};\nvar mapStateToProps = function mapStateToProps(state) {\n  return {\n    message: state.message\n  };\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_1__.connect)(mapStateToProps, null)(App));\n\n//# sourceURL=webpack:///./src/client/containers/app.jsx?");
+
+/***/ }),
+
+/***/ "./src/client/index.jsx":
+/*!******************************!*\
+  !*** ./src/client/index.jsx ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ \"./node_modules/react-dom/index.js\");\n/* harmony import */ var redux_logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! redux-logger */ \"./node_modules/redux-logger/dist/redux-logger.js\");\n/* harmony import */ var redux_logger__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(redux_logger__WEBPACK_IMPORTED_MODULE_2__);\n/* harmony import */ var redux_thunk__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! redux-thunk */ \"./node_modules/redux-thunk/dist/redux-thunk.mjs\");\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! redux */ \"./node_modules/redux/dist/redux.mjs\");\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/dist/react-redux.mjs\");\n/* harmony import */ var _middleware_storeStateMiddleWare_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./middleware/storeStateMiddleWare.js */ \"./src/client/middleware/storeStateMiddleWare.js\");\n/* harmony import */ var _reducers_index_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./reducers/index.js */ \"./src/client/reducers/index.js\");\n/* harmony import */ var _containers_app_jsx__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./containers/app.jsx */ \"./src/client/containers/app.jsx\");\n/* harmony import */ var _actions_alert_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./actions/alert.js */ \"./src/client/actions/alert.js\");\n\n\n\n\n\n\n\n\n\n\nvar initialState = {};\nvar store = (0,redux__WEBPACK_IMPORTED_MODULE_7__.createStore)(_reducers_index_js__WEBPACK_IMPORTED_MODULE_4__[\"default\"], initialState, (0,redux__WEBPACK_IMPORTED_MODULE_7__.applyMiddleware)(redux_thunk__WEBPACK_IMPORTED_MODULE_8__.thunk, redux_logger__WEBPACK_IMPORTED_MODULE_2___default()()));\nreact_dom__WEBPACK_IMPORTED_MODULE_1__.render(/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(react_redux__WEBPACK_IMPORTED_MODULE_9__.Provider, {\n  store: store\n}, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_containers_app_jsx__WEBPACK_IMPORTED_MODULE_5__[\"default\"], null)), document.getElementById('tetris'));\nstore.dispatch((0,_actions_alert_js__WEBPACK_IMPORTED_MODULE_6__.alert)('Soon, will be here a fantastic Tetris ...'));\n\n//# sourceURL=webpack:///./src/client/index.jsx?");
+
+/***/ }),
+
 /***/ "./node_modules/react-dom/cjs/react-dom.development.js":
 /*!*************************************************************!*\
   !*** ./node_modules/react-dom/cjs/react-dom.development.js ***!
@@ -93,28 +115,6 @@ eval("\n\nif (false) {} else {\n  module.exports = __webpack_require__(/*! ./cjs
 
 "use strict";
 eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   ALERT_POP: () => (/* binding */ ALERT_POP),\n/* harmony export */   alert: () => (/* binding */ alert)\n/* harmony export */ });\nvar ALERT_POP = 'ALERT_POP';\nvar alert = function alert(message) {\n  return {\n    type: ALERT_POP,\n    message: message\n  };\n};\n\n//# sourceURL=webpack:///./src/client/actions/alert.js?");
-
-/***/ }),
-
-/***/ "./src/client/containers/app.js":
-/*!**************************************!*\
-  !*** ./src/client/containers/app.js ***!
-  \**************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/dist/react-redux.mjs\");\n\n\nvar App = function App(_ref) {\n  var message = _ref.message;\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(\"span\", null, message);\n};\nvar mapStateToProps = function mapStateToProps(state) {\n  return {\n    message: state.message\n  };\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_1__.connect)(mapStateToProps, null)(App));\n\n//# sourceURL=webpack:///./src/client/containers/app.js?");
-
-/***/ }),
-
-/***/ "./src/client/index.js":
-/*!*****************************!*\
-  !*** ./src/client/index.js ***!
-  \*****************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ \"./node_modules/react-dom/index.js\");\n/* harmony import */ var redux_logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! redux-logger */ \"./node_modules/redux-logger/dist/redux-logger.js\");\n/* harmony import */ var redux_thunk__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! redux-thunk */ \"./node_modules/redux-thunk/dist/redux-thunk.mjs\");\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! redux */ \"./node_modules/redux/dist/redux.mjs\");\n/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-redux */ \"./node_modules/react-redux/dist/react-redux.mjs\");\n/* harmony import */ var _middleware_storeStateMiddleWare_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./middleware/storeStateMiddleWare.js */ \"./src/client/middleware/storeStateMiddleWare.js\");\n/* harmony import */ var _reducers_index_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./reducers/index.js */ \"./src/client/reducers/index.js\");\n/* harmony import */ var _containers_app_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./containers/app.js */ \"./src/client/containers/app.js\");\n/* harmony import */ var _actions_alert_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./actions/alert.js */ \"./src/client/actions/alert.js\");\n\n\n\n\n\n\n\n\n\n\nvar initialState = {};\nvar store = (0,redux__WEBPACK_IMPORTED_MODULE_7__.createStore)(_reducers_index_js__WEBPACK_IMPORTED_MODULE_4__[\"default\"], initialState, (0,redux__WEBPACK_IMPORTED_MODULE_7__.applyMiddleware)(redux_thunk__WEBPACK_IMPORTED_MODULE_8__.thunk, redux_logger__WEBPACK_IMPORTED_MODULE_2__()));\nreact_dom__WEBPACK_IMPORTED_MODULE_1__.render(/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_redux__WEBPACK_IMPORTED_MODULE_9__.Provider, {\n  store: store\n}, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_containers_app_js__WEBPACK_IMPORTED_MODULE_5__[\"default\"], null)), document.getElementById('tetris'));\nstore.dispatch((0,_actions_alert_js__WEBPACK_IMPORTED_MODULE_6__.alert)('Soon, will be here a fantastic Tetris ...'));\n\n//# sourceURL=webpack:///./src/client/index.js?");
 
 /***/ }),
 
@@ -214,6 +214,18 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -268,7 +280,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/client/index.js");
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/client/index.jsx");
 /******/ 	
 /******/ })()
 ;
