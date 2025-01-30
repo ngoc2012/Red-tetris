@@ -8,7 +8,7 @@ var _redux = require("redux");
 var _reactRedux = require("react-redux");
 var _storeStateMiddleWare = require("./middleware/storeStateMiddleWare.js");
 var _index = _interopRequireDefault(require("./reducers/index.js"));
-var _app = _interopRequireDefault(require("./containers/app.js"));
+var _app = _interopRequireDefault(require("./containers/app.jsx"));
 var _alert = require("./actions/alert.js");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
 var initialState = {};
