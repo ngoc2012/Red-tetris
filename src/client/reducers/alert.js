@@ -1,13 +1,13 @@
-import { ALERT_POP } from '../actions/alert.js'
+import { ALERT_POP } from '../actions/alert.js';
 
 const reducer = (state = {} , action) => {
   switch(action.type){
     case ALERT_POP:
-      return { message: action.message }
+      return { message: action.message };
     default: 
-      return state
+      return state;
   }
-}
+};
 
-export default reducer
+export default reducer;
 

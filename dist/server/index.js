@@ -49,10 +49,8 @@ var initEngine = function initEngine(io) {
 };
 function create(params) {
   var promise = new Promise(function (resolve, reject) {
-    // const app = require('http').createServer()
     var app = (0, _http.createServer)();
     initApp(app, params, function () {
-      // const io = require('socket.io')(app)
       var io = new _socket.Server(app);
       var stop = function stop(cb) {
         io.close();
