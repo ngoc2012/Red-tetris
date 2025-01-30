@@ -60,7 +60,6 @@ export function create(params){
         resolve({stop});
       });
     } catch (error) {
-      // Reject if any error occurs during initialization
       reject(`Error while creating the app: ${error.message}`);
     }
   });
