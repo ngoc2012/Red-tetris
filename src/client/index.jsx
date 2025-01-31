@@ -1,6 +1,6 @@
 import React from 'react'
-import ReactDom from 'react-dom'
-import createLogger from 'redux-logger'
+import {createRoot} from 'react-dom/client'
+import {createLogger} from 'redux-logger'
 import {thunk} from 'redux-thunk'
 import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'                                                                                                                                                    
@@ -17,10 +17,11 @@ const store = createStore(
   applyMiddleware(thunk, createLogger())
 )
 
-ReactDom.render((
+const root = createRoot(document.getElementById('tetris'));
+root.render(
   <Provider store={store}>
-    <App/>
+    <App />
   </Provider>
-), document.getElementById('tetris'))
+);
 
 store.dispatch(alert('Soon, will be here a fantastic Tetris ...'))
