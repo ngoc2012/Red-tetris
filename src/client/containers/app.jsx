@@ -5,8 +5,8 @@ import flyd from 'flyd'
 const App = ({message}) => {
   var number = flyd.stream(5);
   console.log(number());
-  console.log(number(7));
-  console.log(number());
+  // console.log(number(7));
+  // console.log(number());
   return (
     <span>{message}</span>
   )
