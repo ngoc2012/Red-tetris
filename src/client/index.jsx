@@ -8,7 +8,6 @@ import {storeStateMiddleWare} from './middleware/storeStateMiddleWare.js'
 import reducer from './reducers/index.js'
 import App from './containers/app.jsx'
 import {alert} from './actions/alert.js'
-import flyd from './flyd.js'
  
 const initialState = {}
 

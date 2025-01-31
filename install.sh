@@ -2,6 +2,7 @@ npm i react-redux --save
 npm i react-dom redux-logger --save
 npm i @reduxjs/toolkit --save
 npm i socket.io socket.io-client --save
+npm i flyd --save
 npm i webpack webpack-cli --save-dev
 npm i chai chai-equal-jsx mocha nyc --save-dev
 npm i babel-loader @babel/preset-react --save-dev 
