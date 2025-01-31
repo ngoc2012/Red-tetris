@@ -49,22 +49,26 @@ var initEngine = function initEngine(io) {
 };
 function create(params) {
   var promise = new Promise(function (resolve, reject) {
-    var app = (0, _http.createServer)();
-    initApp(app, params, function () {
-      var io = new _socket.Server(app);
-      var stop = function stop(cb) {
-        io.close();
-        app.close(function () {
-          app.unref();
+    try {
+      var app = (0, _http.createServer)();
+      initApp(app, params, function () {
+        var io = new _socket.Server(app);
+        var stop = function stop(cb) {
+          io.close();
+          app.close(function () {
+            app.unref();
+          });
+          loginfo("Engine stopped.");
+          cb();
+        };
+        initEngine(io);
+        resolve({
+          stop: stop
         });
-        loginfo("Engine stopped.");
-        cb();
-      };
-      initEngine(io);
-      resolve({
-        stop: stop
       });
-    });
+    } catch (error) {
+      reject("Error while creating the app: ".concat(error.message));
+    }
   });
   return promise;
 }

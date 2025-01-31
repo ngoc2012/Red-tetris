@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/36</span>
+                <span class='fraction'>0/38</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/36</span>
+                <span class='fraction'>0/38</span>
             </div>
         
             
@@ -126,7 +126,11 @@
 <a name='L61'></a><a href='#L61'>61</a>
 <a name='L62'></a><a href='#L62'>62</a>
 <a name='L63'></a><a href='#L63'>63</a>
-<a name='L64'></a><a href='#L64'>64</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -178,6 +182,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -189,68 +194,75 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import fs  from 'fs'
-import debug from 'debug'
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import fs  from 'fs';
+import debug from 'debug';
 &nbsp;
 const logerror = <span class="cstat-no" title="statement not covered" >debug('tetris:error')</span>
-  , loginfo = <span class="cstat-no" title="statement not covered" >debug('tetris:info')</span>
+  , loginfo = <span class="cstat-no" title="statement not covered" >debug('tetris:info');</span>
 &nbsp;
 const initApp = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(a</span>pp, params, cb) =&gt; {</span>
-  const {host, port} = <span class="cstat-no" title="statement not covered" >params</span>
+  const {host, port} = <span class="cstat-no" title="statement not covered" >params;</span>
   const handler = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {</span>
-    const file = <span class="cstat-no" title="statement not covered" >req.url === '/bundle.js' ? '/../../build/bundle.js' : '/../../index.html'</span>
+    const file = <span class="cstat-no" title="statement not covered" >req.url === '/bundle.js' ? '/../../build/bundle.js' : '/../../index.html';</span>
 <span class="cstat-no" title="statement not covered" >    fs.readFile(__dirname + file, <span class="fstat-no" title="function not covered" >(e</span>rr, data) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      if (err) {</span>
-<span class="cstat-no" title="statement not covered" >        logerror(err)</span>
-<span class="cstat-no" title="statement not covered" >        res.writeHead(500)</span>
-<span class="cstat-no" title="statement not covered" >        return res.end('Error loading index.html')</span>
+<span class="cstat-no" title="statement not covered" >        logerror(err);</span>
+<span class="cstat-no" title="statement not covered" >        res.writeHead(500);</span>
+<span class="cstat-no" title="statement not covered" >        return res.end('Error loading index.html');</span>
       }
-<span class="cstat-no" title="statement not covered" >      res.writeHead(200)</span>
-<span class="cstat-no" title="statement not covered" >      res.end(data)</span>
-    })
-  }
+<span class="cstat-no" title="statement not covered" >      res.writeHead(200);</span>
+<span class="cstat-no" title="statement not covered" >      res.end(data);</span>
+    });
+  };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  app.on('request', handler)</span>
+<span class="cstat-no" title="statement not covered" >  app.on('request', handler);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  app.listen({host, port}, <span class="fstat-no" title="function not covered" >()</span> =&gt;{</span>
-<span class="cstat-no" title="statement not covered" >    loginfo(`tetris listen on ${params.url}`)</span>
-<span class="cstat-no" title="statement not covered" >    cb()</span>
-  })
-}
+<span class="cstat-no" title="statement not covered" >    loginfo(`tetris listen on ${params.url}`);</span>
+<span class="cstat-no" title="statement not covered" >    cb();</span>
+  });
+};
 &nbsp;
 const initEngine = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >io</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >  io.on('connection', <span class="fstat-no" title="function not covered" >fu</span>nction(socket){</span>
-<span class="cstat-no" title="statement not covered" >    loginfo("Socket connected: " + socket.id)</span>
+<span class="cstat-no" title="statement not covered" >    loginfo("Socket connected: " + socket.id);</span>
 <span class="cstat-no" title="statement not covered" >    socket.on('action', <span class="fstat-no" title="function not covered" >(a</span>ction) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      if(action.type === 'server/ping'){</span>
-<span class="cstat-no" title="statement not covered" >        socket.emit('action', {type: 'pong'})</span>
+<span class="cstat-no" title="statement not covered" >        socket.emit('action', {type: 'pong'});</span>
       }
-    })
-  })
-}
+    });
+  });
+};
 &nbsp;
 import { createServer } from 'http';
 import { Server as SocketIO } from 'socket.io';
 &nbsp;
 export function <span class="fstat-no" title="function not covered" >create(</span>params){
   const promise = <span class="cstat-no" title="statement not covered" >new Promise( <span class="fstat-no" title="function not covered" >(r</span>esolve, reject) =&gt; {</span>
-    const app = <span class="cstat-no" title="statement not covered" >createServer();</span>
-<span class="cstat-no" title="statement not covered" >    initApp(app, params, <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-      const io = <span class="cstat-no" title="statement not covered" >new SocketIO(app);</span>
-      const stop = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(c</span>b) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        io.close()</span>
-<span class="cstat-no" title="statement not covered" >        app.close( <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >          app.unref()</span>
-        })
-<span class="cstat-no" title="statement not covered" >        loginfo(`Engine stopped.`)</span>
-<span class="cstat-no" title="statement not covered" >        cb()</span>
-      }
-&nbsp;
-<span class="cstat-no" title="statement not covered" >      initEngine(io)</span>
-<span class="cstat-no" title="statement not covered" >      resolve({stop})</span>
-    })
-  })
-<span class="cstat-no" title="statement not covered" >  return promise</span>
+<span class="cstat-no" title="statement not covered" >    try {</span>
+      const app = <span class="cstat-no" title="statement not covered" >createServer();</span>
+<span class="cstat-no" title="statement not covered" >      initApp(app, params, <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+        const io = <span class="cstat-no" title="statement not covered" >new SocketIO(app);</span>
+        const stop = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(c</span>b) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >          io.close();</span>
+<span class="cstat-no" title="statement not covered" >          app.close( <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            app.unref();</span>
+          });
+<span class="cstat-no" title="statement not covered" >          loginfo(`Engine stopped.`);</span>
+<span class="cstat-no" title="statement not covered" >          cb();</span>
+        };
+  
+<span class="cstat-no" title="statement not covered" >        initEngine(io);</span>
+<span class="cstat-no" title="statement not covered" >        resolve({stop});</span>
+      });
+    } catch (error) {
+<span class="cstat-no" title="statement not covered" >      reject(`Error while creating the app: ${error.message}`);</span>
+    }
+  });
+<span class="cstat-no" title="statement not covered" >  return promise;</span>
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -259,7 +271,7 @@ export function <span class="fstat-no" title="function not covered" >create(</sp
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-01-30T12:14:55.013Z
+                at 2025-01-30T22:04:02.642Z
             </div>
         <script src="../prettify.js"></script>
         <script>
