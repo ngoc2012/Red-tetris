@@ -20,7 +20,6 @@ const App = () => {
 
   return (
     <div>
-      <span>{message}</span>
       <div>
         {messages.map((msg, index) => (
           <p key={index}>{msg}</p>
