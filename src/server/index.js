@@ -46,7 +46,11 @@ export function create(params){
     try {
       const app = createServer();
       initApp(app, params, () => {
-        const io = new SocketIO(app);
+        const io = new SocketIO(app, {
+          cors: {
+            origin: '*',
+          }
+        });
         const stop = (cb) => {
           io.close();
           app.close( () => {

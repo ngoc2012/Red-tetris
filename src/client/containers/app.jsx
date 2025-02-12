@@ -1,22 +1,42 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import flyd from 'flyd'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from "react-redux";
+import { initSocket, sendMessage } from "../actions/socket.js";
 
-const App = ({message}) => {
-  var number = flyd.stream(5);
-  console.log(number());
-  // console.log(number(7));
-  // console.log(number());
+const App = () => {
+  const dispatch = useDispatch();
+  const messages = useSelector((state) => state.chat.messages);
+  const [message, setMessage] = React.useState("");
+
+  useEffect(() => {
+    initSocket(dispatch);
+  }, [dispatch]);
+  
+  const handleSend = () => {
+    if (message.trim()) {
+      sendMessage(message);
+      setMessage(""); // Clear input
+    }
+  };
+
   return (
-    <span>{message}</span>
+    <div>
+      <span>{message}</span>
+      <div>
+        {messages.map((msg, index) => (
+          <p key={index}>{msg}</p>
+        ))}
+      </div>
+      <input
+        type="text"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Type a message..."
+      />
+      <button onClick={handleSend}>Send</button>
+    </div>
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    message: state.message
-  }
-}
-export default connect(mapStateToProps, null)(App)
+export default App
 
 
