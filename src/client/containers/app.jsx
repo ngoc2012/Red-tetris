@@ -5,23 +5,23 @@ import { Tetris } from '../components/Tetris.jsx';
 
 const App = () => {
   const dispatch = useDispatch();
-  const messages = useSelector((state) => state.chat.messages);
-  const [message, setMessage] = React.useState("");
+  // const messages = useSelector((state) => state.chat.messages);
+  // const [message, setMessage] = React.useState("");
 
   useEffect(() => {
     initSocket(dispatch);
   }, [dispatch]);
   
-  const handleSend = () => {
-    if (message.trim()) {
-      sendMessage(message);
-      setMessage(""); // Clear input
-    }
-  };
+  // const handleSend = () => {
+  //   if (message.trim()) {
+  //     sendMessage(message);
+  //     setMessage(""); // Clear input
+  //   }
+  // };
 
   return (
     <div>
-      <div>
+      {/* <div>
         {messages.map((msg, index) => (
           <p key={index}>{msg}</p>
         ))}
@@ -32,7 +32,7 @@ const App = () => {
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Type a message..."
       />
-      <button onClick={handleSend}>Send</button>
+      <button onClick={handleSend}>Send</button> */}
       <Tetris />
     </div>
   )

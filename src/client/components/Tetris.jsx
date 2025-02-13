@@ -5,13 +5,13 @@ import { Spectrums } from './Spectrums.jsx'
 export const Tetris = () => {
   return (
     <div>
-      <div id="left">Info: Score ...</div>
-      <div id="center">
-        <header>4 next </header>
+      <div id="Board">
         <Board />
-        <footer>Game status</footer>
       </div>
-      <div id="right">
+      <div id="Info">
+        <div>4 next </div>
+        <div id="Score">Score ...</div>
+        <div>Game status</div>
         <header>Players spectrums</header>
         <Spectrums spectrums={[{playerId:1}]}/>
       </div>
