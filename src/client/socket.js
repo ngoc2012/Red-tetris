@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { addMessage } from "../store.js"; // Import Redux action
+import { addMessage } from "./store.js"; // Import Redux action
 
 
 const socket = io("http://localhost:3004"); // Server URL

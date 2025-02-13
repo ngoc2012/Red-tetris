@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from "react-redux";
-import { initSocket, sendMessage } from "../actions/socket.js";
+import { initSocket, sendMessage } from "../socket.js";
+import { Tetris } from '../components/Tetris.jsx';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ const App = () => {
         placeholder="Type a message..."
       />
       <button onClick={handleSend}>Send</button>
+      <Tetris />
     </div>
   )
 }
