@@ -10,6 +10,18 @@ import { store } from './store.js'
 // console.log(number(7));
 // console.log(number());
 
+// function setVh() {
+//   // Calculate 1% of the viewport height
+//   let vh = window.innerHeight * 0.01;
+//   // Set the value in the --vh custom property on the root
+//   document.documentElement.style.setProperty('--vh', `${vh}px`);
+// }
+
+// // Initial execution
+// setVh();
+// // Update the value on resize to handle orientation changes
+// window.addEventListener('resize', setVh);
+
 const root = createRoot(document.getElementById('tetris'));
 root.render(
   <Provider store={store}>

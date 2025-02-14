@@ -7,14 +7,27 @@ const logerror = debug('tetris:error')
 const initApp = (app, params, cb) => {
   const {host, port} = params;
   const handler = (req, res) => {
-    const file = req.url === '/bundle.js' ? '/../../build/bundle.js' : '/../../index.html';
+    if (req.url === '/favicon.ico') {
+      res.writeHead(200, {'Content-Type': 'image/x-icon'} );
+      var file = '/../../favicon.ico';
+    } else if (req.url === '/bundle.js') {
+      res.writeHead(200, {'Content-Type': 'application/javascript'} );
+      var file = '/../../build/bundle.js';
+    } else if (req.url === '/style.css') {
+      res.writeHead(200, {'Content-Type': 'text/css'} );
+      var file = '/../../style.css';
+    } else {
+      res.writeHead(200, {'Content-Type': 'text/html'} );
+      var file = '/../../index.html';
+    }
+    // const file = req.url === '/bundle.js' ? '/../../build/bundle.js' : '/../../index.html';
     fs.readFile(__dirname + file, (err, data) => {
       if (err) {
         logerror(err);
         res.writeHead(500);
         return res.end('Error loading index.html');
       }
-      res.writeHead(200);
+      // res.writeHead(200);
       res.end(data);
     });
   };
