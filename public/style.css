@@ -1,0 +1,39 @@
+.container {
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  color: #fff;
+}
+
+/* Styles for Item 1 */
+.item-1 {
+  background-color: #3498db;
+}
+
+/* Styles for Item 2 */
+.item-2 {
+  background-color: #e74c3c;
+}
+
+/* Landscape orientation: two columns */
+@media (orientation: landscape) {
+  .container {
+    grid-template-columns: 1fr 0.236fr;
+    grid-template-rows: 1fr;
+  }
+}
+
+/* Portrait orientation: two rows */
+@media (orientation: portrait) {
+  .container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.618fr 0.382fr;
+  }
+}

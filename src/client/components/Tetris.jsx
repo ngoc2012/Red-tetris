@@ -4,11 +4,11 @@ import { Spectrums } from './Spectrums.jsx'
 
 export const Tetris = () => {
   return (
-    <div>
-      <div id="Board">
+    <div className="main">
+      <div className="board">
         <Board />
       </div>
-      <div id="Info">
+      <div className="info">
         <div>4 next </div>
         <div id="Score">Score ...</div>
         <div>Game status</div>
