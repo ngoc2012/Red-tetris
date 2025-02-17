@@ -78,7 +78,14 @@ export function create(params){
             // Broadcast the message to all clients
             io.emit("receiveMessage", message);
           });
-        
+
+          socket.on("rename", (new_name) => {});
+          socket.on("new_game", () => {});
+          socket.on("join_game", () => {});
+          socket.on("game_list", () => {});
+          socket.on("cleared_a_line", (new_score) => {});
+          socket.on("next_piece", () => {});
+
           socket.on("disconnect", () => {
             console.log("User disconnected:", socket.id);
           });
