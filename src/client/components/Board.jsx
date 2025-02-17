@@ -1,11 +1,11 @@
 import React from 'react';
 
-export const Cell = ({className}) => {
-    <div className={className}></div>
-}
-
-export const Board = ({board}) => {
+export const Board = () => {
   return (
-    <div>Board</div>
+    <div className="board">
+      {Array.from({ length: 20 * 10 }).map((_, index) => (
+        <div key={index} className="cell empty"></div>
+      ))}
+    </div>
   )
 }

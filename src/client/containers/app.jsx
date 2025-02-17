@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from "react-redux";
 import { initSocket, sendMessage } from "../socket.js";
-import { Tetris } from '../components/Tetris.jsx';
+import { Board } from '../components/Board.jsx'
+import { Info } from '../components/Info.jsx';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -20,20 +21,9 @@ const App = () => {
   // };
 
   return (
-    <div>
-      {/* <div>
-        {messages.map((msg, index) => (
-          <p key={index}>{msg}</p>
-        ))}
-      </div>
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Type a message..."
-      />
-      <button onClick={handleSend}>Send</button> */}
-      <Tetris />
+    <div className="main">
+      <Board />
+      <Info />
     </div>
   )
 }

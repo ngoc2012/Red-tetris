@@ -16,11 +16,14 @@ const initApp = (app, params, cb) => {
     } else if (req.url === '/style.css') {
       res.writeHead(200, {'Content-Type': 'text/css'} );
       var file = '/../../style.css';
+    } else if (req.url === '/Halstatt.jpg') {
+      res.writeHead(200, {'Content-Type': 'image/jpg'} );
+      var file = '/../../Halstatt.jpg';
     } else {
       res.writeHead(200, {'Content-Type': 'text/html'} );
       var file = '/../../index.html';
     }
-    // const file = req.url === '/bundle.js' ? '/../../build/bundle.js' : '/../../index.html';
+
     fs.readFile(__dirname + file, (err, data) => {
       if (err) {
         logerror(err);

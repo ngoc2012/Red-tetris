@@ -3,30 +3,35 @@ import { createLogger } from 'redux-logger'
 import { thunk } from 'redux-thunk'
 
 import { storeStateMiddleWare } from './middleware/storeStateMiddleWare.js'
-// import reducer from './reducers/index.js'
-// import { alert } from './actions/alert.js'
 
 const initialState = {
   messages: [],
+  game_state: {
+    status: "game_over",
+    board: [],
+    current_piece: null,
+    next_pieces: [],
+    score: 0,
+  },
 };
 
-const chatSlice = createSlice({
-  name: "chat",
+const game_stateSlice = createSlice({
+  name: "game_state",
   initialState,
   reducers: {
-    addMessage: (state, action) => {
-      state.messages.push(action.payload);
+    setStatus: (state, action) => {
+      state.status = action.payload;
     },
   },
 });
 
 export const store = configureStore({
   reducer: {
-    chat: chatSlice.reducer,
+    game_state: game_stateSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(thunk, createLogger(), storeStateMiddleWare),
 })
 
 // Export actions
-export const { addMessage } = chatSlice.actions;
+export const { setStatus } = game_stateSlice.actions;
