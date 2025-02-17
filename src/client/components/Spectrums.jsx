@@ -5,9 +5,20 @@ export const Spectrum = ({info}) => {
     <div className="spectrum">
       <header>{info.playerId}</header>
       <div className="cells">
-        {Array.from({ length: 20 * 10 }).map((_, index) => (
-          <div key={index} className="spec_cell" />
-        ))}
+      {Array.from({ length: 20 * 10 }).map((_, i) => {
+          const row = Math.floor(i / 10);
+          const isBlocked = i < info.penalty;
+          const isFilled = !isBlocked && info.spec[row] && i % 10 < info.spec[row];
+
+          console.log(isBlocked, isFilled, info.spec[row], i % 10, info.spec[row]);
+
+          return (
+            <div
+              key={i}
+              className={`spec_cell ${isBlocked ? 'blocked' : isFilled ? 'filled' : 'empty'}`}
+            />
+          );
+        })}
       </div>
       <footer>{info.score}</footer>
     </div>

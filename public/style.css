@@ -84,8 +84,16 @@ body {
   gap: 1px;
 }
 
-.spectrum .cells .spec_cell{
+.spectrum .cells .spec_cell .empty {
   background-color: rgba(59, 59, 59, 0.5);
+}
+
+.spectrum .cells .spec_cell .filled {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.spectrum .cells .spec_cell .blocked {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .spectrum header, .spectrum footer {

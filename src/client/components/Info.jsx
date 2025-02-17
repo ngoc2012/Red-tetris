@@ -18,15 +18,15 @@ const SmallBoard = () => {
 export const Info = () => {
   const [status, setStatus] = useState("");
 
-  useEffect(() => {
-    const subscription = flyd.map((key) => {
-      setStatus(key);
-    }, key$);
+  // useEffect(() => {
+  //   const subscription = flyd.map((key) => {
+  //     setStatus(key);
+  //   }, key$);
   
-    return () => {
-      subscription.end(true);
-    };
-  }, []);
+  //   return () => {
+  //     subscription.end(true);
+  //   };
+  // }, []);
   
   const start_game = () => {
     console.log("start game");

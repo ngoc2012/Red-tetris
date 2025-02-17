@@ -8,10 +8,17 @@ export const game_loop = (i) => {
   const subscription = flyd.map((key) => {
     Info.setStatus(key);
   }, key$);
+  
+  useEffect(() => {
+    if (status === 'game_over') {
+      subscription.end(true);
+      return;
+    }
 
-  if (status === "game_over") {
-    subscription.end(true);
-    return;
-  }
-  setInterval(game_loop(i + 1), 1500);
+    const intervalId = setInterval(() => {
+      game_loop(i + 1);
+    }, 1500);
+
+    return () => clearInterval(intervalId);
+  }, [status, i, subscription])
 }
