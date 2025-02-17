@@ -81,18 +81,18 @@ body {
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(20, 1fr);
   
-  gap: 1px;
+  /* gap: 1px; */
 }
 
-.spectrum .cells .spec_cell .empty {
+.spectrum .cells .spec_cell.empty {
   background-color: rgba(59, 59, 59, 0.5);
 }
 
-.spectrum .cells .spec_cell .filled {
+.spectrum .cells .spec_cell.filled {
   background-color: rgba(255, 255, 255, 0.5);
 }
 
-.spectrum .cells .spec_cell .blocked {
+.spectrum .cells .spec_cell.blocked {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
