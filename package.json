@@ -12,8 +12,13 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.1",
     "flyd": "^0.2.8",
+    "gamepad.js": "github:neogeek/gamepad.js",
     "react-dom": "^19.0.0",
+    "react-gamepad": "^1.0.3",
+    "react-gamepads": "^1.0.0",
     "react-redux": "^9.2.0",
+    "react-router": "^7.1.5",
+    "react-router-dom": "^7.1.5",
     "redux-logger": "^3.0.6",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1"

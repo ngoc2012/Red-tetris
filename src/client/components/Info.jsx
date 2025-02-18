@@ -41,7 +41,7 @@ export const Info = () => {
       <Spectrums />
       <div title="status" className="status">{status}</div>
       <button className="button start_game" onClick={start_game}>Start game</button>
-      <button className="button exit_game" onClick={end_game}>Exit game</button>
+      <button className="button exit_game" onClick={end_game}>End game</button>
       {/* <button className="button join_game">Join game</button> */}
       
     </div>

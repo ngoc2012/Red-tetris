@@ -71,18 +71,18 @@ export function create(params){
         io.on("connection", (socket) => {
           console.log("A user connected:", socket.id);
         
-          // Listen for messages from the client
-          socket.on("sendMessage", (message) => {
-            console.log("Message received:", message);
+          // // Listen for messages from the client
+          // socket.on("sendMessage", (message) => {
+          //   console.log("Message received:", message);
         
-            // Broadcast the message to all clients
-            io.emit("receiveMessage", message);
-          });
+          //   // Broadcast the message to all clients
+          //   io.emit("receiveMessage", message);
+          // });
 
           socket.on("rename", (new_name) => {});
-          socket.on("new_game", () => {});
-          socket.on("join_game", () => {});
-          socket.on("game_list", () => {});
+          socket.on("new_room", () => {socket.emit("new_room", {room_id: 1});});
+          socket.on("join_room", () => {});
+          socket.on("room_list", () => {});
           socket.on("cleared_a_line", (new_score) => {});
           socket.on("next_piece", () => {});
 
