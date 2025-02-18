@@ -28,6 +28,9 @@ const game_stateSlice = createSlice({
     add_piece: (state, action) => {
       state.next_pieces += action.payload;
     },
+    remove_piece: (state, action) => {
+      state.next_pieces.slice(1);
+    },
   },
 });
 

@@ -17,14 +17,15 @@ const App = () => {
   },[]);
   
   return (
-    <Routes>
-      <Route path="/" element={<Lobby />} />
-      <Route path="/:roomid/:name" element={
+    // <Routes>
+    //   <Route path="/" element={<Lobby />} />
+    //   <Route path="/:roomid/:name" element={
         <div className="main">
         <Board />
         <Info />
-        </div>} />
-    </Routes>
+        </div>
+        // } />
+    // </Routes>
   )
 }
 

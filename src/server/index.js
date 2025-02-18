@@ -84,7 +84,10 @@ export function create(params){
           socket.on("join_room", () => {});
           socket.on("room_list", () => {});
           socket.on("cleared_a_line", (new_score) => {});
-          socket.on("next_piece", () => {});
+          socket.on("next_piece", () => {
+            let new_piece = {piece: "I", x: 4, y: 0};
+            io.emit("new_piece", new_piece);
+          });
 
           socket.on("disconnect", () => {
             console.log("User disconnected:", socket.id);

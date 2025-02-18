@@ -16,6 +16,7 @@ export const Board = () => {
     };
   }, []);
   
+  // Gamepad logic
   const [gamepads, setGamepads] = useState({});
   useGamepads(gamepads => setGamepads(gamepads));
 
