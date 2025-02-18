@@ -1,9 +1,8 @@
-import { store } from '../store';
-import React, { useState, useEffect} from 'react';
+import { setStatus } from '../store';
+import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
 import { Spectrums } from './Spectrums.jsx'
-import { key$ } from '../index.jsx'
-import flyd from 'flyd'
-import { game_loop } from '../game_loop.js';
+import { useGameLoop } from '../game_loop.js';
 
 const SmallBoard = () => {
   return (
@@ -16,20 +15,19 @@ const SmallBoard = () => {
 }
 
 export const Info = () => {
-  const [status, setStatus] = useState("");
+  const dispatch = useDispatch();
+  const status = useSelector((state) => state.game_state.status);
 
-  // useEffect(() => {
-  //   const subscription = flyd.map((key) => {
-  //     setStatus(key);
-  //   }, key$);
-  
-  //   return () => {
-  //     subscription.end(true);
-  //   };
-  // }, []);
-  
+  useGameLoop();
+
   const start_game = () => {
     console.log("start game");
+    dispatch(setStatus("playing"));
+  }
+
+  const end_game = () => {
+    console.log("end game");
+    dispatch(setStatus("game_over"));
   }
 
   return (
@@ -43,7 +41,7 @@ export const Info = () => {
       <Spectrums />
       <div title="status" className="status">{status}</div>
       <button className="button start_game" onClick={start_game}>Start game</button>
-      <button className="button exit_game">Exit game</button>
+      <button className="button exit_game" onClick={end_game}>Exit game</button>
       {/* <button className="button join_game">Join game</button> */}
       
     </div>

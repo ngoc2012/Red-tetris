@@ -1,24 +1,30 @@
-import { useSelector } from 'react-redux';
-import { Info } from './components/Info.jsx';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setStatus } from './store.js';
 import { key$ } from './index.jsx';
 import flyd from 'flyd';
 
-export const game_loop = (i) => {
+export const useGameLoop = () => {
+  const dispatch = useDispatch();
   const status = useSelector((state) => state.game_state.status);
-  const subscription = flyd.map((key) => {
-    Info.setStatus(key);
-  }, key$);
-  
+
   useEffect(() => {
     if (status === 'game_over') {
-      subscription.end(true);
       return;
     }
 
+    const subscription = flyd.map((key) => {
+      dispatch(setStatus(key));
+    }, key$);
+
     const intervalId = setInterval(() => {
-      game_loop(i + 1);
+      // Game loop logic here
+      console.log('Game loop');
     }, 1500);
 
-    return () => clearInterval(intervalId);
-  }, [status, i, subscription])
-}
+    return () => {
+      subscription.end(true);
+      clearInterval(intervalId);
+    };
+  }, [status, dispatch]);
+};

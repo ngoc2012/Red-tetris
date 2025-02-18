@@ -17,7 +17,7 @@ const initialState = {
 
 const game_stateSlice = createSlice({
   name: "game_state",
-  initialState,
+  initialState: initialState.game_state,
   reducers: {
     setStatus: (state, action) => {
       state.status = action.payload;
