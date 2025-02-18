@@ -17,7 +17,7 @@
     "react-gamepad": "^1.0.3",
     "react-gamepads": "^1.0.0",
     "react-redux": "^9.2.0",
-    "react-router": "^7.1.5",
+    "react-router": "^7.2.0",
     "react-router-dom": "^7.1.5",
     "redux-logger": "^3.0.6",
     "socket.io": "^4.8.1",
