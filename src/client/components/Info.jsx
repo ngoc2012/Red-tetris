@@ -37,11 +37,13 @@ export const Info = () => {
           <SmallBoard key={index} />
         ))}
       </div>
-      <div title="score" className="score">1024</div>
+      <div className='game_info'>
+        <div title="score" className="score">1024</div>
+        <div title="status" className="status">{status}</div>
+        <button className="button start_game" onClick={start_game}>Start game</button>
+        <button className="button exit_game" onClick={end_game}>End game</button>
+      </div>
       <Spectrums />
-      <div title="status" className="status">{status}</div>
-      <button className="button start_game" onClick={start_game}>Start game</button>
-      <button className="button exit_game" onClick={end_game}>End game</button>
       {/* <button className="button join_game">Join game</button> */}
       
     </div>

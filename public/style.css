@@ -94,7 +94,7 @@ body {
 
 
 /* Landscape orientation: two columns */
-@media (min-aspect-ratio: 64/100) {
+@media (min-aspect-ratio: 71/100) {
   .main {
     margin:   0.8vh;
     justify-content: center;
@@ -110,7 +110,7 @@ body {
 
   .main .board {
     width:  48vh;
-    height: 100%;
+    height: 96vh;
 
     padding: 1vh;
     margin:  1vh;
@@ -209,7 +209,7 @@ body {
 }
 
 /* Portrait orientation: two rows */
-@media (max-aspect-ratio: 64/100) {
+@media (max-aspect-ratio: 71/100) {
   .main {
     flex-direction: column;
     margin:    0.8vw;
@@ -235,16 +235,17 @@ body {
   }
 
   .main .info {
-    width:  100%;
-    height: 24vw;
+    width:   100%;
+    height:  24vw;
+    display: flex;
 
-    background-color: rgba(255, 0, 0, 0.2);
+    /* background-color: rgba(255, 0, 0, 0.2); */
   }
 
   .next_pieces {
-    width:  16vw;
+    width:  24vw;
     height: 100%;
-    background-color: rgba(5, 80, 167, 0.2);
+    /* background-color: rgba(5, 80, 167, 0.2); */
 
     display: grid;
     grid-template-columns: 1fr;
@@ -254,5 +255,85 @@ body {
     padding-left:  1vw;
     padding-right: 1vw;
     margin-bottom: 2vw;
+  }
+
+  .small_board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 0, 0, 0.2);
+    gap: 1px;
+  }
+
+  .game_info {
+    width:  30vw;
+    height: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Vertical center */
+    justify-content: center; /* Horizontal center */
+
+    /* background-color: rgba(20, 163, 13, 0.2); */
+    padding: 2vw;
+  }
+
+  .score {
+    width:  100%;
+    height: 6vw;
+    /* background-color: rgba(26, 13, 170, 0.2); */
+    
+    font-size: 2.5vw;
+  }
+
+  .status {
+    width:      100%;
+    height:     6vw;
+    font-size:  2vw;
+    /* background-color: rgba(21, 62, 124, 0.2); */
+  }
+
+  .button {
+    width: 100%;
+    height: 8vw;
+    background-color: transparent;
+
+    padding-left:  1vw;
+    padding-right: 1vw;
+    margin-bottom: 1vw;
+    font-size:     2.5vw;
+  }
+
+  .spectrum header, .spectrum footer {
+    margin: 1vh;
+  }
+
+  .spectrum_list {
+    font-size: 1.5vw;
+    height:    100%;
+    width:     100%;
+
+    display: flex;
+    flex-direction: row;
+    
+    overflow-x: auto;
+    /* background-color: rgba(98, 8, 158, 0.2); */
+  }
+  
+  .spectrum_list .spectrum {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers horizontally */
+    justify-content: center; /* Centers vertically */
+    text-align: center;
+    padding-left: 2vw;
+  }
+
+  .spectrum_list .spectrum .cells{
+    width:  8vw;
+    height: 20vw;
+    /* background-color: rgba(255, 0, 0, 0.2); */
   }
 }
