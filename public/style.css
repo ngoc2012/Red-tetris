@@ -29,18 +29,21 @@ body {
 .main {
   display:  flex;
   /* margin:   0.8vh; */
-  width:    96vw;
+  width:    94vw;
   height:   96vh;
 
   align-items: center;
   justify-content: center;
-  font-size: 1.5vh;
+  
   /* color: #fff; */
 }
 
+.button {
+  color: white;
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff, 0 0 55px #ff00ff, 0 0 75px #ff00ff;
+}
+
 .main .board {
-  border:     0.5vh solid #ad1515;
-  box-shadow: 0 0 1vh #ad1515;
   background-color: rgba(255, 0, 0, 0.2);
 
   display: grid;
@@ -49,20 +52,9 @@ body {
   gap: 1px;
 }
 
-.main .info{
-  padding: 1vh;
-  margin: 1vh;
-}
-
 .score {
   text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff, 0 0 55px #ff00ff, 0 0 75px #ff00ff;
 }
-
-.info .button {
-  color: white;
-  font-size: 2vh;
-}
-
 
 .spectrum .cells {
   width:  100%;
@@ -88,10 +80,6 @@ body {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.spectrum header, .spectrum footer {
-  margin: 1vh;
-}
-
 .cell.empty{
   background-color:  rgba(59, 59, 59, 0.5);
 }
@@ -111,7 +99,14 @@ body {
     margin:   0.8vh;
     justify-content: center;
     align-items: center;
+    font-size: 1.5vh;
   }
+
+  .button {
+    font-size:     2vh;
+    border-radius: 2vh;
+  }
+  
 
   .main .board {
     width:  48vh;
@@ -119,6 +114,9 @@ body {
 
     padding: 1vh;
     margin:  1vh;
+
+    border:     0.5vh solid #ad1515;
+    box-shadow: 0 0 1vh #ad1515;
   }
 
   .main .info {
@@ -131,17 +129,17 @@ body {
 
   .next_pieces {
     width: 100%;
-    height: calc(24vh - 10px);
+    height: calc(24vh - 2vh);
     /* background-color: rgba(255, 0, 0, 0.2); */
 
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: repeat(3, 1fr);
-    gap: 10px;
+    gap: 2vh;
 
-    padding-left: 5px;
-    padding-right: 5px;
-    margin-bottom: 10px;
+    padding-left:  1vh;
+    padding-right: 1vh;
+    margin-bottom: 2vh;
   }
   
   .small_board {
@@ -178,7 +176,11 @@ body {
     padding-right: 1vh;
   }
   
-  .info .spectrum_list {
+  .spectrum header, .spectrum footer {
+    margin: 1vh;
+  }
+
+  .spectrum_list {
     font-size: 1.3vh;
     height: 55vh;
 
@@ -189,7 +191,7 @@ body {
     overflow-y: auto;
   }
   
-  .info .spectrum_list .spectrum {
+  .spectrum_list .spectrum {
     display: flex;
     flex-direction: column;
     align-items: center; /* Centers horizontally */
@@ -197,29 +199,60 @@ body {
     text-align: center;
   }
 
-  .info .spectrum_list .spectrum .cells{
+  .spectrum_list .spectrum .cells{
     width:  10vh;
     height: 20vh;
     background-color: rgba(255, 0, 0, 0.2);
   }
+
+  
 }
 
 /* Portrait orientation: two rows */
 @media (max-aspect-ratio: 64/100) {
   .main {
     flex-direction: column;
+    margin:    0.8vw;
+    font-size: 1.5vw;
+
+    /* background-color: rgba(255, 255, 0, 0.2); */
+  }
+
+  .button {
+    font-size:     2vw;
+    border-radius: 2vw;
   }
 
   .main .board {
-    height: 192vw;
-    width:  96vw;
-    justify-self: center;
+    height: calc(96vh - 24vw);
+    width:  calc((96vh - 24vw) / 2);
+
+    padding: 1vw;
+    margin:  1vw;
+
+    border:     0.5vw solid #ad1515;
+    box-shadow: 0 0 1vw #ad1515;
   }
 
   .main .info {
-    width:  96vw;
-    height: calc(96vh - 192vw);
+    width:  100%;
+    height: 24vw;
+
+    background-color: rgba(255, 0, 0, 0.2);
   }
 
-  
+  .next_pieces {
+    width:  16vw;
+    height: 100%;
+    background-color: rgba(5, 80, 167, 0.2);
+
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, 1fr);
+    gap: 2vw;
+
+    padding-left:  1vw;
+    padding-right: 1vw;
+    margin-bottom: 2vw;
+  }
 }
