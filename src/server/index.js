@@ -1,5 +1,7 @@
 import fs  from 'fs';
 import debug from 'debug';
+import tetrominoes from './tetrominoes.js';
+
 
 const logerror = debug('tetris:error')
   , loginfo = debug('tetris:info');
@@ -57,6 +59,10 @@ const initEngine = io => {
 import { createServer } from 'http';
 import { Server as SocketIO } from 'socket.io';
 
+let players = {}; // Global players object  {socket.id: {name: 'name', room: 'room_id'}}
+let roomPlayers = {}; // Global roomPlayers object {room_id: {owner: socket.id, players: {socket.id: {penalty: 0, score: 0}}}
+let roomCounter = 0; // Global room counter
+
 export function create(params){
   const promise = new Promise( (resolve, reject) => {
     try {
@@ -70,23 +76,42 @@ export function create(params){
 
         io.on("connection", (socket) => {
           console.log("A user connected:", socket.id);
-        
-          // // Listen for messages from the client
-          // socket.on("sendMessage", (message) => {
-          //   console.log("Message received:", message);
-        
-          //   // Broadcast the message to all clients
-          //   io.emit("receiveMessage", message);
-          // });
+          socket.emit("connected", { id: socket.id });
+          players[socket.id] = { name: "" + socket.id, room: null };
 
-          socket.on("rename", (new_name) => {});
-          socket.on("new_room", () => {socket.emit("new_room", {room_id: 1});});
-          socket.on("join_room", () => {});
-          socket.on("room_list", () => {});
-          socket.on("cleared_a_line", (new_score) => {});
-          socket.on("next_piece", () => {
-            let new_piece = {piece: "I", x: 4, y: 0};
-            io.emit("new_piece", new_piece);
+          socket.on("rename", ({new_name}) => {
+            players[socket.id].name = new_name;
+            console.log(`${socket.id} renamed to ${new_name}`);
+          });
+
+          socket.on("new_room", () => {
+            const room_id = roomCounter++;
+            socket.join(room_id);
+            roomPlayers[room_id] = { owner: socket.id, players: {} };
+            roomPlayers[room_id].players[socket.id] = { penalty: 0, score: 0 };
+            socket.emit("new_room", {room_id});
+            socket.emit("join_room_success", { room_id });
+            console.log(`Room ${room_id} created by ${socket.id}`);
+          });
+          socket.on("join_room", ({ room_id }) => {
+            socket.join(room_id);
+            console.log(`${socket.id} joined room ${room_id}`);
+          });
+          socket.on("room_list", () => {
+            socket.emit("room_list", { total_rooms: roomCounter - 1 });
+          });
+          socket.on("cleared_a_line", () => {
+            const players = roomPlayers[players[socket.id].room].players;
+            players[socket.id].score += 1;
+            
+            console.log(`New score for ${socket.id} is ${new_score}`);
+            io.to(room_id).emit("room_update", roomPlayers);
+          });
+          socket.on("next_piece", ({ room_id }) => {
+            io.to(room_id).emit(
+              "next_piece",
+              Object.keys(tetrominoes)[Math.floor(Math.random() * keys.length)]
+            );
           });
 
           socket.on("disconnect", () => {

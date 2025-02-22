@@ -1,8 +1,8 @@
-import { configureStore, createSlice } from '@reduxjs/toolkit'
-import { createLogger } from 'redux-logger'
-import { thunk } from 'redux-thunk'
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import { createLogger } from 'redux-logger';
+import { thunk } from 'redux-thunk';
 
-import { storeStateMiddleWare } from './storeStateMiddleWare.js'
+import { storeStateMiddleWare } from './storeStateMiddleWare.js';
 
 const initialState = {
   player: {
@@ -54,7 +54,7 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(thunk, createLogger(), storeStateMiddleWare),
-})
+});
 
 // Export actions
 export const { setStatus, add_piece } = game_stateSlice.actions;
