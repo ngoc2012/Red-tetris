@@ -108,9 +108,10 @@ export function create(params){
             io.to(room_id).emit("room_update", roomPlayers);
           });
           socket.on("next_piece", ({ room_id }) => {
+            const keys = Object.keys(tetrominoes);
             io.to(room_id).emit(
               "next_piece",
-              Object.keys(tetrominoes)[Math.floor(Math.random() * keys.length)]
+              keys[Math.floor(Math.random() * keys.length)]
             );
           });
 
