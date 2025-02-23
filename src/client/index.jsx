@@ -17,3 +17,5 @@ root.render(
 
 export const key$ = flyd.stream();
 document.addEventListener('keydown', (event) => {key$(event.key)});
+
+export const next_pieces$ = flyd.stream([]);

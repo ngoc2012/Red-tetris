@@ -1,15 +1,57 @@
 import { setStatus } from '../store';
 import { useSelector, useDispatch } from 'react-redux';
-import React from 'react';
+import React, { useState, useEffect} from 'react';
 import { Spectrums } from './Spectrums.jsx'
 import { useGameLoop } from '../game_loop.js';
+import flyd from 'flyd';
+import { next_pieces$ } from '../index.jsx';
+import { tetrominoes } from '../../server/tetrominoes.js';
 
-const SmallBoard = () => {
+const SmallBoard = ({tetro}) => {
+
+  let [pieces, setPieces] = useState([]);
+  
   return (
     <div className="small_board">
-      {Array.from({ length: 2 * 4 }).map((_, index) => (
-        <div key={index} className="cell empty"></div>
-      ))}
+      {Array.from({ length: 2 * 4 }).map((_, i) => {
+        if (tetro === "") {
+          return (<div key={i} className="cell empty"></div>)
+        }
+        const row = Math.floor(i / 4);
+        const col = i % 4;
+        if (tetrominoes[tetro][0][row][col] === 1)
+          return (<div key={i} className={"cell filled " + tetro}></div>)
+        else
+          return (<div key={i} className="cell empty"></div>)
+      }
+      )}
+    </div>
+  )
+}
+
+const Pieces = () => {
+  
+  let [pieces, setPieces] = useState(["", "", ""]);
+
+  useEffect(() => {
+    const subscription = flyd.map((next_pieces) => {
+      setPieces(next_pieces);
+    }, next_pieces$);
+  
+    return () => {
+      subscription.end(true);
+    };
+  }, []);
+
+  return (
+    <div className="next_pieces">
+        {Array.from({ length: 3 }).map((_, index) => {
+          if (index < pieces.length)
+            return <SmallBoard key={index} tetro={pieces[index]}/>
+          else
+            return <SmallBoard key={index} tetro=""/>
+        }
+        )}
     </div>
   )
 }
@@ -32,12 +74,9 @@ export const Info = () => {
 
   return (
     <div className="info">
-      <div className="next_pieces">
-        {Array.from({ length: 3 }).map((_, index) => (
-          <SmallBoard key={index} />
-        ))}
-      </div>
+      
       <div className='game_info'>
+        <Pieces />
         <div title="score" className="score">1024</div>
         <div title="status" className="status">{status}</div>
         <button className="button start_game" onClick={start_game}>Start game</button>

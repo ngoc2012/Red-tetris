@@ -2,10 +2,13 @@ import React, { useState, useEffect} from 'react';
 import { key$ } from '../index.jsx'
 import flyd from 'flyd'
 import { useGamepads } from 'react-gamepads';
+import socket from '../socket.js';
 
 export const Board = () => {
 
   useEffect(() => {
+    socket.emit('new_room');
+
     const subscription = flyd.map((key) => {
       // Key pressed logic here
       console.log(key);

@@ -1,6 +1,6 @@
 import fs  from 'fs';
 import debug from 'debug';
-import tetrominoes from './tetrominoes.js';
+import { tetrominoes } from './tetrominoes.js';
 
 
 const logerror = debug('tetris:error')
@@ -93,13 +93,16 @@ export function create(params){
             socket.emit("join_room_success", { room_id });
             console.log(`Room ${room_id} created by ${socket.id}`);
           });
+
           socket.on("join_room", ({ room_id }) => {
             socket.join(room_id);
             console.log(`${socket.id} joined room ${room_id}`);
           });
+
           socket.on("room_list", () => {
             socket.emit("room_list", { total_rooms: roomCounter - 1 });
           });
+
           socket.on("cleared_a_line", () => {
             const players = roomPlayers[players[socket.id].room].players;
             players[socket.id].score += 1;
@@ -107,7 +110,9 @@ export function create(params){
             console.log(`New score for ${socket.id} is ${new_score}`);
             io.to(room_id).emit("room_update", roomPlayers);
           });
+
           socket.on("next_piece", ({ room_id }) => {
+            console.log('next_piece', room_id);
             const keys = Object.keys(tetrominoes);
             io.to(room_id).emit(
               "next_piece",

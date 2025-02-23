@@ -6,10 +6,11 @@ import { storeStateMiddleWare } from './storeStateMiddleWare.js';
 
 const initialState = {
   player: {
-    id: 0,
+    id: "",
     name: "me",
   },
   game_state: {
+    room_id: "",
     status: "game_over",
     board: [],
     current_piece: null,
@@ -30,6 +31,9 @@ const game_stateSlice = createSlice({
     },
     remove_piece: (state, action) => {
       state.next_pieces.slice(1);
+    },
+    setRoomId: (state, action) => {
+      state.room_id = action.payload;
     },
   },
 });
@@ -57,4 +61,5 @@ export const store = configureStore({
 });
 
 // Export actions
-export const { setStatus, add_piece } = game_stateSlice.actions;
+export const { setStatus, add_piece, setRoomId } = game_stateSlice.actions;
+export const { setId, setName } = playerSlice.actions;
