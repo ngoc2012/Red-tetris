@@ -44,14 +44,14 @@ export const Board = () => {
       console.log(key);
     }, key$);
 
-    const subscription1 = flyd.map(
-      (pos) => {
+    const subscription1 = flyd.combine(
+      (pos$, rot$) => {
         setGrid(
           Array.from({ length: 20 * 10 }).map((_, i) => {
             const row = Math.floor(i / 10);
             const col = i % 10;
-            const block_row = Math.floor(pos / 10);
-            const block_col = pos % 10;
+            const block_row = Math.floor(pos$() / 10);
+            const block_col = pos$() % 10;
             const isBlocked = false;
             let isFilled = false;
             if (
@@ -69,9 +69,7 @@ export const Board = () => {
             );
           })
         );
-      },
-      pos$,
-      rot$
+      },[pos$, rot$]
     );
 
     return () => {
