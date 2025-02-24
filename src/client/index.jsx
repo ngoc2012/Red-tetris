@@ -22,5 +22,5 @@ document.addEventListener("keydown", (event) => {
 });
 export const pos$ = flyd.stream(0);
 export const rot$ = flyd.stream(0);
-export const piece$ = flyd.stream(tetrominoes.I);
+export const piece$ = flyd.stream("O");
 export const next_pieces$ = flyd.stream([]);

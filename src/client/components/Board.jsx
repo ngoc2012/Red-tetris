@@ -35,8 +35,7 @@ export const Board = () => {
           break;
         case "ArrowUp":
           // rotation
-          rot$((rot$() + 1) % 4);
-          pos$(pos$());
+          rot$((rot$() + 1) % tetrominoes[piece$()].length);
           break;
         default:
           break;
@@ -44,34 +43,36 @@ export const Board = () => {
       console.log(key);
     }, key$);
 
-    const subscription1 = flyd.map(
-      (pos) => {
+    const subscription1 = flyd.combine(
+      (pos$, rot$) => {
         setGrid(
           Array.from({ length: 20 * 10 }).map((_, i) => {
             const row = Math.floor(i / 10);
             const col = i % 10;
-            const block_row = Math.floor(pos / 10);
-            const block_col = pos % 10;
+            const block_row = Math.floor(pos$() / 10);
+            const block_col = pos$() % 10;
             const isBlocked = false;
             let isFilled = false;
             if (
               row >= block_row &&
-              row <= block_row + piece$()[rot$()].length - 1 &&
+              row <= block_row + tetrominoes[piece$()][rot$()].length - 1 &&
               col >= block_col &&
-              col <= block_col + piece$()[rot$()][0].length - 1
+              col <= block_col + tetrominoes[piece$()][rot$()][0].length - 1
             )
-              isFilled = piece$()[rot$()][row - block_row][col - block_col] == 1;
+              isFilled =
+                tetrominoes[piece$()][rot$()][row - block_row][col - block_col] == 1;
             return (
               <Square
                 key={i}
-                name={`cell ${isBlocked ? "blocked" : isFilled ? "filled J" : "empty"}`}
+                color={piece$()}
+                filled={isFilled}
+                blocked={isBlocked}
               ></Square>
             );
           })
         );
       },
-      pos$,
-      rot$
+      [pos$, rot$]
     );
 
     return () => {
