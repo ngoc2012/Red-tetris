@@ -1,8 +1,8 @@
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { createLogger } from 'redux-logger';
-import { thunk } from 'redux-thunk';
+import { configureStore, createSlice } from "@reduxjs/toolkit";
+import { createLogger } from "redux-logger";
+import { thunk } from "redux-thunk";
 
-import { storeStateMiddleWare } from './storeStateMiddleWare.js';
+import { storeStateMiddleWare } from "./storeStateMiddleWare.js";
 
 const initialState = {
   player: {
@@ -27,7 +27,7 @@ const game_stateSlice = createSlice({
       state.status = action.payload;
     },
     add_piece: (state, action) => {
-      state.next_pieces += action.payload;
+      state.next_pieces = [...state.next_pieces, action.payload];
     },
     remove_piece: (state, action) => {
       state.next_pieces.slice(1);
