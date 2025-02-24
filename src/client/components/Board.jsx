@@ -36,7 +36,7 @@ export const Board = () => {
         case "ArrowUp":
           // rotation
           rot$((rot$() + 1) % 4);
-          pos$(pos$());
+          // pos$(pos$());
           break;
         default:
           break;
