@@ -25,7 +25,7 @@ const SmallBoard = ({ tetro }) => {
 };
 
 const Pieces = () => {
-  let [pieces, setPieces] = useState(["", "", ""]);
+  let [pieces, setPieces] = useState([]);
 
   useEffect(() => {
     const subscription = flyd.map((next_pieces) => {

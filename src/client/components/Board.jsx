@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { pos$, key$ } from "../index.jsx";
+import { pos$, rot$, key$, piece$ } from "../index.jsx";
 import flyd from "flyd";
 import { useGamepads } from "react-gamepads";
 import { Square } from "./Square.jsx";
@@ -21,16 +21,22 @@ export const Board = () => {
       // Key pressed logic here
       switch (key) {
         case "ArrowRight":
-          pos$(pos$() + 1);
+          if (pos$() % 10 <= 8) {
+            pos$(pos$() + 1);
+          }
           break;
         case "ArrowLeft":
-          pos$(pos$() - 1);
+          if (pos$() % 10 > 0) {
+            pos$(pos$() - 1);
+          }
           break;
         case "ArrowDown":
           pos$(pos$() + 10);
           break;
         case "ArrowUp":
           // rotation
+          rot$((rot$() + 1) % 4);
+          pos$(pos$());
           break;
         default:
           break;
@@ -38,32 +44,35 @@ export const Board = () => {
       console.log(key);
     }, key$);
 
-    const subscription1 = flyd.map((pos) => {
-      setGrid(
-        Array.from({ length: 20 * 10 }).map((_, i) => {
-          const row = Math.floor(i / 10);
-          const col = i % 10;
-          const block_row = Math.floor(pos / 10);
-          const block_col = pos % 10;
-          const isBlocked = false;
-          let isFilled = false;
-          // console.log(tetrominoes.J);
-          if (
-            row >= block_row &&
-            row <= block_row + 2 &&
-            col >= block_col &&
-            col <= block_col + 2
-          )
-            isFilled = tetrominoes.J[0][row - block_row][col - block_col] == 1;
-          return (
-            <Square
-              key={i}
-              name={`cell ${isBlocked ? "blocked" : isFilled ? "filled J" : "empty"}`}
-            ></Square>
-          );
-        })
-      );
-    }, pos$);
+    const subscription1 = flyd.map(
+      (pos) => {
+        setGrid(
+          Array.from({ length: 20 * 10 }).map((_, i) => {
+            const row = Math.floor(i / 10);
+            const col = i % 10;
+            const block_row = Math.floor(pos / 10);
+            const block_col = pos % 10;
+            const isBlocked = false;
+            let isFilled = false;
+            if (
+              row >= block_row &&
+              row <= block_row + piece$()[rot$()].length - 1 &&
+              col >= block_col &&
+              col <= block_col + piece$()[rot$()][0].length - 1
+            )
+              isFilled = piece$()[rot$()][row - block_row][col - block_col] == 1;
+            return (
+              <Square
+                key={i}
+                name={`cell ${isBlocked ? "blocked" : isFilled ? "filled J" : "empty"}`}
+              ></Square>
+            );
+          })
+        );
+      },
+      pos$,
+      rot$
+    );
 
     return () => {
       subscription.end(true);

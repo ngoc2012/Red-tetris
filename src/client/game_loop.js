@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { setStatus } from './store.js';
-import { pos$, key$, next_pieces$ } from './index.jsx';
-import flyd from 'flyd';
-import socket from './socket.js';
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setStatus } from "./store.js";
+import { pos$, key$, next_pieces$ } from "./index.jsx";
+import flyd from "flyd";
+import socket from "./socket.js";
 
 export const useGameLoop = () => {
   const dispatch = useDispatch();
@@ -14,7 +14,7 @@ export const useGameLoop = () => {
   // const y = useSelector((state) => state.game_state.y);
 
   useEffect(() => {
-    if (status !== 'playing') {
+    if (status !== "playing") {
       return;
     }
 
@@ -23,12 +23,12 @@ export const useGameLoop = () => {
     }, key$);
 
     const intervalId = setInterval(() => {
-      if (next_pieces$().length < 3) socket.emit('next_piece', { room_id });
+      if (next_pieces$().length < 3) socket.emit("next_piece", { room_id });
       // if (next_pieces.length < 3) {
       //   socket.emit('next_piece');
       // }
       // console.log(next_pieces.length);
-      console.log('Game loop');
+      console.log("Game loop");
       // dispatch(incrementY());
       // console.log(y);
       pos$(pos$() + 10);
