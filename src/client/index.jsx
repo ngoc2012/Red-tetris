@@ -5,7 +5,6 @@ import App from "./components/App.jsx";
 import { store } from "./store.js";
 import flyd from "flyd";
 import { BrowserRouter } from "react-router";
-import { tetrominoes } from "../server/tetrominoes.js";
 
 const root = createRoot(document.getElementById("tetris"));
 root.render(
@@ -22,5 +21,5 @@ document.addEventListener("keydown", (event) => {
 });
 export const pos$ = flyd.stream(0);
 export const rot$ = flyd.stream(0);
-export const piece$ = flyd.stream("O");
+export const piece$ = flyd.stream("I");
 export const next_pieces$ = flyd.stream([]);

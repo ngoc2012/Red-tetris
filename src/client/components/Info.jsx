@@ -68,8 +68,8 @@ export const Info = () => {
 
   return (
     <div className='info'>
+      <Pieces />
       <div className='game_info'>
-        <Pieces />
         <div title='score' className='score'>
           1024
         </div>
