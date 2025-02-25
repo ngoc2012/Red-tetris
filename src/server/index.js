@@ -79,9 +79,16 @@ export function create(params){
           socket.emit("connected", { id: socket.id });
           players[socket.id] = { name: "" + socket.id, room: null };
 
-          socket.on("rename", ({new_name}) => {
-            players[socket.id].name = new_name;
-            console.log(`${socket.id} renamed to ${new_name}`);
+          socket.on("rename", ({ new_name }, callback) => {
+            const isValidName = false;
+        
+            if (isValidName) {
+              players[socket.id].name = new_name;
+              console.log(`${socket.id} renamed to ${new_name}`);
+              callback({ success: true });
+            } else {
+              callback({ success: false, message: "Invalid name" });
+            }
           });
 
           socket.on("new_room", () => {
