@@ -7,6 +7,11 @@ import { tetrominoes } from "../../server/tetrominoes.js";
 import socket from "../socket.js";
 import { can_move } from "../../utils/index.js";
 
+export const RIGHT = 1;
+export const LEFT = 2;
+export const DOWN = 4;
+export const ROT = 8;
+
 export const Board = () => {
   const [grid, setGrid] = useState(
     Array.from({ length: 20 * 10 }).map((_, index) => (
@@ -22,23 +27,47 @@ export const Board = () => {
       // Key pressed logic here
       switch (key) {
         case "ArrowRight":
-          // if (pos$() % 10 <= 8) {
-          if (can_move(board, pos$() + 1, rot$())) {
+          if (can_move(board, pos$() + 1, RIGHT, rot$())) {
             pos$(pos$() + 1);
           }
           break;
         case "ArrowLeft":
-          // if (pos$() % 10 > 0) {
-          if (can_move(board, pos$() - 1, rot$())) {
+          if (can_move(board, pos$() - 1, LEFT, rot$())) {
             pos$(pos$() - 1);
           }
           break;
         case "ArrowDown":
-          pos$(pos$() + 10);
+          if (can_move(board, pos$() + 10, DOWN, rot$())) {
+            pos$(pos$() + 10);
+          }
           break;
         case "ArrowUp":
           // rotation
-          rot$((rot$() + 1) % tetrominoes[piece$()].length);
+          if (can_move(board, pos$(), ROT, (rot$() + 1) % tetrominoes[piece$()].length)) {
+            rot$((rot$() + 1) % tetrominoes[piece$()].length);
+          } else if (
+            // wall kick right
+            can_move(
+              board,
+              pos$() + 1,
+              RIGHT | ROT,
+              (rot$() + 1) % tetrominoes[piece$()].length
+            )
+          ) {
+            pos$(pos$() + 1);
+            rot$((rot$() + 1) % tetrominoes[piece$()].length);
+          } else if (
+            // wall kick left
+            can_move(
+              board,
+              pos$() - 1,
+              LEFT | ROT,
+              (rot$() + 1) % tetrominoes[piece$()].length
+            )
+          ) {
+            pos$(pos$() - 1);
+            rot$((rot$() + 1) % tetrominoes[piece$()].length);
+          }
           break;
         default:
           break;

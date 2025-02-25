@@ -5,7 +5,6 @@ import App from "./components/App.jsx";
 import { store } from "./store.js";
 import flyd from "flyd";
 import { BrowserRouter } from "react-router";
-import { tetrominoes } from "../server/tetrominoes.js";
 
 const root = createRoot(document.getElementById("tetris"));
 root.render(
