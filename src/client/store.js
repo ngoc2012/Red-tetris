@@ -12,7 +12,7 @@ const initialState = {
   game_state: {
     room_id: "",
     status: "game_over",
-    board: [],
+    board: Array(20 * 10).fill(""),
     current_piece: null,
     next_pieces: [],
     score: 0,
@@ -25,6 +25,9 @@ const game_stateSlice = createSlice({
   reducers: {
     setStatus: (state, action) => {
       state.status = action.payload;
+    },
+    setBoard: (state, action) => {
+      state.board = action.payload;
     },
     add_piece: (state, action) => {
       state.next_pieces = [...state.next_pieces, action.payload];
@@ -61,5 +64,5 @@ export const store = configureStore({
 });
 
 // Export actions
-export const { setStatus, add_piece, setRoomId } = game_stateSlice.actions;
+export const { setStatus, add_piece, setRoomId, setBoard } = game_stateSlice.actions;
 export const { setId, setName } = playerSlice.actions;
