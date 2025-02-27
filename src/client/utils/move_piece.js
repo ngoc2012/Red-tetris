@@ -1,6 +1,14 @@
-import { key$, pos$, rot$ } from "../index.jsx";
-import { setBoard } from "../store.js";
-import { add_block_to_board, can_move, next_piece, next_rot } from "./utils.js";
+import { tetrominoes } from "../../server/tetrominoes.js";
+import { piece$, pos$, rot$ } from "../index.jsx";
+import { setBoard, setStatus } from "../store.js";
+import {
+  add_block_to_board,
+  BUFFER,
+  can_move,
+  next_piece,
+  next_rot,
+  WIDTH,
+} from "./utils.js";
 
 export const RIGHT = 1;
 export const LEFT = 2;
@@ -20,14 +28,19 @@ export const move_right = (board) => {
 };
 
 export const move_down = (board, dispatch) => {
-  if (can_move(board, pos$() + 10, DOWN, rot$())) {
-    pos$(pos$() + 10);
+  if (can_move(board, pos$() + WIDTH, DOWN, rot$())) {
+    pos$(pos$() + WIDTH);
   } else {
-    dispatch(setBoard(add_block_to_board(board)));
-    pos$(0);
-    rot$(0);
-    key$("");
-    next_piece(false);
+    if (board.some((v, i) => i < BUFFER * WIDTH && v != "")) {
+      console.log("Game Over");
+      dispatch(setStatus("game_over"));
+      piece$("");
+    } else {
+      dispatch(setBoard(add_block_to_board(board)));
+      pos$((WIDTH + tetrominoes[piece$()].length) / 2);
+      rot$(0);
+      next_piece(false);
+    }
   }
 };
 

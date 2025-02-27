@@ -3,6 +3,7 @@ import { createLogger } from "redux-logger";
 import { thunk } from "redux-thunk";
 
 import { storeStateMiddleWare } from "./storeStateMiddleWare.js";
+import { BUFFER, LENGTH, WIDTH } from "./utils/utils.js";
 
 const initialState = {
   player: {
@@ -12,7 +13,7 @@ const initialState = {
   game_state: {
     room_id: "",
     status: "game_over",
-    board: Array(20 * 10).fill(""),
+    board: Array.from({ length: (LENGTH + BUFFER) * WIDTH }).fill(""),
     score: 0,
   },
 };

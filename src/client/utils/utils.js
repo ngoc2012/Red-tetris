@@ -2,10 +2,15 @@ import { LEFT, RIGHT, ROT } from "../utils/move_piece.js";
 import { piece$, rot$, pos$, next_pieces$ } from "../index.jsx";
 import { tetrominoes } from "../../server/tetrominoes.js";
 
+export const WIDTH = 10;
+export const LENGTH = 20;
+export const BUFFER = 2;
+
 export const next_piece = (start = true) => {
   if (!piece$() || !start) {
     piece$(next_pieces$()[0]);
     next_pieces$(next_pieces$().slice(1));
+    pos$(Math.floor((WIDTH - tetrominoes[piece$()][rot$()].length) / 2));
   }
 };
 
@@ -15,19 +20,22 @@ export const next_rot = () => {
 
 export const board_to_block = (pos, col, row) => {
   return [
-    (col - (pos % 10) + 10) % 10,
-    row - Math.floor(pos / 10) - (col - (pos % 10) < 0 || pos < 0),
+    (col - (pos % WIDTH) + WIDTH) % WIDTH,
+    row - Math.floor(pos / WIDTH) - (col - (pos % WIDTH) < 0 || pos < 0),
   ];
 };
 
 export const block_to_board = (pos, col, row) => {
-  return [((pos % 10) + col) % 10, Math.floor(pos / 10) + row + ((pos % 10) + col > 9)];
+  return [
+    ((pos % WIDTH) + col) % WIDTH,
+    Math.floor(pos / WIDTH) + row + ((pos % WIDTH) + col >= WIDTH),
+  ];
 };
 
 export const add_block_to_board = (board) => {
   return board.map((v, i) => {
-    const row = Math.floor(i / 10);
-    const col = (i + 10) % 10;
+    const row = Math.floor(i / WIDTH);
+    const col = (i + WIDTH) % WIDTH;
     const [block_col, block_row] = board_to_block(pos$(), col, row);
     if (
       block_row >= 0 &&
@@ -44,7 +52,7 @@ export const add_block_to_board = (board) => {
 
 export const can_move = (board, pos, direction, rotation) => {
   const piece = Array.from(tetrominoes[piece$()][rotation]).flat(1);
-  const center_col = ((pos % 10) + tetrominoes[piece$()][rotation].length / 2) % 10;
+  const center_col = ((pos % WIDTH) + tetrominoes[piece$()][rotation].length / 2) % WIDTH;
   return piece.every((v, i) => {
     if (v != "") {
       const row = Math.floor(i / tetrominoes[piece$()][rotation].length);
@@ -52,13 +60,13 @@ export const can_move = (board, pos, direction, rotation) => {
       const [board_col, board_row] = block_to_board(pos, col, row);
 
       if (
-        board_row > 19 ||
+        board_row >= LENGTH + BUFFER ||
         board_col < 0 ||
         (board_col === 0 && direction === RIGHT) ||
         (board_col === 9 && direction === LEFT) ||
         (Math.abs(board_col - center_col) > 4 && direction & ROT) ||
-        (board[board_row * 10 + board_col] != "" &&
-          board[board_row * 10 + board_col] != undefined)
+        (board[board_row * WIDTH + board_col] != "" &&
+          board[board_row * WIDTH + board_col] != undefined)
       ) {
         return false;
       }

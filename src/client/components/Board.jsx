@@ -5,14 +5,14 @@ import { useGamepads } from "react-gamepads";
 import { Square } from "./Square.jsx";
 import { tetrominoes } from "../../server/tetrominoes.js";
 import socket from "../socket.js";
-import { board_to_block } from "../utils/utils.js";
+import { board_to_block, BUFFER, LENGTH, WIDTH } from "../utils/utils.js";
 import { move_down, move_left, move_right, rotate_piece } from "../utils/move_piece.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useGameLoop } from "../game_loop.js";
 
 export const Board = () => {
   const [grid, setGrid] = useState(
-    Array.from({ length: 20 * 10 }).map((_, index) => (
+    Array.from({ length: WIDTH * (LENGTH + BUFFER) }).map((_, index) => (
       <Square key={index} name='cell empty'></Square>
     ))
   );
@@ -53,9 +53,9 @@ export const Board = () => {
     const subscription1 = flyd.combine(
       (pos$, rot$, piece$) => {
         setGrid(
-          Array.from({ length: 20 * 10 }).map((_, i) => {
-            const row = Math.floor(i / 10);
-            const col = (i + 10) % 10;
+          Array.from({ length: WIDTH * (LENGTH + BUFFER) }).map((_, i) => {
+            const row = Math.floor(i / WIDTH);
+            const col = (i + WIDTH) % WIDTH;
             const [block_col, block_row] = board_to_block(pos$(), col, row);
             const isBlocked = false;
 
@@ -65,7 +65,7 @@ export const Board = () => {
               block_row <= tetrominoes[piece$()][rot$()].length - 1 &&
               block_col >= 0 &&
               block_col <= tetrominoes[piece$()][rot$()][0].length - 1 &&
-              tetrominoes[piece$()][rot$()][block_row][(block_col + 10) % 10] == 1
+              tetrominoes[piece$()][rot$()][block_row][(block_col + WIDTH) % WIDTH] == 1
             ) {
               return (
                 <Square key={i} color={piece$()} filled={true} blocked={isBlocked}></Square>
@@ -122,5 +122,5 @@ export const Board = () => {
     }
   }, [gamepads[0]]);
 
-  return <div className='board'>{grid}</div>;
+  return <div className='board'>{grid.slice(BUFFER * WIDTH)}</div>;
 };
