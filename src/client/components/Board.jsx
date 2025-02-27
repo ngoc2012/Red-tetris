@@ -27,6 +27,10 @@ export const Board = () => {
   useEffect(() => {
     socket.emit("new_room");
 
+    return () => {};
+  }, []);
+
+  useEffect(() => {
     const subscription = flyd.map((key) => {
       // Key pressed logic here
       switch (key) {
@@ -47,6 +51,7 @@ export const Board = () => {
             dispatch(setBoard(add_block(board)));
             pos$(0);
             rot$(0);
+            key$("");
           }
           break;
         case "ArrowUp":
@@ -110,7 +115,7 @@ export const Board = () => {
       subscription.end(true);
       subscription1.end(true);
     };
-  }, []);
+  }, [dispatch, board]);
 
   // Gamepad logic
   const [gamepads, setGamepads] = useState({});
