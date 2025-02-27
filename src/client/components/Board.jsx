@@ -1,4 +1,3 @@
-import { setBoard } from "../store";
 import React, { useState, useEffect } from "react";
 import { pos$, rot$, key$, piece$ } from "../index.jsx";
 import flyd from "flyd";
@@ -6,13 +5,10 @@ import { useGamepads } from "react-gamepads";
 import { Square } from "./Square.jsx";
 import { tetrominoes } from "../../server/tetrominoes.js";
 import socket from "../socket.js";
-import { add_block, board_to_block, can_move, next_rot } from "../../utils/utils.js";
+import { board_to_block } from "../utils/utils.js";
+import { move_down, move_left, move_right, rotate_piece } from "../utils/move_piece.js";
 import { useDispatch, useSelector } from "react-redux";
-
-export const RIGHT = 1;
-export const LEFT = 2;
-export const DOWN = 4;
-export const ROT = 8;
+import { useGameLoop } from "../game_loop.js";
 
 export const Board = () => {
   const [grid, setGrid] = useState(
@@ -20,9 +16,9 @@ export const Board = () => {
       <Square key={index} name='cell empty'></Square>
     ))
   );
-
   const dispatch = useDispatch();
   const board = useSelector((state) => state.game_state.board);
+  useGameLoop();
 
   useEffect(() => {
     socket.emit("new_room");
@@ -32,45 +28,22 @@ export const Board = () => {
 
   useEffect(() => {
     const subscription = flyd.map((key) => {
+      if (!piece$()) {
+        return;
+      }
       // Key pressed logic here
       switch (key) {
         case "ArrowRight":
-          if (can_move(board, pos$() + 1, RIGHT, rot$())) {
-            pos$(pos$() + 1);
-          }
+          move_right(board);
           break;
         case "ArrowLeft":
-          if (can_move(board, pos$() - 1, LEFT, rot$())) {
-            pos$(pos$() - 1);
-          }
+          move_left(board);
           break;
         case "ArrowDown":
-          if (can_move(board, pos$() + 10, DOWN, rot$())) {
-            pos$(pos$() + 10);
-          } else {
-            dispatch(setBoard(add_block(board)));
-            pos$(0);
-            rot$(0);
-            key$("");
-          }
+          move_down(board, dispatch);
           break;
         case "ArrowUp":
-          // rotation
-          if (can_move(board, pos$(), ROT, next_rot())) {
-            rot$(next_rot());
-          } else if (
-            // wall kick right
-            can_move(board, pos$() + 1, RIGHT | ROT, next_rot())
-          ) {
-            pos$(pos$() + 1);
-            rot$(next_rot());
-          } else if (
-            // wall kick left
-            can_move(board, pos$() - 1, LEFT | ROT, next_rot())
-          ) {
-            pos$(pos$() - 1);
-            rot$(next_rot());
-          }
+          rotate_piece(board);
           break;
         default:
           break;
@@ -78,7 +51,7 @@ export const Board = () => {
       console.log(key);
     }, key$);
     const subscription1 = flyd.combine(
-      (pos$, rot$) => {
+      (pos$, rot$, piece$) => {
         setGrid(
           Array.from({ length: 20 * 10 }).map((_, i) => {
             const row = Math.floor(i / 10);
@@ -87,6 +60,7 @@ export const Board = () => {
             const isBlocked = false;
 
             if (
+              piece$() &&
               block_row >= 0 &&
               block_row <= tetrominoes[piece$()][rot$()].length - 1 &&
               block_col >= 0 &&
@@ -108,7 +82,7 @@ export const Board = () => {
           })
         );
       },
-      [pos$, rot$]
+      [pos$, rot$, piece$]
     );
 
     return () => {
@@ -147,9 +121,6 @@ export const Board = () => {
       });
     }
   }, [gamepads[0]]);
-
-  // perhaps use a 2d array to handle line clearing
-  // const grid = ;
 
   return <div className='board'>{grid}</div>;
 };

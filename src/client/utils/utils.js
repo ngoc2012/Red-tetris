@@ -1,6 +1,13 @@
-import { LEFT, RIGHT, ROT } from "../client/components/Board.jsx";
-import { piece$, rot$, pos$ } from "../client/index.jsx";
-import { tetrominoes } from "../server/tetrominoes.js";
+import { LEFT, RIGHT, ROT } from "../utils/move_piece.js";
+import { piece$, rot$, pos$, next_pieces$ } from "../index.jsx";
+import { tetrominoes } from "../../server/tetrominoes.js";
+
+export const next_piece = (start = true) => {
+  if (!piece$() || !start) {
+    piece$(next_pieces$()[0]);
+    next_pieces$(next_pieces$().slice(1));
+  }
+};
 
 export const next_rot = () => {
   return (rot$() + 1) % tetrominoes[piece$()].length;
@@ -17,7 +24,7 @@ export const block_to_board = (pos, col, row) => {
   return [((pos % 10) + col) % 10, Math.floor(pos / 10) + row + ((pos % 10) + col > 9)];
 };
 
-export const add_block = (board) => {
+export const add_block_to_board = (board) => {
   return board.map((v, i) => {
     const row = Math.floor(i / 10);
     const col = (i + 10) % 10;

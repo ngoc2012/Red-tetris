@@ -2,7 +2,6 @@ import { setStatus } from "../store";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useState, useEffect } from "react";
 import { Spectrums } from "./Spectrums.jsx";
-import { useGameLoop } from "../game_loop.js";
 import flyd from "flyd";
 import { next_pieces$ } from "../index.jsx";
 import { tetrominoes } from "../../server/tetrominoes.js";
@@ -53,8 +52,6 @@ const Pieces = () => {
 export const Info = () => {
   const dispatch = useDispatch();
   const status = useSelector((state) => state.game_state.status);
-
-  useGameLoop();
 
   const start_game = () => {
     console.log("start game");
