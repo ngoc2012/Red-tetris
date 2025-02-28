@@ -5,6 +5,7 @@ import {
   add_block_to_board,
   BUFFER,
   can_move,
+  clear_full_rows,
   next_piece,
   next_rot,
   WIDTH,
@@ -34,9 +35,8 @@ export const move_down = (board, dispatch) => {
     if (board.some((v, i) => i < BUFFER * WIDTH && v != "")) {
       console.log("Game Over");
       dispatch(setStatus("game_over"));
-      piece$("");
     } else {
-      dispatch(setBoard(add_block_to_board(board)));
+      dispatch(setBoard(clear_full_rows(add_block_to_board(board)), dispatch));
       pos$((WIDTH + tetrominoes[piece$()].length) / 2);
       rot$(0);
       next_piece(false);
@@ -60,5 +60,23 @@ export const rotate_piece = (board) => {
   ) {
     pos$(pos$() - 1);
     rot$(next_rot());
+  } else if (piece$() === "I") {
+    // I piece specific wall kicks
+    if (rot$() === 1 && can_move(board, pos$() + 2, RIGHT | ROT, next_rot())) {
+      pos$(pos$() + 2);
+      rot$(next_rot());
+    } else if (rot$() === 3 && can_move(board, pos$() - 2, LEFT | ROT, next_rot())) {
+      pos$(pos$() - 2);
+      rot$(next_rot());
+    }
   }
+};
+
+export const move_down_max = (board, dispatch) => {
+  let dist = 0;
+  while (can_move(board, pos$() + WIDTH * dist, DOWN, rot$())) {
+    ++dist;
+  }
+  pos$(pos$() + WIDTH * (dist - 1));
+  move_down(board, dispatch);
 };

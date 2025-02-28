@@ -56,6 +56,7 @@ export const Info = () => {
   const start_game = () => {
     console.log("start game");
     dispatch(setStatus("playing"));
+    document.activeElement.blur();
   };
 
   const end_game = () => {

@@ -6,7 +6,13 @@ import { Square } from "./Square.jsx";
 import { tetrominoes } from "../../server/tetrominoes.js";
 import socket from "../socket.js";
 import { board_to_block, BUFFER, LENGTH, WIDTH } from "../utils/utils.js";
-import { move_down, move_left, move_right, rotate_piece } from "../utils/move_piece.js";
+import {
+  move_down,
+  move_down_max,
+  move_left,
+  move_right,
+  rotate_piece,
+} from "../utils/move_piece.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useGameLoop } from "../game_loop.js";
 
@@ -28,7 +34,7 @@ export const Board = () => {
 
   useEffect(() => {
     const subscription = flyd.map((key) => {
-      if (!piece$()) {
+      if (!piece$() || !key) {
         return;
       }
       // Key pressed logic here
@@ -45,10 +51,14 @@ export const Board = () => {
         case "ArrowUp":
           rotate_piece(board);
           break;
+        case " ":
+          move_down_max(board, dispatch);
+          break;
         default:
           break;
       }
       console.log(key);
+      key$("");
     }, key$);
     const subscription1 = flyd.combine(
       (pos$, rot$, piece$) => {

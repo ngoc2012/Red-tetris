@@ -1,14 +1,27 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { next_pieces$, piece$, pos$ } from "./index.jsx";
+import { key$, next_pieces$, piece$ } from "./index.jsx";
 import socket from "./socket.js";
 import { move_down } from "./utils/move_piece.js";
+
+const onKeyDown = (event) => {
+  key$(event.key);
+};
 
 export const useGameLoop = () => {
   const dispatch = useDispatch();
   const status = useSelector((state) => state.game_state.status);
   const room_id = useSelector((state) => state.game_state.room_id);
   const board = useSelector((state) => state.game_state.board);
+
+  useEffect(() => {
+    if (status === "playing") {
+      document.addEventListener("keydown", onKeyDown);
+    }
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [status, dispatch]);
 
   useEffect(() => {
     if (status !== "playing") {

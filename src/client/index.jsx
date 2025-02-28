@@ -16,9 +16,6 @@ root.render(
 );
 
 export const key$ = flyd.stream();
-document.addEventListener("keydown", (event) => {
-  key$(event.key);
-});
 export const pos$ = flyd.stream(0);
 export const rot$ = flyd.stream(0);
 export const piece$ = flyd.stream("");

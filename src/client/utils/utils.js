@@ -32,8 +32,29 @@ export const block_to_board = (pos, col, row) => {
   ];
 };
 
+export const clear_full_rows = (board) => {
+  let full_row = false;
+  let full_row_count = 0;
+  const new_board = board.slice().filter((v, i) => {
+    if (i % WIDTH === 0) {
+      full_row = false;
+    }
+    if (
+      i % WIDTH === 0 &&
+      board.slice(i, i + WIDTH).every((v2, _) => {
+        return v2 !== "" && v2 !== "X";
+      })
+    ) {
+      full_row = true;
+      ++full_row_count;
+    }
+    return full_row === false;
+  });
+  return Array.from([...Array(full_row_count * WIDTH).fill(""), ...new_board]);
+};
+
 export const add_block_to_board = (board) => {
-  return board.map((v, i) => {
+  const new_board = board.map((v, i) => {
     const row = Math.floor(i / WIDTH);
     const col = (i + WIDTH) % WIDTH;
     const [block_col, block_row] = board_to_block(pos$(), col, row);
@@ -48,6 +69,7 @@ export const add_block_to_board = (board) => {
     }
     return v;
   });
+  return new_board;
 };
 
 export const can_move = (board, pos, direction, rotation) => {
