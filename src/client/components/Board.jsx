@@ -109,22 +109,28 @@ export const Board = () => {
     if (gamepads[0] !== undefined) {
       gamepads[0].buttons.forEach((button, index) => {
         if (button.pressed) {
-          console.log("Button pressed:", index);
+          if (index == 1 || index == 2) rotate_piece(board);
+          if (index == 0 || index == 3) move_down_max(board, dispatch);;
+          // console.log("Button pressed:", index);
         }
       });
       gamepads[0].axes.forEach((value, index) => {
         if (value !== 0) {
           if (index === 0) {
             if (value === -1) {
-              console.log("Left pressed");
+              move_left(board);
+              // console.log("Left pressed");
             } else if (value === 1) {
-              console.log("Right pressed");
+              move_right(board);
+              // console.log("Right pressed");
             }
           } else if (index === 1) {
             if (value === -1) {
-              console.log("Up pressed");
+              rotate_piece(board);
+              // console.log("Up pressed");
             } else if (value === 1) {
-              console.log("Down pressed");
+              move_down(board, dispatch);
+              // console.log("Down pressed");
             }
           }
         }
