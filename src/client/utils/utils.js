@@ -50,7 +50,10 @@ export const clear_full_rows = (board) => {
     }
     return full_row === false;
   });
-  return Array.from([...Array(full_row_count * WIDTH).fill(""), ...new_board]);
+  return [
+    Array.from([...Array(full_row_count * WIDTH).fill(""), ...new_board]),
+    Math.max(0, 200 * full_row_count - 100 + 100 * (full_row_count === 4)),
+  ];
 };
 
 export const add_block_to_board = (board) => {

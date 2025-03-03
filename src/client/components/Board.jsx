@@ -24,6 +24,7 @@ export const Board = () => {
   );
   const dispatch = useDispatch();
   const board = useSelector((state) => state.game_state.board);
+  const score = useSelector((state) => state.game_state.score);
   useGameLoop();
 
   useEffect(() => {
@@ -46,13 +47,13 @@ export const Board = () => {
           move_left(board);
           break;
         case "ArrowDown":
-          move_down(board, dispatch);
+          move_down(board, score, dispatch);
           break;
         case "ArrowUp":
           rotate_piece(board);
           break;
         case " ":
-          move_down_max(board, dispatch);
+          move_down_max(board, score, dispatch);
           break;
         default:
           break;
@@ -110,7 +111,7 @@ export const Board = () => {
       gamepads[0].buttons.forEach((button, index) => {
         if (button.pressed) {
           if (index == 1 || index == 2) rotate_piece(board);
-          if (index == 0 || index == 3) move_down_max(board, dispatch);;
+          if (index == 0 || index == 3) move_down_max(board, score, dispatch);
           // console.log("Button pressed:", index);
         }
       });
@@ -129,7 +130,7 @@ export const Board = () => {
               rotate_piece(board);
               // console.log("Up pressed");
             } else if (value === 1) {
-              move_down(board, dispatch);
+              move_down(board, score, dispatch);
               // console.log("Down pressed");
             }
           }

@@ -1,6 +1,6 @@
 import { tetrominoes } from "../../server/tetrominoes.js";
 import { piece$, pos$, rot$ } from "../index.jsx";
-import { setBoard, setStatus } from "../store.js";
+import { setBoard, setScore, setStatus } from "../store.js";
 import {
   add_block_to_board,
   BUFFER,
@@ -28,7 +28,7 @@ export const move_right = (board) => {
   }
 };
 
-export const move_down = (board, dispatch) => {
+export const move_down = (board, score, dispatch) => {
   if (can_move(board, pos$() + WIDTH, DOWN, rot$())) {
     pos$(pos$() + WIDTH);
   } else {
@@ -36,7 +36,12 @@ export const move_down = (board, dispatch) => {
       console.log("Game Over");
       dispatch(setStatus("game_over"));
     } else {
-      dispatch(setBoard(clear_full_rows(add_block_to_board(board)), dispatch));
+      const [newBoard, scoreObtained] = clear_full_rows(
+        add_block_to_board(board),
+        dispatch
+      );
+      dispatch(setBoard(newBoard));
+      dispatch(setScore(score + scoreObtained));
       pos$((WIDTH + tetrominoes[piece$()].length) / 2);
       rot$(0);
       next_piece(false);
@@ -72,11 +77,11 @@ export const rotate_piece = (board) => {
   }
 };
 
-export const move_down_max = (board, dispatch) => {
+export const move_down_max = (board, score, dispatch) => {
   let dist = 0;
   while (can_move(board, pos$() + WIDTH * dist, DOWN, rot$())) {
     ++dist;
   }
   pos$(pos$() + WIDTH * (dist - 1));
-  move_down(board, dispatch);
+  move_down(board, score, dispatch);
 };

@@ -52,6 +52,7 @@ const Pieces = () => {
 export const Info = () => {
   const dispatch = useDispatch();
   const status = useSelector((state) => state.game_state.status);
+  const score = useSelector((state) => state.game_state.score);
 
   const start_game = () => {
     console.log("start game");
@@ -69,7 +70,7 @@ export const Info = () => {
       <Pieces />
       <div className='game_info'>
         <div title='score' className='score'>
-          1024
+          {score}
         </div>
         <div title='status' className='status'>
           {status}
