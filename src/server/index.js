@@ -1,28 +1,38 @@
 import fs from "fs";
 import debug from "debug";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 import { tetrominoes } from "./tetrominoes.js";
+import { createServer } from "http";
+import { Server as SocketIO } from "socket.io";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const logerror = debug("tetris:error"),
   loginfo = debug("tetris:info");
 
 const initApp = (app, params, cb) => {
   const { host, port } = params;
+
   const handler = (req, res) => {
+    loginfo(req.url);
     if (req.url === "/favicon.ico") {
       res.writeHead(200, { "Content-Type": "image/x-icon" });
-      var file = "/../../favicon.ico";
+      var file = "/../../public/favicon.ico";
     } else if (req.url === "/bundle.js") {
       res.writeHead(200, { "Content-Type": "application/javascript" });
       var file = "/../../build/bundle.js";
     } else if (req.url === "/style.css") {
       res.writeHead(200, { "Content-Type": "text/css" });
-      var file = "/../../style.css";
+      var file = "/../../public/style.css";
     } else if (req.url === "/Halstatt.jpg") {
       res.writeHead(200, { "Content-Type": "image/jpg" });
-      var file = "/../../Halstatt.jpg";
+      var file = "/../../public/Halstatt.jpg";
     } else {
+      console.log("index");
       res.writeHead(200, { "Content-Type": "text/html" });
-      var file = "/../../index.html";
+      var file = "/../../public/index.html";
     }
 
     fs.readFile(__dirname + file, (err, data) => {
@@ -54,9 +64,6 @@ const initEngine = (io) => {
     });
   });
 };
-
-import { createServer } from "http";
-import { Server as SocketIO } from "socket.io";
 
 let players = {}; // Global players object  {socket.id: {name: 'name', room: 'room_id'}}
 let roomPlayers = {}; // Global roomPlayers object {room_id: {owner: socket.id, players: {socket.id: {penalty: 0, score: 0}}}
@@ -90,13 +97,13 @@ export function create(params) {
             }
           });
 
-          socket.on("new_room", () => {
+          socket.on("new_room", (callback) => {
             const room_id = roomCounter++;
             socket.join(room_id);
             roomPlayers[room_id] = { owner: socket.id, players: {} };
             roomPlayers[room_id].players[socket.id] = { penalty: 0, score: 0 };
             socket.emit("new_room", { room_id });
-            socket.emit("join_room_success", { room_id });
+            callback({ success: true, room_id: room_id });
             console.log(`Room ${room_id} created by ${socket.id}`);
           });
 
@@ -105,8 +112,8 @@ export function create(params) {
             console.log(`${socket.id} joined room ${room_id}`);
           });
 
-          socket.on("room_list", () => {
-            socket.emit("room_list", { total_rooms: roomCounter - 1 });
+          socket.on("room_list", (callback) => {
+            callback(roomPlayers);
           });
 
           socket.on("cleared_a_line", () => {

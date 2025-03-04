@@ -4,7 +4,17 @@ import { initSocket } from "../socket.js";
 import { Board } from "./Board.jsx";
 import { Info } from "./Info.jsx";
 import { Lobby } from "./Lobby.jsx";
-import { Routes, Route } from "react-router";
+import { Routes, Route, useNavigate } from "react-router";
+
+const NotFound = () => {
+  const nav = useNavigate();
+
+  useEffect(() => {
+    nav("/");
+
+    return () => {};
+  }, []);
+};
 
 const App = () => {
   const dispatch = useDispatch();
@@ -27,6 +37,7 @@ const App = () => {
           </div>
         }
       />
+      <Route path='*' element={<NotFound />} />
     </Routes>
   );
 };

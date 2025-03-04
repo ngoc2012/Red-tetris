@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { setId, setStatus, setRoomId } from "./store.js";
+import { setId, setStatus } from "./store.js";
 import { next_pieces$ } from "./index.jsx";
 import { next_piece } from "./utils/utils.js";
 
@@ -16,12 +16,6 @@ export const initSocket = (dispatch) => {
     console.log("Now connected to server with id: ", id);
     dispatch(setStatus("connected"));
     dispatch(setId(id));
-  });
-
-  socket.on("new_room", ({ room_id }) => {
-    console.log("New room created: ", room_id);
-    dispatch(setRoomId(room_id));
-    dispatch(setStatus("Room id " + room_id));
   });
 };
 

@@ -1,26 +1,48 @@
 // https://reactrouter.com/start/framework/navigating#link
-import React, { useState } from 'react';
-import { Link } from "react-router";
-import { useSelector, useDispatch } from 'react-redux';
-import { setName } from '../store';
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { useSelector, useDispatch } from "react-redux";
+import { setName, setRoomId, setStatus } from "../store";
 import socket from "../socket.js";
 
 export const Lobby = () => {
   const dispatch = useDispatch();
   const name = useSelector((state) => state.player.name);
+
   const [isEditing, setIsEditing] = useState(false);
   const [tempName, setTempName] = useState(name);
   const [onError, setOnError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [isFading, setIsFading] = useState(false);
 
-  const room_list = ["room1", "room2", "room3yhyuhyh"];
+  const [rooms, setRooms] = useState([]);
+
+  const nav = useNavigate();
+
+  useEffect(() => {
+    socket.emit("room_list", (response) => {
+      console.log("response", response);
+      setRooms(Object.values(response));
+    });
+
+    return () => {};
+  }, []);
+
+  useEffect(() => {
+    console.log("rooms", rooms);
+
+    return () => {};
+  }, [rooms]);
 
   const new_room = () => {
-  }
+    socket.emit("new_room", (response) => {
+      if (response.success) {
+        nav(`${response.room_id}/${name}`);
+      }
+    });
+  };
 
-  const history = () => {
-  }
+  const history = () => {};
 
   const handleNameClick = () => {
     setIsEditing(true);
@@ -31,7 +53,7 @@ export const Lobby = () => {
   };
 
   const handleNameSubmit = (e) => {
-    if (e.type === 'blur' || (e.type === 'keydown' && e.key === 'Enter')) {
+    if (e.type === "blur" || (e.type === "keydown" && e.key === "Enter")) {
       socket.emit("rename", { new_name: tempName }, (response) => {
         if (response.success) {
           dispatch(setName(tempName));
@@ -53,17 +75,17 @@ export const Lobby = () => {
         }
       });
     }
-    if (e.type === 'keydown' && e.key === 'Escape') {
+    if (e.type === "keydown" && e.key === "Escape") {
       setTempName(name); // Reset to original name
       setIsEditing(false);
     }
   };
   return (
-    <div className="lobby">
-      <div className="name_edit">
+    <div className='lobby'>
+      <div className='name_edit'>
         {isEditing ? (
           <input
-            type="text"
+            type='text'
             value={tempName}
             onChange={handleNameChange}
             onKeyDown={handleNameSubmit}
@@ -71,20 +93,25 @@ export const Lobby = () => {
             autoFocus
           />
         ) : (
-          <div className="name" onClick={handleNameClick}>Hi {name}!</div>
+          <div className='name' onClick={handleNameClick}>
+            Hi {name}!
+          </div>
         )}
       </div>
-      {onError && (
-        <div className={`error ${isFading ? 'fade-out' : ''}`}>{errorMsg}</div>
-      )}
-      <div className="rooms">
-      {room_list.map((r, i) => (
-        <Link key={i} to={`/${r}/${name}`}>{r}</Link>
-      ))}
+      {onError && <div className={`error ${isFading ? "fade-out" : ""}`}>{errorMsg}</div>}
+      <div className='rooms'>
+        {rooms.map((r, i) => (
+          <Link key={i} to={`/${i}/${name}`}>
+            {i}
+          </Link>
+        ))}
       </div>
-      <button className="button new_room" onClick={new_room}>New room</button>
-      <button className="button history" onClick={history}>History</button>
-      
+      <button className='button new_room' onClick={new_room}>
+        New room
+      </button>
+      <button className='button history' onClick={history}>
+        History
+      </button>
     </div>
-  )
-}
+  );
+};

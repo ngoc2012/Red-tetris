@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { key$, next_pieces$, piece$ } from "./index.jsx";
 import socket from "./socket.js";
@@ -13,12 +13,37 @@ export const useGameLoop = () => {
   const status = useSelector((state) => state.game_state.status);
   const room_id = useSelector((state) => state.game_state.room_id);
   const board = useSelector((state) => state.game_state.board);
+  const requestRef = useRef();
+  const lastUpdateTimeRef = useRef(0);
+  const progressTimeRef = useRef(0);
+
+  const update = (time) => {
+    requestRef.current = requestAnimationFrame(update);
+    if (status !== "playing") {
+      return;
+    }
+    if (!lastUpdateTimeRef.current) {
+      lastUpdateTimeRef.current = time;
+    }
+    const deltaTime = time - lastUpdateTimeRef.current;
+    progressTimeRef.current += deltaTime;
+    if (progressTimeRef.current > 1000) {
+      console.log("Game loop");
+      move_down(board, dispatch);
+      progressTimeRef.current = 0;
+    }
+    lastUpdateTimeRef.current = time;
+  };
 
   useEffect(() => {
-    if (status === "playing") {
-      document.addEventListener("keydown", onKeyDown);
+    if (status !== "playing") {
+      return () => {};
     }
+    requestRef.current = requestAnimationFrame(update);
+    document.addEventListener("keydown", onKeyDown);
+
     return () => {
+      cancelAnimationFrame(requestRef.current);
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [status, dispatch]);
@@ -29,13 +54,7 @@ export const useGameLoop = () => {
     }
     for (let i = next_pieces$().length; i < 3 + !piece$(); i++)
       socket.emit("next_piece", { room_id });
-    const intervalId = setInterval(() => {
-      console.log("Game loop");
-      move_down(board, dispatch);
-    }, 1000);
 
-    return () => {
-      clearInterval(intervalId);
-    };
+    return () => {};
   }, [status, board, dispatch]);
 };

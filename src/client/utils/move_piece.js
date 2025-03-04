@@ -41,7 +41,9 @@ export const move_down = (board, score, dispatch) => {
         dispatch
       );
       dispatch(setBoard(newBoard));
-      dispatch(setScore(score + scoreObtained));
+      if (scoreObtained > 0) {
+        dispatch(setScore(score + scoreObtained));
+      }
       pos$((WIDTH + tetrominoes[piece$()].length) / 2);
       rot$(0);
       next_piece(false);

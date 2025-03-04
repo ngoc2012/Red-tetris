@@ -4,7 +4,6 @@ import flyd from "flyd";
 import { useGamepads } from "react-gamepads";
 import { Square } from "./Square.jsx";
 import { tetrominoes } from "../../server/tetrominoes.js";
-import socket from "../socket.js";
 import { board_to_block, BUFFER, LENGTH, WIDTH } from "../utils/utils.js";
 import {
   move_down,
@@ -15,6 +14,7 @@ import {
 } from "../utils/move_piece.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useGameLoop } from "../game_loop.js";
+import { useNavigate } from "react-router";
 
 export const Board = () => {
   const [grid, setGrid] = useState(
@@ -26,11 +26,13 @@ export const Board = () => {
   const board = useSelector((state) => state.game_state.board);
   const score = useSelector((state) => state.game_state.score);
   useGameLoop();
+  const nav = useNavigate();
 
   useEffect(() => {
-    socket.emit("new_room");
-
-    return () => {};
+    // verify if room and player id exists
+    if (false) {
+      nav("/");
+    }
   }, []);
 
   useEffect(() => {
