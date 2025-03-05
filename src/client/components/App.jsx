@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { initSocket } from "../socket.js";
-import { Board } from "./Board.jsx";
-import { Info } from "./Info.jsx";
 import { Lobby } from "./Lobby.jsx";
+import { Game } from "./Game.jsx";
 import { Routes, Route, useNavigate } from "react-router";
 
 const NotFound = () => {
@@ -28,15 +27,7 @@ const App = () => {
   return (
     <Routes>
       <Route path='/' element={<Lobby />} />
-      <Route
-        path='/:roomid/:name'
-        element={
-          <div className='main'>
-            <Board />
-            <Info />
-          </div>
-        }
-      />
+      <Route path='/:roomid/:name' element={<Game />} />
       <Route path='*' element={<NotFound />} />
     </Routes>
   );

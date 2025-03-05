@@ -14,7 +14,6 @@ import {
 } from "../utils/move_piece.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useGameLoop } from "../game_loop.js";
-import { useNavigate } from "react-router";
 
 export const Board = () => {
   const [grid, setGrid] = useState(
@@ -26,14 +25,6 @@ export const Board = () => {
   const board = useSelector((state) => state.game_state.board);
   const score = useSelector((state) => state.game_state.score);
   useGameLoop();
-  const nav = useNavigate();
-
-  useEffect(() => {
-    // verify if room and player id exists
-    if (false) {
-      nav("/");
-    }
-  }, []);
 
   useEffect(() => {
     const subscription = flyd.map((key) => {

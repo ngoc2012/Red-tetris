@@ -65,8 +65,27 @@ const initEngine = (io) => {
   });
 };
 
-let players = {}; // Global players object  {socket.id: {name: 'name', room: 'room_id'}}
-let roomPlayers = {}; // Global roomPlayers object {room_id: {owner: socket.id, players: {socket.id: {penalty: 0, score: 0}}}
+const check_name = (name) => {
+  let code, index;
+  const len = name.length;
+  if (len < 1) {
+    return false;
+  }
+  for (index = 0; index < len; index++) {
+    code = name.charCodeAt(index);
+    if (
+      !(code > 47 && code < 58) && // numeric (0-9)
+      !(code > 64 && code < 91) && // upper alpha (A-Z)
+      !(code > 96 && code < 123) // lower alpha (a-z)
+    ) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const players = {}; // Global players object  {socket.id: {name: 'name', room: 'room_id'}}
+const roomPlayers = {}; // Global roomPlayers object {room_id: {owner: socket.id, players: {socket.id: {penalty: 0, score: 0}}}
 let roomCounter = 0; // Global room counter
 
 export function create(params) {
@@ -83,10 +102,11 @@ export function create(params) {
         io.on("connection", (socket) => {
           console.log("A user connected:", socket.id);
           socket.emit("connected", { id: socket.id });
+          socket.join("lobby");
           players[socket.id] = { name: "" + socket.id, room: null };
 
           socket.on("rename", ({ new_name }, callback) => {
-            const isValidName = true;
+            const isValidName = check_name(new_name);
 
             if (isValidName) {
               players[socket.id].name = new_name;
@@ -99,17 +119,46 @@ export function create(params) {
 
           socket.on("new_room", (callback) => {
             const room_id = roomCounter++;
+            socket.leave("lobby");
             socket.join(room_id);
             roomPlayers[room_id] = { owner: socket.id, players: {} };
             roomPlayers[room_id].players[socket.id] = { penalty: 0, score: 0 };
             socket.emit("new_room", { room_id });
+            io.to("lobby").emit("room_update");
             callback({ success: true, room_id: room_id });
             console.log(`Room ${room_id} created by ${socket.id}`);
           });
 
-          socket.on("join_room", ({ room_id }) => {
+          socket.on("join_room", (room_id, callback) => {
+            if (!Object.hasOwn(roomPlayers, room_id)) {
+              callback({ success: false });
+              return;
+            }
+            socket.leave("lobby");
             socket.join(room_id);
+            roomPlayers[room_id].players[socket.id] = { penalty: 0, score: 0 };
+            callback({ success: true, room_id: room_id });
             console.log(`${socket.id} joined room ${room_id}`);
+          });
+
+          socket.on("leave_room", (room_id) => {
+            if (room_id >= 0) {
+              socket.leave(room_id);
+              delete roomPlayers[room_id].players[socket.id];
+              if (Object.keys(roomPlayers[room_id].players).length === 0) {
+                delete roomPlayers[room_id];
+                io.to("lobby").emit("room_update");
+                console.log(`deleted room ${room_id}`);
+              } else if (roomPlayers[room_id].owner === socket.id) {
+                roomPlayers[room_id].owner = Object.keys(roomPlayers[room_id].players)[0];
+                console.log(
+                  `transferred ownership of room ${room_id} to ${roomPlayers[room_id].owner}`
+                );
+              }
+              console.log(`${socket.id} left room ${room_id}`);
+              console.log("roomPlayers", roomPlayers);
+              socket.join("lobby");
+            }
           });
 
           socket.on("room_list", (callback) => {
@@ -125,12 +174,29 @@ export function create(params) {
           });
 
           socket.on("next_piece", ({ room_id }) => {
+            if (
+              !Object.hasOwn(roomPlayers, room_id) ||
+              !Object.hasOwn(roomPlayers[room_id].players, socket.id)
+            ) {
+              return;
+            }
             console.log("next_piece", room_id);
             const keys = Object.keys(tetrominoes);
             io.to(room_id).emit(
               "next_piece",
               keys[Math.floor(Math.random() * keys.length)]
             );
+          });
+
+          socket.on("ping", (room_id, callback) => {
+            if (
+              !Object.hasOwn(roomPlayers, room_id) ||
+              !Object.hasOwn(roomPlayers[room_id].players, socket.id)
+            ) {
+              callback({ pong: false });
+              return;
+            }
+            callback({ pong: true });
           });
 
           socket.on("disconnect", () => {

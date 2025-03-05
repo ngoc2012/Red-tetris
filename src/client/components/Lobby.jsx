@@ -2,12 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
-import { setName, setRoomId, setStatus } from "../store";
+import { setName, setRoomId } from "../store";
 import socket from "../socket.js";
 
 export const Lobby = () => {
   const dispatch = useDispatch();
   const name = useSelector((state) => state.player.name);
+  const room_id = useSelector((state) => state.game_state.room_id);
 
   const [isEditing, setIsEditing] = useState(false);
   const [tempName, setTempName] = useState(name);
@@ -15,15 +16,23 @@ export const Lobby = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [isFading, setIsFading] = useState(false);
 
+  const getRooms = () => {
+    socket.emit("room_list", (response) => {
+      setRooms(Object.keys(response));
+    });
+  };
+
   const [rooms, setRooms] = useState([]);
 
   const nav = useNavigate();
 
   useEffect(() => {
-    socket.emit("room_list", (response) => {
-      console.log("response", response);
-      setRooms(Object.values(response));
+    socket.on("room_update", () => {
+      getRooms();
     });
+    socket.emit("leave_room", room_id);
+    dispatch(setRoomId(-1));
+    getRooms();
 
     return () => {};
   }, []);
@@ -38,6 +47,18 @@ export const Lobby = () => {
     socket.emit("new_room", (response) => {
       if (response.success) {
         nav(`${response.room_id}/${name}`);
+        dispatch(setRoomId(response.room_id));
+      }
+    });
+  };
+
+  const join_room = (id) => {
+    socket.emit("join_room", id, (response) => {
+      if (response.success) {
+        nav(`${response.room_id}/${name}`);
+        dispatch(setRoomId(response.room_id));
+      } else {
+        getRooms();
       }
     });
   };
@@ -101,8 +122,8 @@ export const Lobby = () => {
       {onError && <div className={`error ${isFading ? "fade-out" : ""}`}>{errorMsg}</div>}
       <div className='rooms'>
         {rooms.map((r, i) => (
-          <Link key={i} to={`/${i}/${name}`}>
-            {i}
+          <Link replace key={i} to={`/${r}/${name}`} onClick={() => join_room(r)}>
+            {r}
           </Link>
         ))}
       </div>

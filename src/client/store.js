@@ -11,7 +11,7 @@ const initialState = {
     name: "me",
   },
   game_state: {
-    room_id: "",
+    room_id: -1,
     status: "game_over",
     board: Array.from({ length: (LENGTH + BUFFER) * WIDTH }).fill(""),
     score: 0,
