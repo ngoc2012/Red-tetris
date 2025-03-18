@@ -99,6 +99,22 @@ export function create(params) {
           },
         });
 
+        const leave_room = (socket, room_id) => {
+          delete roomPlayers[room_id].players[socket.id];
+          if (Object.keys(roomPlayers[room_id].players).length === 0) {
+            delete roomPlayers[room_id];
+            io.to("lobby").emit("room_update");
+            console.log(`deleted room ${room_id}`);
+          } else if (roomPlayers[room_id].owner === socket.id) {
+            roomPlayers[room_id].owner = Object.keys(
+              roomPlayers[room_id].players
+            )[0];
+            console.log(
+              `transferred ownership of room ${room_id} to ${roomPlayers[room_id].owner}`
+            );
+          }
+        };
+
         io.on("connection", (socket) => {
           console.log("A user connected:", socket.id);
           socket.emit("connected", { id: socket.id });
@@ -144,17 +160,7 @@ export function create(params) {
           socket.on("leave_room", (room_id) => {
             if (room_id >= 0) {
               socket.leave(room_id);
-              delete roomPlayers[room_id].players[socket.id];
-              if (Object.keys(roomPlayers[room_id].players).length === 0) {
-                delete roomPlayers[room_id];
-                io.to("lobby").emit("room_update");
-                console.log(`deleted room ${room_id}`);
-              } else if (roomPlayers[room_id].owner === socket.id) {
-                roomPlayers[room_id].owner = Object.keys(roomPlayers[room_id].players)[0];
-                console.log(
-                  `transferred ownership of room ${room_id} to ${roomPlayers[room_id].owner}`
-                );
-              }
+              leave_room(socket, room_id);
               console.log(`${socket.id} left room ${room_id}`);
               console.log("roomPlayers", roomPlayers);
               socket.join("lobby");
@@ -197,6 +203,14 @@ export function create(params) {
               return;
             }
             callback({ pong: true });
+          });
+
+          socket.on("disconnecting", () => {
+            socket.rooms.forEach((room) => {
+              if (room in roomPlayers) {
+                leave_room(socket, room);
+              }
+            });
           });
 
           socket.on("disconnect", () => {
