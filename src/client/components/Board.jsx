@@ -69,10 +69,17 @@ export const Board = () => {
               block_row <= tetrominoes[piece$()][rot$()].length - 1 &&
               block_col >= 0 &&
               block_col <= tetrominoes[piece$()][rot$()][0].length - 1 &&
-              tetrominoes[piece$()][rot$()][block_row][(block_col + WIDTH) % WIDTH] == 1
+              tetrominoes[piece$()][rot$()][block_row][
+                (block_col + WIDTH) % WIDTH
+              ] == 1
             ) {
               return (
-                <Square key={i} color={piece$()} filled={true} blocked={isBlocked}></Square>
+                <Square
+                  key={i}
+                  color={piece$()}
+                  filled={true}
+                  blocked={isBlocked}
+                ></Square>
               );
             }
             return (

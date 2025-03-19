@@ -1,4 +1,4 @@
-import { setStatus } from "../store";
+import { resetBoard, setStatus } from "../store";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useState, useEffect } from "react";
 import { Spectrums } from "./Spectrums.jsx";
@@ -57,6 +57,7 @@ export const Info = () => {
   const start_game = () => {
     console.log("start game");
     dispatch(setStatus("playing"));
+    dispatch(resetBoard());
     document.activeElement.blur();
   };
 

@@ -13,6 +13,7 @@ export const useGameLoop = () => {
   const status = useSelector((state) => state.game_state.status);
   const room_id = useSelector((state) => state.game_state.room_id);
   const board = useSelector((state) => state.game_state.board);
+  const score = useSelector((state) => state.game_state.score);
   const requestRef = useRef();
   const lastUpdateTimeRef = useRef(0);
   const progressTimeRef = useRef(0);
@@ -29,7 +30,7 @@ export const useGameLoop = () => {
     progressTimeRef.current += deltaTime;
     if (progressTimeRef.current > 1000) {
       console.log("Game loop");
-      move_down(board, dispatch);
+      move_down(board, score, dispatch);
       progressTimeRef.current = 0;
     }
     lastUpdateTimeRef.current = time;
@@ -41,20 +42,12 @@ export const useGameLoop = () => {
     }
     requestRef.current = requestAnimationFrame(update);
     document.addEventListener("keydown", onKeyDown);
+    for (let i = next_pieces$().length; i < 3 + !piece$(); i++)
+      socket.emit("next_piece", { room_id });
 
     return () => {
       cancelAnimationFrame(requestRef.current);
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [status, dispatch]);
-
-  useEffect(() => {
-    if (status !== "playing") {
-      return () => {};
-    }
-    for (let i = next_pieces$().length; i < 3 + !piece$(); i++)
-      socket.emit("next_piece", { room_id });
-
-    return () => {};
   }, [status, board, dispatch]);
 };

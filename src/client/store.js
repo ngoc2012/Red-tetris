@@ -28,6 +28,9 @@ const game_stateSlice = createSlice({
     setBoard: (state, action) => {
       state.board = action.payload;
     },
+    resetBoard: (state) => {
+      state.board = initialState.game_state.board;
+    },
     setScore: (state, action) => {
       state.score = action.payload;
     },
@@ -60,5 +63,6 @@ export const store = configureStore({
 });
 
 // Export actions
-export const { setStatus, setRoomId, setBoard, setScore } = game_stateSlice.actions;
+export const { setStatus, setRoomId, setBoard, setScore, resetBoard } =
+  game_stateSlice.actions;
 export const { setId, setName } = playerSlice.actions;

@@ -72,7 +72,10 @@ export const rotate_piece = (board) => {
     if (rot$() === 1 && can_move(board, pos$() + 2, RIGHT | ROT, next_rot())) {
       pos$(pos$() + 2);
       rot$(next_rot());
-    } else if (rot$() === 3 && can_move(board, pos$() - 2, LEFT | ROT, next_rot())) {
+    } else if (
+      rot$() === 3 &&
+      can_move(board, pos$() - 2, LEFT | ROT, next_rot())
+    ) {
       pos$(pos$() - 2);
       rot$(next_rot());
     }
