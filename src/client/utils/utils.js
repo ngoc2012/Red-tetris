@@ -1,7 +1,7 @@
 import { LEFT, RIGHT, ROT } from "../utils/move_piece.js";
 import { piece$, rot$, pos$, next_pieces$ } from "../index.jsx";
 import { tetrominoes } from "../../server/tetrominoes.js";
-import { resetBoard } from "../store.js";
+import { resetBoard, setScore } from "../store.js";
 
 export const WIDTH = 10;
 export const LENGTH = 20;
@@ -9,6 +9,7 @@ export const BUFFER = 2;
 
 export const reset = (dispatch) => {
   dispatch(resetBoard());
+  dispatch(setScore(0));
   next_pieces$([]);
   piece$("");
 };
@@ -59,7 +60,7 @@ export const clear_full_rows = (board) => {
   });
   return [
     Array.from([...Array(full_row_count * WIDTH).fill(""), ...new_board]),
-    Math.max(0, 200 * full_row_count - 100 + 100 * (full_row_count === 4)),
+    full_row_count,
   ];
 };
 

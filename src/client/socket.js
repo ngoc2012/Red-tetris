@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { setId, setStatus } from "./store.js";
+import { setScore, setId, setStatus } from "./store.js";
 import { next_pieces$ } from "./index.jsx";
 import { next_piece } from "./utils/utils.js";
 
@@ -16,6 +16,12 @@ export const initSocket = (dispatch) => {
     console.log("Now connected to server with id: ", id);
     dispatch(setStatus("connected"));
     dispatch(setId(id));
+  });
+
+  socket.on("score_update", ({ id, score }) => {
+    if (id === socket.id) {
+      dispatch(setScore(score));
+    }
   });
 };
 

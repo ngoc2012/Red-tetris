@@ -84,8 +84,25 @@ const check_name = (name) => {
   return true;
 };
 
-const players = {}; // Global players object  {socket.id: {name: 'name', room: 'room_id'}}
-const roomPlayers = {}; // Global roomPlayers object {room_id: {owner: socket.id, players: {socket.id: {penalty: 0, score: 0}}}
+const players = {}; // Global players object
+//{
+//  socket.id: {
+//    name: 'name',
+//    room: 'room_id'
+//  }
+//}
+const roomPlayers = {}; // Global roomPlayers object
+//{
+//  room_id: {
+//    owner: socket.id,
+//    players: {
+//      socket.id: {
+//        penalty: 0,
+//        score: 0
+//      }
+//    }
+//  }
+//}
 let roomCounter = 0; // Global room counter
 
 export function create(params) {
@@ -119,7 +136,8 @@ export function create(params) {
           console.log("A user connected:", socket.id);
           socket.emit("connected", { id: socket.id });
           socket.join("lobby");
-          players[socket.id] = { name: "" + socket.id, room: null };
+          players[socket.id] = { name: socket.id, room: "lobby" };
+          console.log("players", players);
 
           socket.on("rename", ({ new_name }, callback) => {
             const isValidName = check_name(new_name);
@@ -139,6 +157,7 @@ export function create(params) {
             socket.join(room_id);
             roomPlayers[room_id] = { owner: socket.id, players: {} };
             roomPlayers[room_id].players[socket.id] = { penalty: 0, score: 0 };
+            players[socket.id].room = room_id;
             socket.emit("new_room", { room_id });
             io.to("lobby").emit("room_update");
             callback({ success: true, room_id: room_id });
@@ -153,6 +172,7 @@ export function create(params) {
             socket.leave("lobby");
             socket.join(room_id);
             roomPlayers[room_id].players[socket.id] = { penalty: 0, score: 0 };
+            players[socket.id].room = room_id;
             callback({ success: true, room_id: room_id });
             console.log(`${socket.id} joined room ${room_id}`);
           });
@@ -161,6 +181,7 @@ export function create(params) {
             if (room_id >= 0) {
               socket.leave(room_id);
               leave_room(socket, room_id);
+              players[socket.id].room = "lobby";
               console.log(`${socket.id} left room ${room_id}`);
               console.log("roomPlayers", roomPlayers);
               socket.join("lobby");
@@ -171,12 +192,22 @@ export function create(params) {
             callback(roomPlayers);
           });
 
-          socket.on("cleared_a_line", () => {
-            const players = roomPlayers[players[socket.id].room].players;
-            players[socket.id].score += 1;
+          socket.on("cleared_a_line", (rows_cleared) => {
+            const room_id = players[socket.id].room;
+            const room_players = roomPlayers[room_id].players;
 
-            console.log(`New score for ${socket.id} is ${new_score}`);
-            io.to(room_id).emit("room_update", roomPlayers);
+            room_players[socket.id].score += Math.max(
+              0,
+              200 * rows_cleared - 100 + 100 * (rows_cleared === 4)
+            );
+
+            console.log(
+              `New score for ${socket.id} is ${room_players[socket.id].score}`
+            );
+            io.to(room_id).emit("score_update", {
+              id: socket.id,
+              score: room_players[socket.id].score,
+            });
           });
 
           socket.on("next_piece", ({ room_id }) => {
@@ -215,6 +246,7 @@ export function create(params) {
 
           socket.on("disconnect", () => {
             console.log("User disconnected:", socket.id);
+            delete players[socket.id];
           });
         });
 

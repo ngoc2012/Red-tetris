@@ -1,4 +1,4 @@
-import { resetBoard, setStatus } from "../store";
+import { setStatus } from "../store";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useState, useEffect } from "react";
 import { Spectrums } from "./Spectrums.jsx";
