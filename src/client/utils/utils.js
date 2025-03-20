@@ -1,10 +1,17 @@
 import { LEFT, RIGHT, ROT } from "../utils/move_piece.js";
 import { piece$, rot$, pos$, next_pieces$ } from "../index.jsx";
 import { tetrominoes } from "../../server/tetrominoes.js";
+import { resetBoard } from "../store.js";
 
 export const WIDTH = 10;
 export const LENGTH = 20;
 export const BUFFER = 2;
+
+export const reset = (dispatch) => {
+  dispatch(resetBoard());
+  next_pieces$([]);
+  piece$("");
+};
 
 export const next_piece = (start = true) => {
   if (!piece$() || !start) {
@@ -77,7 +84,8 @@ export const add_block_to_board = (board) => {
 
 export const can_move = (board, pos, direction, rotation) => {
   const piece = Array.from(tetrominoes[piece$()][rotation]).flat(1);
-  const center_col = ((pos % WIDTH) + tetrominoes[piece$()][rotation].length / 2) % WIDTH;
+  const center_col =
+    ((pos % WIDTH) + tetrominoes[piece$()][rotation].length / 2) % WIDTH;
   return piece.every((v, i) => {
     if (v != "") {
       const row = Math.floor(i / tetrominoes[piece$()][rotation].length);

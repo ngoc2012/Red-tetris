@@ -5,6 +5,7 @@ import { Spectrums } from "./Spectrums.jsx";
 import flyd from "flyd";
 import { next_pieces$ } from "../index.jsx";
 import { tetrominoes } from "../../server/tetrominoes.js";
+import { reset } from "../utils/utils.js";
 
 const SmallBoard = ({ tetro }) => {
   return (
@@ -56,8 +57,8 @@ export const Info = () => {
 
   const start_game = () => {
     console.log("start game");
+    reset(dispatch);
     dispatch(setStatus("playing"));
-    dispatch(resetBoard());
     document.activeElement.blur();
   };
 
@@ -76,7 +77,11 @@ export const Info = () => {
         <div title='status' className='status'>
           {status}
         </div>
-        <button className='button start_game' onClick={start_game}>
+        <button
+          className='button start_game'
+          onClick={start_game}
+          disabled={status === "playing"}
+        >
           Start game
         </button>
         <button className='button exit_game' onClick={end_game}>

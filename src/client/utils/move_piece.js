@@ -32,22 +32,21 @@ export const move_down = (board, score, dispatch) => {
   if (can_move(board, pos$() + WIDTH, DOWN, rot$())) {
     pos$(pos$() + WIDTH);
   } else {
-    if (board.some((v, i) => i < BUFFER * WIDTH && v != "")) {
+    const [newBoard, scoreObtained] = clear_full_rows(
+      add_block_to_board(board),
+      dispatch
+    );
+    if (newBoard.some((v, i) => i < BUFFER * WIDTH && v != "")) {
       console.log("Game Over");
       dispatch(setStatus("game_over"));
-    } else {
-      const [newBoard, scoreObtained] = clear_full_rows(
-        add_block_to_board(board),
-        dispatch
-      );
-      dispatch(setBoard(newBoard));
-      if (scoreObtained > 0) {
-        dispatch(setScore(score + scoreObtained));
-      }
-      pos$((WIDTH + tetrominoes[piece$()].length) / 2);
-      rot$(0);
-      next_piece(false);
     }
+    dispatch(setBoard(newBoard));
+    if (scoreObtained > 0) {
+      dispatch(setScore(score + scoreObtained));
+    }
+    pos$((WIDTH + tetrominoes[piece$()].length) / 2);
+    rot$(0);
+    next_piece(false);
   }
 };
 

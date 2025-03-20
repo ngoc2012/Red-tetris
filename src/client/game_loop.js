@@ -20,9 +20,7 @@ export const useGameLoop = () => {
 
   const update = (time) => {
     requestRef.current = requestAnimationFrame(update);
-    if (status !== "playing") {
-      return;
-    }
+
     if (!lastUpdateTimeRef.current) {
       lastUpdateTimeRef.current = time;
     }
@@ -30,7 +28,9 @@ export const useGameLoop = () => {
     progressTimeRef.current += deltaTime;
     if (progressTimeRef.current > 1000) {
       console.log("Game loop");
-      move_down(board, score, dispatch);
+      if (piece$()) {
+        move_down(board, score, dispatch);
+      }
       progressTimeRef.current = 0;
     }
     lastUpdateTimeRef.current = time;
