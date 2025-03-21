@@ -8,7 +8,6 @@ import socket from "../socket.js";
 export const Lobby = () => {
   const dispatch = useDispatch();
   const name = useSelector((state) => state.player.name);
-  const room_id = useSelector((state) => state.game_state.room_id);
 
   const [isEditing, setIsEditing] = useState(false);
   const [tempName, setTempName] = useState(name);
@@ -30,7 +29,6 @@ export const Lobby = () => {
     socket.on("room_update", () => {
       getRooms();
     });
-    socket.emit("leave_room", room_id);
     dispatch(setRoomId(-1));
     getRooms();
 
@@ -119,10 +117,17 @@ export const Lobby = () => {
           </div>
         )}
       </div>
-      {onError && <div className={`error ${isFading ? "fade-out" : ""}`}>{errorMsg}</div>}
+      {onError && (
+        <div className={`error ${isFading ? "fade-out" : ""}`}>{errorMsg}</div>
+      )}
       <div className='rooms'>
         {rooms.map((r, i) => (
-          <Link replace key={i} to={`/${r}/${name}`} onClick={() => join_room(r)}>
+          <Link
+            replace
+            key={i}
+            to={`/${r}/${name}`}
+            onClick={() => join_room(r)}
+          >
             {r}
           </Link>
         ))}

@@ -91,7 +91,7 @@ const players = {}; // Global players object
 //    room: 'room_id'
 //  }
 //}
-const roomPlayers = {}; // Global roomPlayers object
+const rooms = {}; // Global roomPlayers object
 //{
 //  room_id: {
 //    owner: socket.id,
@@ -116,18 +116,26 @@ export function create(params) {
           },
         });
 
+        const join_room = (socket, room_id) => {
+          socket.leave("lobby");
+          socket.join(room_id);
+          rooms[room_id].players[socket.id] = { penalty: 0, score: 0 };
+          players[socket.id].room = room_id;
+        };
+
         const leave_room = (socket, room_id) => {
-          delete roomPlayers[room_id].players[socket.id];
-          if (Object.keys(roomPlayers[room_id].players).length === 0) {
-            delete roomPlayers[room_id];
+          if (room_id < 0) return;
+          delete rooms[room_id].players[socket.id];
+          if (Object.keys(rooms[room_id].players).length === 0) {
+            // player was the last one in room
+            delete rooms[room_id];
             io.to("lobby").emit("room_update");
             console.log(`deleted room ${room_id}`);
-          } else if (roomPlayers[room_id].owner === socket.id) {
-            roomPlayers[room_id].owner = Object.keys(
-              roomPlayers[room_id].players
-            )[0];
+          } else if (rooms[room_id].owner === socket.id) {
+            // player was owner of the room
+            rooms[room_id].owner = Object.keys(rooms[room_id].players)[0];
             console.log(
-              `transferred ownership of room ${room_id} to ${roomPlayers[room_id].owner}`
+              `transferred ownership of room ${room_id} to ${rooms[room_id].owner}`
             );
           }
         };
@@ -153,28 +161,22 @@ export function create(params) {
 
           socket.on("new_room", (callback) => {
             const room_id = roomCounter++;
-            socket.leave("lobby");
-            socket.join(room_id);
-            roomPlayers[room_id] = { owner: socket.id, players: {} };
-            roomPlayers[room_id].players[socket.id] = { penalty: 0, score: 0 };
-            players[socket.id].room = room_id;
-            socket.emit("new_room", { room_id });
+            rooms[room_id] = { owner: socket.id, players: {} };
+            join_room(socket, room_id);
             io.to("lobby").emit("room_update");
             callback({ success: true, room_id: room_id });
             console.log(`Room ${room_id} created by ${socket.id}`);
           });
 
           socket.on("join_room", (room_id, callback) => {
-            if (!Object.hasOwn(roomPlayers, room_id)) {
+            if (!Object.hasOwn(rooms, room_id)) {
               callback({ success: false });
               return;
             }
-            socket.leave("lobby");
-            socket.join(room_id);
-            roomPlayers[room_id].players[socket.id] = { penalty: 0, score: 0 };
-            players[socket.id].room = room_id;
+            join_room(socket, room_id);
             callback({ success: true, room_id: room_id });
             console.log(`${socket.id} joined room ${room_id}`);
+            // event to room: new player joined
           });
 
           socket.on("leave_room", (room_id) => {
@@ -183,18 +185,19 @@ export function create(params) {
               leave_room(socket, room_id);
               players[socket.id].room = "lobby";
               console.log(`${socket.id} left room ${room_id}`);
-              console.log("roomPlayers", roomPlayers);
+              console.log("roomPlayers", rooms);
               socket.join("lobby");
+              // event to room: player left
             }
           });
 
           socket.on("room_list", (callback) => {
-            callback(roomPlayers);
+            callback(rooms);
           });
 
           socket.on("cleared_a_line", (rows_cleared) => {
             const room_id = players[socket.id].room;
-            const room_players = roomPlayers[room_id].players;
+            const room_players = rooms[room_id].players;
 
             room_players[socket.id].score += Math.max(
               0,
@@ -212,8 +215,8 @@ export function create(params) {
 
           socket.on("next_piece", ({ room_id }) => {
             if (
-              !Object.hasOwn(roomPlayers, room_id) ||
-              !Object.hasOwn(roomPlayers[room_id].players, socket.id)
+              !Object.hasOwn(rooms, room_id) ||
+              !Object.hasOwn(rooms[room_id].players, socket.id)
             ) {
               return;
             }
@@ -227,8 +230,8 @@ export function create(params) {
 
           socket.on("ping", (room_id, callback) => {
             if (
-              !Object.hasOwn(roomPlayers, room_id) ||
-              !Object.hasOwn(roomPlayers[room_id].players, socket.id)
+              !Object.hasOwn(rooms, room_id) ||
+              !Object.hasOwn(rooms[room_id].players, socket.id)
             ) {
               callback({ pong: false });
               return;
@@ -237,11 +240,8 @@ export function create(params) {
           });
 
           socket.on("disconnecting", () => {
-            socket.rooms.forEach((room) => {
-              if (room in roomPlayers) {
-                leave_room(socket, room);
-              }
-            });
+            if (players[socket.id].room >= 0)
+              leave_room(socket, players[socket.id].room);
           });
 
           socket.on("disconnect", () => {
