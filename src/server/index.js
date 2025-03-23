@@ -124,7 +124,8 @@ export function create(params) {
         };
 
         const leave_room = (socket, room_id) => {
-          if (room_id < 0) return;
+          if (room_id < 0 || !rooms[room_id]) return;
+          console.log("leave_room", room_id, socket.id);
           delete rooms[room_id].players[socket.id];
           if (Object.keys(rooms[room_id].players).length === 0) {
             // player was the last one in room
@@ -169,6 +170,7 @@ export function create(params) {
           });
 
           socket.on("join_room", (room_id, callback) => {
+            console.log("join_room", room_id);
             if (!Object.hasOwn(rooms, room_id)) {
               callback({ success: false });
               return;
@@ -227,17 +229,23 @@ export function create(params) {
               keys[Math.floor(Math.random() * keys.length)]
             );
           });
-
-          socket.on("ping", (room_id, callback) => {
-            if (
-              !Object.hasOwn(rooms, room_id) ||
-              !Object.hasOwn(rooms[room_id].players, socket.id)
-            ) {
-              callback({ pong: false });
-              return;
-            }
-            callback({ pong: true });
-          });
+          
+          // Does not need this anymore
+          // socket.on("ping", (room_id, callback) => {
+          //   console.log("ping", rooms, room_id);
+          //   if (
+          //     !Object.hasOwn(rooms, room_id) ||
+          //     !Object.hasOwn(rooms[room_id].players, socket.id)
+          //   ) {
+          //     console.log("pong false", Object.hasOwn(rooms, room_id));
+          //     if (rooms[room_id]) {
+          //       console.log("pong false", Object.hasOwn(rooms[room_id].players, socket.id));
+          //     }
+          //     callback({ pong: false });
+          //     return;
+          //   }
+          //   callback({ pong: true });
+          // });
 
           socket.on("disconnecting", () => {
             if (players[socket.id].room >= 0)

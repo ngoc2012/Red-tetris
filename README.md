@@ -1,4 +1,11 @@
-# Red Tetris Boilerplate
+# Red-tetris
+
+## Dev
+
+npm run srv-dev
+npm run client-dist
+
+## Red Tetris Boilerplate
 
 This starter kit was made to help students to develop red_tetris project : a Full Stack Javascript Tetris. We can also use it as a starting point for any product made of React / Redux and socket.io.
 

@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "eslint": "eslint src",
-    "client-dist": "NODE_ENV=production webpack --progress --color",
+    "client-dist": "NODE_ENV=production webpack --progress --color --watch",
     "client-dev": "webpack-dev-server --color --hot --host 0.0.0.0 --port 8080",
     "srv-dev": "DEBUG=tetris:* babel-watch -w src src/server/main.js",
     "srv-prod": "node src/server/main.js",
@@ -19,7 +19,7 @@
     "react-gamepads": "^1.0.0",
     "react-redux": "^9.2.0",
     "react-router": "^7.2.0",
-    "react-router-dom": "^7.1.5",
+    "react-router-dom": "^7.4.0",
     "redux-logger": "^3.0.6",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1"

@@ -29,7 +29,6 @@ export const Lobby = () => {
     socket.on("room_update", () => {
       getRooms();
     });
-    dispatch(setRoomId(-1));
     getRooms();
 
     return () => {};
@@ -37,27 +36,12 @@ export const Lobby = () => {
 
   useEffect(() => {
     console.log("rooms", rooms);
-
     return () => {};
   }, [rooms]);
 
   const new_room = () => {
     socket.emit("new_room", (response) => {
-      if (response.success) {
-        nav(`${response.room_id}/${name}`);
-        dispatch(setRoomId(response.room_id));
-      }
-    });
-  };
-
-  const join_room = (id) => {
-    socket.emit("join_room", id, (response) => {
-      if (response.success) {
-        nav(`${response.room_id}/${name}`);
-        dispatch(setRoomId(response.room_id));
-      } else {
-        getRooms();
-      }
+      if (response.success) nav(`${response.room_id}/${name}`);
     });
   };
 
@@ -123,10 +107,8 @@ export const Lobby = () => {
       <div className='rooms'>
         {rooms.map((r, i) => (
           <Link
-            replace
             key={i}
             to={`/${r}/${name}`}
-            onClick={() => join_room(r)}
           >
             {r}
           </Link>
