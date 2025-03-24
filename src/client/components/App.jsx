@@ -3,16 +3,8 @@ import { useDispatch } from "react-redux";
 import { initSocket } from "../socket.js";
 import { Lobby } from "./Lobby.jsx";
 import { Game } from "./Game.jsx";
-import { Routes, Route, useNavigate } from "react-router";
-
-const NotFound = () => {
-  <div>
-    <h2>Page Not Found</h2>
-    <p>
-      The page you're looking for doesn't exist. Go back to the <Link to="/">home page</Link>.
-    </p>
-  </div>
-};
+import { Routes, Route } from "react-router-dom";
+import { NotFound } from "./NotFound.jsx";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -20,8 +12,6 @@ const App = () => {
   useEffect(() => {
     initSocket(dispatch);
   }, [dispatch]);
-
-  useEffect(() => {}, []);
 
   return (
     <Routes>

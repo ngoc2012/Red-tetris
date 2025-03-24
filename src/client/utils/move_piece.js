@@ -29,7 +29,7 @@ export const move_right = (board) => {
   }
 };
 
-export const move_down = (board, score, dispatch) => {
+export const move_down = (board, dispatch) => {
   if (can_move(board, pos$() + WIDTH, DOWN, rot$())) {
     pos$(pos$() + WIDTH);
   } else {
@@ -79,11 +79,11 @@ export const rotate_piece = (board) => {
   }
 };
 
-export const move_down_max = (board, score, dispatch) => {
+export const move_down_max = (board, dispatch) => {
   let dist = 0;
   while (can_move(board, pos$() + WIDTH * dist, DOWN, rot$())) {
     ++dist;
   }
   pos$(pos$() + WIDTH * (dist - 1));
-  move_down(board, score, dispatch);
+  move_down(board, dispatch);
 };

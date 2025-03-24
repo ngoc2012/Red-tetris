@@ -1,39 +1,66 @@
 import React, { useEffect, useState } from "react";
 import socket from "../socket";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Board } from "./Board.jsx";
 import { Info } from "./Info.jsx";
 import { setRoomId, setStatus } from "../store.js";
 import { reset } from "../utils/utils.js";
 import { useParams } from "react-router-dom";
+import { NotFound } from "./NotFound.jsx";
 
 export const Game = () => {
-
   const { roomid, name } = useParams();
-  const [display, setDisplay] = useState(false);
-  const [status, setStatus0] = useState("");
+  const [display, setDisplay] = useState(null);
   const dispatch = useDispatch();
+  const status = useSelector((state) => state.game_state.status);
 
   useEffect(() => {
-    setStatus0(`Search for the room ${roomid}... `);
     socket.emit("join_room", roomid, (response) => {
       if (response.success) {
         setDisplay(true);
         dispatch(setRoomId(roomid));
-      }
-      else {
-        setStatus0("Room not found");
+        dispatch(setStatus("waiting"));
+      } else {
+        setDisplay(false);
       }
     });
-    return () => socket.emit("leave_room", roomid);
+    return () => {
+      reset(dispatch);
+      socket.emit("leave_room", roomid);
+    };
   }, [roomid, name]);
 
-  return (
-    display ? (
-      <div className='main'>
-        <Board />
-        <Info />
-      </div>
-    ) : (<div>{status}</div>)
+  useEffect(() => {
+    if (status === "game_over") {
+      socket.emit("game_over", roomid);
+    }
+
+    return () => {};
+  }, [status]);
+
+  useEffect(() => {
+    socket.on("game_start", () => {
+      reset(dispatch);
+      dispatch(setStatus("playing"));
+    });
+
+    socket.on("game_end", () => {
+      console.log("game end");
+    });
+
+    return () => {};
+  }, []);
+
+  if (display === null) {
+    return;
+  }
+
+  return display ? (
+    <div className='main'>
+      <Board />
+      <Info />
+    </div>
+  ) : (
+    <NotFound />
   );
 };

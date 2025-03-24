@@ -1,8 +1,8 @@
 // https://reactrouter.com/start/framework/navigating#link
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { setName, setRoomId } from "../store";
+import { setName } from "../store";
 import socket from "../socket.js";
 
 export const Lobby = () => {
@@ -29,7 +29,6 @@ export const Lobby = () => {
     socket.on("room_update", () => {
       getRooms();
     });
-    getRooms();
 
     return () => {};
   }, []);
@@ -106,10 +105,7 @@ export const Lobby = () => {
       )}
       <div className='rooms'>
         {rooms.map((r, i) => (
-          <Link
-            key={i}
-            to={`/${r}/${name}`}
-          >
+          <Link key={i} to={`/${r}/${name}`}>
             {r}
           </Link>
         ))}

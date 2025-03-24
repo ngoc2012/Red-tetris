@@ -5,7 +5,7 @@ import { Spectrums } from "./Spectrums.jsx";
 import flyd from "flyd";
 import { next_pieces$ } from "../index.jsx";
 import { tetrominoes } from "../../server/tetrominoes.js";
-import { reset } from "../utils/utils.js";
+import socket from "../socket.js";
 
 const SmallBoard = ({ tetro }) => {
   return (
@@ -54,11 +54,18 @@ export const Info = () => {
   const dispatch = useDispatch();
   const status = useSelector((state) => state.game_state.status);
   const score = useSelector((state) => state.game_state.score);
+  const room_id = useSelector((state) => state.game_state.room_id);
 
   const start_game = () => {
-    console.log("start game");
-    reset(dispatch);
-    dispatch(setStatus("playing"));
+    socket.emit("game_start", room_id, (response) => {
+      if (response.success) {
+        console.log("game starting");
+      } else {
+        console.log("could not start game");
+      }
+      // reset(dispatch);
+      // dispatch(setStatus("playing"));
+    });
     document.activeElement.blur();
   };
 

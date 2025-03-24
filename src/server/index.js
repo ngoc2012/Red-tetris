@@ -30,7 +30,6 @@ const initApp = (app, params, cb) => {
       res.writeHead(200, { "Content-Type": "image/jpg" });
       var file = "/../../public/Halstatt.jpg";
     } else {
-      console.log("index");
       res.writeHead(200, { "Content-Type": "text/html" });
       var file = "/../../public/index.html";
     }
@@ -94,6 +93,7 @@ const players = {}; // Global players object
 const rooms = {}; // Global roomPlayers object
 //{
 //  room_id: {
+//    status: playing|waiting
 //    owner: socket.id,
 //    players: {
 //      socket.id: {
@@ -162,10 +162,13 @@ export function create(params) {
 
           socket.on("new_room", (callback) => {
             const room_id = roomCounter++;
-            rooms[room_id] = { owner: socket.id, players: {} };
-            join_room(socket, room_id);
-            io.to("lobby").emit("room_update");
+            rooms[room_id] = {
+              status: "waiting",
+              owner: socket.id,
+              players: {},
+            };
             callback({ success: true, room_id: room_id });
+            io.to("lobby").emit("room_update");
             console.log(`Room ${room_id} created by ${socket.id}`);
           });
 
@@ -187,7 +190,7 @@ export function create(params) {
               leave_room(socket, room_id);
               players[socket.id].room = "lobby";
               console.log(`${socket.id} left room ${room_id}`);
-              console.log("roomPlayers", rooms);
+              console.log("rooms", rooms);
               socket.join("lobby");
               // event to room: player left
             }
@@ -195,6 +198,22 @@ export function create(params) {
 
           socket.on("room_list", (callback) => {
             callback(rooms);
+          });
+
+          socket.on("game_start", (room_id, callback) => {
+            if (rooms[room_id].owner === socket.id) {
+              rooms[room_id].status = "playing";
+              callback({ success: true });
+              io.to(room_id).emit("game_start");
+            } else {
+              callback({ success: false });
+            }
+          });
+
+          socket.on("game_over", (room_id) => {
+            // if last player remaining and not singleplayer mode
+            // rooms[room_id].status = "waiting";
+            // io.to(room_id).emit("game_over");
           });
 
           socket.on("cleared_a_line", (rows_cleared) => {
@@ -229,23 +248,6 @@ export function create(params) {
               keys[Math.floor(Math.random() * keys.length)]
             );
           });
-          
-          // Does not need this anymore
-          // socket.on("ping", (room_id, callback) => {
-          //   console.log("ping", rooms, room_id);
-          //   if (
-          //     !Object.hasOwn(rooms, room_id) ||
-          //     !Object.hasOwn(rooms[room_id].players, socket.id)
-          //   ) {
-          //     console.log("pong false", Object.hasOwn(rooms, room_id));
-          //     if (rooms[room_id]) {
-          //       console.log("pong false", Object.hasOwn(rooms[room_id].players, socket.id));
-          //     }
-          //     callback({ pong: false });
-          //     return;
-          //   }
-          //   callback({ pong: true });
-          // });
 
           socket.on("disconnecting", () => {
             if (players[socket.id].room >= 0)

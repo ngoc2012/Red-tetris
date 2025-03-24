@@ -13,7 +13,6 @@ export const useGameLoop = () => {
   const status = useSelector((state) => state.game_state.status);
   const room_id = useSelector((state) => state.game_state.room_id);
   const board = useSelector((state) => state.game_state.board);
-  const score = useSelector((state) => state.game_state.score);
   const requestRef = useRef();
   const lastUpdateTimeRef = useRef(0);
   const progressTimeRef = useRef(0);
@@ -29,7 +28,7 @@ export const useGameLoop = () => {
     if (progressTimeRef.current > 1000) {
       console.log("Game loop");
       if (piece$()) {
-        move_down(board, score, dispatch);
+        move_down(board, dispatch);
       }
       progressTimeRef.current = 0;
     }
