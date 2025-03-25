@@ -1,7 +1,7 @@
 import { tetrominoes } from "../../server/tetrominoes.js";
 import { piece$, pos$, rot$ } from "../index.jsx";
 import socket from "../socket.js";
-import { setBoard, setScore, setStatus } from "../store.js";
+import { setBoard, setStatus } from "../store.js";
 import {
   add_block_to_board,
   BUFFER,
@@ -35,7 +35,6 @@ export const move_down = (board, dispatch) => {
   } else {
     const [newBoard, rowsCleared] = clear_full_rows(add_block_to_board(board));
     if (newBoard.some((v, i) => i < BUFFER * WIDTH && v != "")) {
-      console.log("Game Over");
       dispatch(setStatus("game_over"));
     }
     dispatch(setBoard(newBoard));

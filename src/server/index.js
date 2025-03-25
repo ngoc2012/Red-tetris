@@ -86,18 +86,20 @@ const check_name = (name) => {
 const players = {}; // Global players object
 //{
 //  socket.id: {
-//    name: 'name',
+//    name: 'name'
 //    room: 'room_id'
 //  }
 //}
-const rooms = {}; // Global roomPlayers object
+const rooms = {}; // Global rooms object
 //{
 //  room_id: {
 //    status: playing|waiting
-//    owner: socket.id,
+//    players_left: 0
+//    owner: socket.id
 //    players: {
 //      socket.id: {
-//        penalty: 0,
+//        playing: true
+//        penalty: 0
 //        score: 0
 //      }
 //    }
@@ -119,19 +121,23 @@ export function create(params) {
         const join_room = (socket, room_id) => {
           socket.leave("lobby");
           socket.join(room_id);
-          rooms[room_id].players[socket.id] = { penalty: 0, score: 0 };
+          rooms[room_id].players[socket.id] = {
+            playing: false,
+            penalty: 0,
+            score: 0,
+          };
           players[socket.id].room = room_id;
         };
 
         const leave_room = (socket, room_id) => {
           if (room_id < 0 || !rooms[room_id]) return;
-          console.log("leave_room", room_id, socket.id);
           delete rooms[room_id].players[socket.id];
+          console.log(`${socket.id} has left room ${room_id}`);
           if (Object.keys(rooms[room_id].players).length === 0) {
             // player was the last one in room
             delete rooms[room_id];
-            io.to("lobby").emit("room_update");
             console.log(`deleted room ${room_id}`);
+            io.to("lobby").emit("room_update");
           } else if (rooms[room_id].owner === socket.id) {
             // player was owner of the room
             rooms[room_id].owner = Object.keys(rooms[room_id].players)[0];
@@ -164,6 +170,7 @@ export function create(params) {
             const room_id = roomCounter++;
             rooms[room_id] = {
               status: "waiting",
+              players_left: 0,
               owner: socket.id,
               players: {},
             };
@@ -173,7 +180,6 @@ export function create(params) {
           });
 
           socket.on("join_room", (room_id, callback) => {
-            console.log("join_room", room_id);
             if (!Object.hasOwn(rooms, room_id)) {
               callback({ success: false });
               return;
@@ -181,6 +187,7 @@ export function create(params) {
             join_room(socket, room_id);
             callback({ success: true, room_id: room_id });
             console.log(`${socket.id} joined room ${room_id}`);
+            console.log("rooms", rooms);
             // event to room: new player joined
           });
 
@@ -203,17 +210,34 @@ export function create(params) {
           socket.on("game_start", (room_id, callback) => {
             if (rooms[room_id].owner === socket.id) {
               rooms[room_id].status = "playing";
+              rooms[room_id].players_left = Object.keys(
+                rooms[room_id].players
+              ).length;
+              for (const k in rooms[room_id].players) {
+                rooms[room_id].players[k] = {
+                  playing: true,
+                  penalty: 0,
+                  score: 0,
+                };
+              }
               callback({ success: true });
               io.to(room_id).emit("game_start");
+              console.log("room", rooms[room_id]);
             } else {
               callback({ success: false });
             }
           });
 
           socket.on("game_over", (room_id) => {
-            // if last player remaining and not singleplayer mode
-            // rooms[room_id].status = "waiting";
-            // io.to(room_id).emit("game_over");
+            rooms[room_id].players[socket.id].playing = false;
+            rooms[room_id].players_left--;
+            if (rooms[room_id].players_left <= 1) {
+              // last player alive wins
+              // (or game over in singleplayer mode)
+              rooms[room_id].status = "waiting";
+              io.to(room_id).emit("game_over");
+            }
+            console.log("room", rooms[room_id]);
           });
 
           socket.on("cleared_a_line", (rows_cleared) => {

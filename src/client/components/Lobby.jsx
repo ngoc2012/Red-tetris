@@ -29,6 +29,7 @@ export const Lobby = () => {
     socket.on("room_update", () => {
       getRooms();
     });
+    getRooms();
 
     return () => {};
   }, []);

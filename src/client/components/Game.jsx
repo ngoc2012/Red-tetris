@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import socket from "../socket";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Board } from "./Board.jsx";
 import { Info } from "./Info.jsx";
 import { setRoomId, setStatus } from "../store.js";
@@ -32,6 +32,7 @@ export const Game = () => {
 
   useEffect(() => {
     if (status === "game_over") {
+      console.log("Game Over");
       socket.emit("game_over", roomid);
     }
 
@@ -44,8 +45,10 @@ export const Game = () => {
       dispatch(setStatus("playing"));
     });
 
-    socket.on("game_end", () => {
-      console.log("game end");
+    socket.on("game_over", () => {});
+
+    socket.on("game_win", () => {
+      console.log("GG");
     });
 
     return () => {};
