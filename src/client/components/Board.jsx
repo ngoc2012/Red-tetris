@@ -4,7 +4,13 @@ import flyd from "flyd";
 import { useGamepads } from "react-gamepads";
 import { Square } from "./Square.jsx";
 import { tetrominoes } from "../../server/tetrominoes.js";
-import { board_to_block, BUFFER, LENGTH, WIDTH } from "../utils/utils.js";
+import {
+  add_penalty,
+  board_to_block,
+  BUFFER,
+  LENGTH,
+  WIDTH,
+} from "../utils/utils.js";
 import {
   move_down,
   move_down_max,
@@ -14,6 +20,8 @@ import {
 } from "../utils/move_piece.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useGameLoop } from "../game_loop.js";
+import socket from "../socket.js";
+import { setBoard } from "../store.js";
 
 export const Board = () => {
   const [grid, setGrid] = useState(
@@ -23,10 +31,18 @@ export const Board = () => {
   );
   const dispatch = useDispatch();
   const board = useSelector((state) => state.game_state.board);
-  const score = useSelector((state) => state.game_state.score);
+  const status = useSelector((state) => state.game_state.status);
   useGameLoop();
 
+  const handle_penalty = (rows) => {
+    if (rows > 0 && status === "playing") {
+      console.log("penalty", rows);
+      dispatch(setBoard(add_penalty(board, rows)));
+    }
+  };
+
   useEffect(() => {
+    socket.on("penalty", handle_penalty);
     const subscription = flyd.map((key) => {
       if (!piece$() || !key) {
         return;
@@ -61,7 +77,6 @@ export const Board = () => {
             const row = Math.floor(i / WIDTH);
             const col = (i + WIDTH) % WIDTH;
             const [block_col, block_row] = board_to_block(pos$(), col, row);
-            const isBlocked = false;
 
             if (
               piece$() &&
@@ -78,7 +93,7 @@ export const Board = () => {
                   key={i}
                   color={piece$()}
                   filled={true}
-                  blocked={isBlocked}
+                  blocked={false}
                 ></Square>
               );
             }
@@ -86,8 +101,8 @@ export const Board = () => {
               <Square
                 key={i}
                 color={board[i]}
-                filled={board[i] != ""}
-                blocked={isBlocked}
+                filled={board[i] !== ""}
+                blocked={board[i] === "X"}
               ></Square>
             );
           })
@@ -99,6 +114,7 @@ export const Board = () => {
     return () => {
       subscription.end(true);
       subscription1.end(true);
+      socket.off("penalty", handle_penalty);
     };
   }, [dispatch, board]);
 

@@ -20,18 +20,21 @@ export const Lobby = () => {
       setRooms(Object.keys(response));
     });
   };
+  const room_update = () => {
+    getRooms();
+  };
 
   const [rooms, setRooms] = useState([]);
 
   const nav = useNavigate();
 
   useEffect(() => {
-    socket.on("room_update", () => {
-      getRooms();
-    });
+    socket.on("room_update", room_update);
     getRooms();
 
-    return () => {};
+    return () => {
+      socket.off("room_update", room_update);
+    };
   }, []);
 
   useEffect(() => {

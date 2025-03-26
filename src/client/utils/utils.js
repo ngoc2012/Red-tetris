@@ -14,7 +14,7 @@ export const reset = (dispatch) => {
   piece$("");
 };
 
-export const next_piece = (start = true) => {
+export const add_next_piece = (start = true) => {
   if (!piece$() || !start) {
     piece$(next_pieces$()[0]);
     next_pieces$(next_pieces$().slice(1));
@@ -38,6 +38,14 @@ export const block_to_board = (pos, col, row) => {
     ((pos % WIDTH) + col) % WIDTH,
     Math.floor(pos / WIDTH) + row + ((pos % WIDTH) + col >= WIDTH),
   ];
+};
+
+export const add_penalty = (board, rows) => {
+  pos$(pos$() - rows * WIDTH);
+  return Array.from([
+    ...board.slice(rows * WIDTH),
+    ...Array(rows * WIDTH).fill("X"),
+  ]);
 };
 
 export const clear_full_rows = (board) => {

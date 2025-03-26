@@ -249,13 +249,22 @@ export function create(params) {
               200 * rows_cleared - 100 + 100 * (rows_cleared === 4)
             );
 
-            console.log(
-              `New score for ${socket.id} is ${room_players[socket.id].score}`
-            );
             io.to(room_id).emit("score_update", {
               id: socket.id,
               score: room_players[socket.id].score,
             });
+            console.log(
+              `New score for ${socket.id} is ${room_players[socket.id].score}`
+            );
+
+            if (rows_cleared > 1) {
+              socket.broadcast.to(room_id).emit("penalty", rows_cleared - 1);
+              console.log(
+                `all players except ${socket.id} receive ${
+                  rows_cleared - 1
+                } garbage rows`
+              );
+            }
           });
 
           socket.on("next_piece", ({ room_id }) => {

@@ -7,7 +7,7 @@ import {
   BUFFER,
   can_move,
   clear_full_rows,
-  next_piece,
+  add_next_piece,
   next_rot,
   WIDTH,
 } from "./utils.js";
@@ -40,7 +40,7 @@ export const move_down = (board, dispatch) => {
     dispatch(setBoard(newBoard));
     pos$((WIDTH + tetrominoes[piece$()].length) / 2);
     rot$(0);
-    next_piece(false);
+    add_next_piece(false);
     if (rowsCleared > 0) {
       socket.emit("cleared_a_line", rowsCleared);
     }
