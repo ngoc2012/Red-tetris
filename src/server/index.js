@@ -94,7 +94,6 @@ const rooms = {}; // Global rooms object
 //{
 //  room_id: {
 //    status: playing|waiting
-//    players_left: 0
 //    owner: socket.id
 //    players: {
 //      socket.id: {
@@ -145,6 +144,27 @@ export function create(params) {
               `transferred ownership of room ${room_id} to ${rooms[room_id].owner}`
             );
           }
+          game_end(room_id);
+        };
+
+        const game_end = (room_id) => {
+          const players_left = Object.values(rooms[room_id].players).reduce(
+            (acc, p, i) =>
+              p.playing === true
+                ? [...acc, Object.keys(rooms[room_id].players)[i]]
+                : acc,
+            []
+          );
+          console.log("players_left", players_left);
+          if (players_left.length >= 1) {
+            if (players_left.length === 1) {
+              io.to(players_left[0]).emit("game_win");
+            }
+            // last player alive wins
+            // (or game over in singleplayer mode)
+            rooms[room_id].status = "waiting";
+            io.to(room_id).emit("game_over");
+          }
         };
 
         io.on("connection", (socket) => {
@@ -170,7 +190,6 @@ export function create(params) {
             const room_id = roomCounter++;
             rooms[room_id] = {
               status: "waiting",
-              players_left: 0,
               owner: socket.id,
               players: {},
             };
@@ -208,11 +227,11 @@ export function create(params) {
           });
 
           socket.on("game_start", (room_id, callback) => {
-            if (rooms[room_id].owner === socket.id) {
+            if (
+              rooms[room_id].owner === socket.id &&
+              rooms[room_id].status === "waiting"
+            ) {
               rooms[room_id].status = "playing";
-              rooms[room_id].players_left = Object.keys(
-                rooms[room_id].players
-              ).length;
               for (const k in rooms[room_id].players) {
                 rooms[room_id].players[k] = {
                   playing: true,
@@ -230,14 +249,8 @@ export function create(params) {
 
           socket.on("game_over", (room_id) => {
             rooms[room_id].players[socket.id].playing = false;
-            rooms[room_id].players_left--;
-            if (rooms[room_id].players_left <= 1) {
-              // last player alive wins
-              // (or game over in singleplayer mode)
-              rooms[room_id].status = "waiting";
-              io.to(room_id).emit("game_over");
-            }
-            console.log("room", rooms[room_id]);
+            game_end(room_id);
+            console.log(`room ${room_id}`, rooms[room_id]);
           });
 
           socket.on("cleared_a_line", (rows_cleared) => {
@@ -258,7 +271,7 @@ export function create(params) {
             );
 
             if (rows_cleared > 1) {
-              socket.broadcast.to(room_id).emit("penalty", rows_cleared - 1);
+              socket.to(room_id).emit("penalty", rows_cleared - 1);
               console.log(
                 `all players except ${socket.id} receive ${
                   rows_cleared - 1

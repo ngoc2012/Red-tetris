@@ -22,9 +22,15 @@ export const Game = () => {
 
   const game_over = () => {};
 
-  const game_win = () => {};
+  const game_win = () => {
+    console.log("GG");
+    dispatch(setStatus("game_win"));
+  };
 
   const next_piece = (new_piece) => {
+    if (status !== "playing") {
+      return;
+    }
     console.log("New piece received: ", new_piece);
     next_pieces$(next_pieces$().concat(new_piece));
     add_next_piece();
@@ -51,11 +57,6 @@ export const Game = () => {
       console.log("Game Over");
       socket.emit("game_over", roomid);
     }
-
-    return () => {};
-  }, [status]);
-
-  useEffect(() => {
     socket.on("game_start", game_start);
     socket.on("game_over", game_over);
     socket.on("game_win", game_win);
@@ -67,7 +68,7 @@ export const Game = () => {
       socket.off("game_win", game_win);
       socket.off("next_piece", next_piece);
     };
-  }, []);
+  }, [status]);
 
   if (display === null) {
     return;
