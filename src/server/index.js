@@ -132,6 +132,7 @@ export function create(params) {
           if (room_id < 0 || !rooms[room_id]) return;
           delete rooms[room_id].players[socket.id];
           console.log(`${socket.id} has left room ${room_id}`);
+          game_end(room_id);
           if (Object.keys(rooms[room_id].players).length === 0) {
             // player was the last one in room
             delete rooms[room_id];
@@ -144,7 +145,6 @@ export function create(params) {
               `transferred ownership of room ${room_id} to ${rooms[room_id].owner}`
             );
           }
-          game_end(room_id);
         };
 
         const game_end = (room_id) => {
@@ -156,7 +156,7 @@ export function create(params) {
             []
           );
           console.log("players_left", players_left);
-          if (players_left.length >= 1) {
+          if (players_left.length <= 1) {
             if (players_left.length === 1) {
               io.to(players_left[0]).emit("game_win");
             }
@@ -164,6 +164,7 @@ export function create(params) {
             // (or game over in singleplayer mode)
             rooms[room_id].status = "waiting";
             io.to(room_id).emit("game_over");
+            io.to("lobby").emit("room_update");
           }
         };
 
@@ -199,7 +200,10 @@ export function create(params) {
           });
 
           socket.on("join_room", (room_id, callback) => {
-            if (!Object.hasOwn(rooms, room_id)) {
+            if (
+              !Object.hasOwn(rooms, room_id) ||
+              rooms[room_id].status == "playing"
+            ) {
               callback({ success: false });
               return;
             }
@@ -215,7 +219,6 @@ export function create(params) {
               socket.leave(room_id);
               leave_room(socket, room_id);
               players[socket.id].room = "lobby";
-              console.log(`${socket.id} left room ${room_id}`);
               console.log("rooms", rooms);
               socket.join("lobby");
               // event to room: player left
@@ -223,7 +226,12 @@ export function create(params) {
           });
 
           socket.on("room_list", (callback) => {
-            callback(rooms);
+            callback(
+              Object.entries(rooms).reduce(
+                (acc, p) => [...acc, { id: p[0], status: p[1].status }],
+                []
+              )
+            );
           });
 
           socket.on("game_start", (room_id, callback) => {
@@ -241,6 +249,7 @@ export function create(params) {
               }
               callback({ success: true });
               io.to(room_id).emit("game_start");
+              io.to("lobby").emit("room_update");
               console.log("room", rooms[room_id]);
             } else {
               callback({ success: false });

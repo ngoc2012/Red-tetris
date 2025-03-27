@@ -17,7 +17,7 @@ export const Lobby = () => {
 
   const getRooms = () => {
     socket.emit("room_list", (response) => {
-      setRooms(Object.keys(response));
+      setRooms(response);
     });
   };
   const room_update = () => {
@@ -108,11 +108,23 @@ export const Lobby = () => {
         <div className={`error ${isFading ? "fade-out" : ""}`}>{errorMsg}</div>
       )}
       <div className='rooms'>
-        {rooms.map((r, i) => (
-          <Link key={i} to={`/${r}/${name}`}>
-            {r}
-          </Link>
-        ))}
+        {rooms.map((r, i) =>
+          r.status == "waiting" ? (
+            <Link key={i} to={`/${r.id}/${name}`}>
+              {r.id}
+            </Link>
+          ) : (
+            <Link
+              key={i}
+              to={`/${r.id}/${name}`}
+              onClick={(e) => {
+                e.preventDefault();
+              }}
+            >
+              {r.id}
+            </Link>
+          )
+        )}
       </div>
       <button className='button new_room' onClick={new_room}>
         New room
