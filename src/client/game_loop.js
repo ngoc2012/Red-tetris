@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { key$, next_pieces$, piece$ } from "./index.jsx";
-import socket from "./socket.js";
+import { key$, piece$ } from "./index.jsx";
 import { move_down } from "./utils/move_piece.js";
 
 const onKeyDown = (event) => {
@@ -11,11 +10,11 @@ const onKeyDown = (event) => {
 export const useGameLoop = () => {
   const dispatch = useDispatch();
   const status = useSelector((state) => state.game_state.status);
-  const room_id = useSelector((state) => state.game_state.room_id);
   const board = useSelector((state) => state.game_state.board);
   const requestRef = useRef();
   const lastUpdateTimeRef = useRef(0);
   const progressTimeRef = useRef(0);
+  const level = 6;
 
   const update = (time) => {
     requestRef.current = requestAnimationFrame(update);
@@ -25,7 +24,10 @@ export const useGameLoop = () => {
     }
     const deltaTime = time - lastUpdateTimeRef.current;
     progressTimeRef.current += deltaTime;
-    if (progressTimeRef.current > 1000) {
+    if (
+      progressTimeRef.current >
+      Math.pow(0.8 - (level - 1) * 0.007, level - 1) * 1000
+    ) {
       console.log("Game loop");
       if (piece$()) {
         move_down(board, dispatch);
@@ -41,8 +43,6 @@ export const useGameLoop = () => {
     }
     requestRef.current = requestAnimationFrame(update);
     document.addEventListener("keydown", onKeyDown);
-    for (let i = next_pieces$().length; i < 3 + !piece$(); i++)
-      socket.emit("next_piece", { room_id });
 
     return () => {
       cancelAnimationFrame(requestRef.current);

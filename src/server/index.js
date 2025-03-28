@@ -98,7 +98,6 @@ const rooms = {}; // Global rooms object
 //    players: {
 //      socket.id: {
 //        playing: true
-//        penalty: 0
 //        score: 0
 //      }
 //    }
@@ -122,7 +121,6 @@ export function create(params) {
           socket.join(room_id);
           rooms[room_id].players[socket.id] = {
             playing: false,
-            penalty: 0,
             score: 0,
           };
           players[socket.id].room = room_id;
@@ -147,6 +145,16 @@ export function create(params) {
           }
         };
 
+        const give_pieces = (room_id, count) => {
+          const keys = Object.keys(tetrominoes);
+          for (let index = 0; index < count; index++) {
+            io.to(room_id).emit(
+              "next_piece",
+              keys[Math.floor(Math.random() * keys.length)]
+            );
+          }
+        };
+
         const game_end = (room_id) => {
           const players_left = Object.values(rooms[room_id].players).reduce(
             (acc, p, i) =>
@@ -160,8 +168,6 @@ export function create(params) {
             if (players_left.length === 1) {
               io.to(players_left[0]).emit("game_win");
             }
-            // last player alive wins
-            // (or game over in singleplayer mode)
             rooms[room_id].status = "waiting";
             io.to(room_id).emit("game_over");
             io.to("lobby").emit("room_update");
@@ -172,7 +178,7 @@ export function create(params) {
           console.log("A user connected:", socket.id);
           socket.emit("connected", { id: socket.id });
           socket.join("lobby");
-          players[socket.id] = { name: socket.id, room: "lobby" };
+          players[socket.id] = { name: "player", room: "lobby" };
           console.log("players", players);
 
           socket.on("rename", ({ new_name }, callback) => {
@@ -243,10 +249,11 @@ export function create(params) {
               for (const k in rooms[room_id].players) {
                 rooms[room_id].players[k] = {
                   playing: true,
-                  penalty: 0,
                   score: 0,
                 };
               }
+              io.to(room_id).emit("game_prep");
+              give_pieces(room_id, 4);
               callback({ success: true });
               io.to(room_id).emit("game_start");
               io.to("lobby").emit("room_update");
@@ -254,6 +261,18 @@ export function create(params) {
             } else {
               callback({ success: false });
             }
+          });
+
+          socket.on("board_update", ({ spectrum, penalty, pieces_left }) => {
+            const room_id = players[socket.id].room;
+            give_pieces(room_id, 3 - pieces_left);
+            socket.to(room_id).emit("spectrum", {
+              id: socket.id,
+              name: players[socket.id].name,
+              score: rooms[room_id].players[socket.id].score,
+              spectrum: spectrum,
+              penalty: penalty,
+            });
           });
 
           socket.on("game_over", (room_id) => {
@@ -297,11 +316,7 @@ export function create(params) {
               return;
             }
             console.log("next_piece", room_id);
-            const keys = Object.keys(tetrominoes);
-            io.to(room_id).emit(
-              "next_piece",
-              keys[Math.floor(Math.random() * keys.length)]
-            );
+            give_pieces(room_id, 1);
           });
 
           socket.on("disconnecting", () => {

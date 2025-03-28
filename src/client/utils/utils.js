@@ -48,6 +48,27 @@ export const add_penalty = (board, rows) => {
   ]);
 };
 
+export const board_to_spectrum = (board) => {
+  const spectrum = Array.from({ length: 10 }).fill(0);
+
+  for (let index = BUFFER * WIDTH; index < board.length; index++) {
+    if (!spectrum.includes(0)) {
+      break;
+    }
+    if (board[index] === "X") {
+      return {
+        spectrum: spectrum,
+        penalty: (220 - index) / WIDTH,
+        pieces_left: next_pieces$().length,
+      };
+    }
+    if (board[index] !== "" && spectrum[index % WIDTH] === 0) {
+      spectrum[index % WIDTH] = (220 - (index - (index % WIDTH))) / WIDTH;
+    }
+  }
+  return { spectrum: spectrum, penalty: 0, pieces_left: next_pieces$().length };
+};
+
 export const clear_full_rows = (board) => {
   let full_row = false;
   let full_row_count = 0;

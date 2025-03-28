@@ -15,8 +15,12 @@ export const Game = () => {
   const dispatch = useDispatch();
   const status = useSelector((state) => state.game_state.status);
 
-  const game_start = () => {
+  const game_prep = () => {
     reset(dispatch);
+    dispatch(setStatus("starting"));
+  };
+
+  const game_start = () => {
     dispatch(setStatus("playing"));
   };
 
@@ -28,7 +32,7 @@ export const Game = () => {
   };
 
   const next_piece = (new_piece) => {
-    if (status !== "playing") {
+    if (status !== "playing" && status !== "starting") {
       return;
     }
     console.log("New piece received: ", new_piece);
@@ -57,12 +61,14 @@ export const Game = () => {
       console.log("Game Over");
       socket.emit("game_over", roomid);
     }
+    socket.on("game_prep", game_prep);
     socket.on("game_start", game_start);
     socket.on("game_over", game_over);
     socket.on("game_win", game_win);
     socket.on("next_piece", next_piece);
 
     return () => {
+      socket.off("game_prep", game_prep);
       socket.off("game_start", game_start);
       socket.off("game_over", game_over);
       socket.off("game_win", game_win);
