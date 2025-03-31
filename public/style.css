@@ -111,7 +111,7 @@ body {
   /* background-color: rgba(151, 15, 15, 0.5); */
 }
 
-.lobby .rooms a {
+.lobby .rooms a{
   display: block;
   color: white;
   text-decoration: none;
@@ -123,7 +123,7 @@ body {
   /* background-color: rgba(17, 15, 151, 0.5); */
 }
 
-.lobby .rooms a::before {
+.lobby .rooms .waiting::before {
   content: ""; /* Required for pseudo-element */
   position: absolute;
   left: 0;
@@ -134,6 +134,19 @@ body {
   background-color: green;
   border-radius: 50%; /* Makes it a circle */
   box-shadow: 0 0 10px 2px rgba(0, 255, 0, 0.8);
+}
+
+.lobby .rooms .playing::before {
+  content: ""; /* Required for pseudo-element */
+  position: absolute;
+  left: 0;
+  top: 35%;
+  /* transform: translateY(-50%); */
+  width:  1.2vh; /* Size of the spot */
+  height: 1.2vh;
+  background-color: rgb(255, 0, 0);
+  border-radius: 50%; /* Makes it a circle */
+  box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.8);
 }
 
 .lobby button {

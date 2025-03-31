@@ -110,7 +110,7 @@ export const Lobby = () => {
       <div className='rooms'>
         {rooms.map((r, i) =>
           r.status == "waiting" ? (
-            <Link key={i} to={`/${r.id}/${name}`}>
+            <Link key={i} to={`/${r.id}/${name}`} className='waiting'>
               {r.id}
             </Link>
           ) : (
@@ -120,6 +120,7 @@ export const Lobby = () => {
               onClick={(e) => {
                 e.preventDefault();
               }}
+              className='playing'
             >
               {r.id}
             </Link>
