@@ -7,6 +7,7 @@ import { tetrominoes } from "../../server/tetrominoes.js";
 import {
   add_penalty,
   board_to_block,
+  board_to_spectrum,
   BUFFER,
   LENGTH,
   WIDTH,
@@ -110,6 +111,7 @@ export const Board = () => {
       },
       [pos$, rot$, piece$]
     );
+    socket.emit("board_update", board_to_spectrum(board));
 
     return () => {
       subscription.end(true);

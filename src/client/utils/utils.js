@@ -52,9 +52,6 @@ export const board_to_spectrum = (board) => {
   const spectrum = Array.from({ length: 10 }).fill(0);
 
   for (let index = BUFFER * WIDTH; index < board.length; index++) {
-    if (!spectrum.includes(0)) {
-      break;
-    }
     if (board[index] === "X") {
       return {
         spectrum: spectrum,

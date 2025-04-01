@@ -10,7 +10,6 @@ import {
   add_next_piece,
   next_rot,
   WIDTH,
-  board_to_spectrum,
 } from "./utils.js";
 
 export const RIGHT = 1;
@@ -45,7 +44,6 @@ export const move_down = (board, dispatch) => {
     if (rowsCleared > 0) {
       socket.emit("cleared_a_line", rowsCleared);
     }
-    socket.emit("board_update", board_to_spectrum(newBoard));
   }
 };
 

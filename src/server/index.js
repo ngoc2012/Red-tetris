@@ -97,7 +97,10 @@ const rooms = {}; // Global rooms object
 //    owner: socket.id
 //    players: {
 //      socket.id: {
+//        name:
 //        playing: true
+//        spectrum:
+//        penalty:
 //        score: 0
 //      }
 //    }
@@ -120,7 +123,10 @@ export function create(params) {
           socket.leave("lobby");
           socket.join(room_id);
           rooms[room_id].players[socket.id] = {
+            name: players[socket.id].name,
             playing: false,
+            spectrum: Array.from({ length: 10 }).fill(0),
+            penalty: 0,
             score: 0,
           };
           players[socket.id].room = room_id;
@@ -131,6 +137,7 @@ export function create(params) {
           delete rooms[room_id].players[socket.id];
           console.log(`${socket.id} has left room ${room_id}`);
           game_end(room_id);
+          socket.to(room_id).emit("player_leave", socket.id);
           if (Object.keys(rooms[room_id].players).length === 0) {
             // player was the last one in room
             delete rooms[room_id];
@@ -213,11 +220,11 @@ export function create(params) {
               callback({ success: false });
               return;
             }
+
             join_room(socket, room_id);
             callback({ success: true, room_id: room_id });
             console.log(`${socket.id} joined room ${room_id}`);
             console.log("rooms", rooms);
-            // event to room: new player joined
           });
 
           socket.on("leave_room", (room_id) => {
@@ -227,7 +234,6 @@ export function create(params) {
               players[socket.id].room = "lobby";
               console.log("rooms", rooms);
               socket.join("lobby");
-              // event to room: player left
             }
           });
 
@@ -263,9 +269,33 @@ export function create(params) {
             }
           });
 
+          socket.on("spectrums", (callback) => {
+            const room_id = players[socket.id].room;
+            const spec = Object.entries(rooms[room_id].players)
+              .filter(([key]) => ![socket.id].includes(key))
+              .reduce(
+                (acc, [k, v]) => ({
+                  ...acc,
+                  [k]: {
+                    playerId: v.name,
+                    score: v.score,
+                    spec: v.spectrum,
+                    penalty: v.penalty,
+                  },
+                }),
+                {}
+              );
+            if (Object.keys(rooms[room_id].players).length < 2) {
+              callback(null);
+            }
+            callback(spec);
+          });
+
           socket.on("board_update", ({ spectrum, penalty, pieces_left }) => {
             const room_id = players[socket.id].room;
             give_pieces(room_id, 3 - pieces_left);
+            rooms[room_id].players[socket.id].spectrum = spectrum;
+            rooms[room_id].players[socket.id].penalty = penalty;
             socket.to(room_id).emit("spectrum", {
               id: socket.id,
               name: players[socket.id].name,

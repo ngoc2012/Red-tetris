@@ -29,12 +29,11 @@ export const Spectrum = ({ info }) => {
 
 export const Spectrums = () => {
   const [spectrums, setSpectrums] = useState({});
-  // const spectrums = [
-  //   {playerId: "player 1", score: 12,    spec: Array.from({ length: 10 }, () => Math.floor(Math.random() * 20) + 1), penalty: Math.floor(Math.random() * 15) + 1},
-  //   {playerId: "player 2", score: 24524, spec: Array.from({ length: 10 }, () => Math.floor(Math.random() * 20) + 1), penalty: Math.floor(Math.random() * 15) + 1},
-  //   // {playerId: "player 3", score: 45365, spec: Array.from({ length: 10 }, () => Math.floor(Math.random() * 20) + 1), penalty: Math.floor(Math.random() * 15) + 1}
-  // ];
-  // // console.log(spectrums);
+
+  const player_leave = (id) => {
+    const { [id]: v, ...newSpectrums } = spectrums;
+    setSpectrums(newSpectrums);
+  };
 
   const handleSpectrum = ({ id, name, score, spectrum, penalty }) => {
     setSpectrums({
@@ -44,10 +43,20 @@ export const Spectrums = () => {
   };
 
   useEffect(() => {
+    socket.emit("spectrums", (response) => {
+      if (response != null) setSpectrums(response);
+    });
+
+    return () => {};
+  }, []);
+
+  useEffect(() => {
     socket.on("spectrum", handleSpectrum);
+    socket.on("player_leave", player_leave);
 
     return () => {
       socket.off("spectrum", handleSpectrum);
+      socket.off("player_leave", player_leave);
     };
   }, [spectrums]);
 

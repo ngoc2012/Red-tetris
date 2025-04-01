@@ -7,7 +7,7 @@ import { setRoomId, setStatus } from "../store.js";
 import { add_next_piece, reset } from "../utils/utils.js";
 import { useParams } from "react-router-dom";
 import { NotFound } from "./NotFound.jsx";
-import { next_pieces$ } from "../index.jsx";
+import { next_pieces$, rot$ } from "../index.jsx";
 
 export const Game = () => {
   const { roomid, name } = useParams();
@@ -21,6 +21,7 @@ export const Game = () => {
   };
 
   const game_start = () => {
+    rot$(0);
     dispatch(setStatus("playing"));
   };
 

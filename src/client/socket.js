@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 import { setScore, setId } from "./store.js";
 
-const socket = io("http://localhost:3004"); // Server URL
+const socket = io(window.location.origin); // Server URL
 
 export const initSocket = (dispatch) => {
   socket.on("connected", ({ id }) => {
