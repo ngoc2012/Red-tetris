@@ -1,21 +1,22 @@
-import { tetrominoes } from "../../server/tetrominoes.js";
+import {
+  BUFFER,
+  DOWN,
+  LEFT,
+  RIGHT,
+  ROT,
+  WIDTH,
+} from "../../common/constants.js";
+import { tetrominoes } from "../../common/tetrominoes.js";
 import { piece$, pos$, rot$ } from "../index.jsx";
 import socket from "../socket.js";
 import { setBoard, setStatus } from "../store.js";
 import {
   add_block_to_board,
-  BUFFER,
   can_move,
   clear_full_rows,
   add_next_piece,
   next_rot,
-  WIDTH,
 } from "./utils.js";
-
-export const RIGHT = 1;
-export const LEFT = 2;
-export const DOWN = 4;
-export const ROT = 8;
 
 export const move_left = (board) => {
   if (can_move(board, pos$() - 1, LEFT, rot$())) {

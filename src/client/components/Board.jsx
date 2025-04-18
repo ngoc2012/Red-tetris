@@ -3,14 +3,11 @@ import { pos$, rot$, key$, piece$ } from "../index.jsx";
 import flyd from "flyd";
 import { useGamepads } from "react-gamepads";
 import { Square } from "./Square.jsx";
-import { tetrominoes } from "../../server/tetrominoes.js";
+import { tetrominoes } from "../../common/tetrominoes.js";
 import {
   add_penalty,
   board_to_block,
   board_to_spectrum,
-  BUFFER,
-  LENGTH,
-  WIDTH,
 } from "../utils/utils.js";
 import {
   move_down,
@@ -23,6 +20,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGameLoop } from "../game_loop.js";
 import socket from "../socket.js";
 import { setBoard } from "../store.js";
+import { BUFFER, LENGTH, WIDTH } from "../../common/constants.js";
+import { Status } from "../../common/enums.js";
 
 export const Board = () => {
   const [grid, setGrid] = useState(
@@ -40,6 +39,10 @@ export const Board = () => {
       console.log("penalty", rows);
       dispatch(setBoard(add_penalty(board, rows)));
     }
+  };
+
+  const game_loop = () => {
+    move_down(board, dispatch);
   };
 
   useEffect(() => {
@@ -119,6 +122,17 @@ export const Board = () => {
       socket.off("penalty", handle_penalty);
     };
   }, [dispatch, board]);
+
+  useEffect(() => {
+    if (status === Status.PLAYING) {
+      socket.on("game_loop", game_loop);
+      console.log("listener on");
+    }
+    return () => {
+      socket.off("game_loop", game_loop);
+      console.log("listener off");
+    };
+  }, [status, dispatch, board]);
 
   // Gamepad logic
   const [gamepads, setGamepads] = useState({});

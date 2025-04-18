@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { key$, piece$ } from "./index.jsx";
-import { move_down } from "./utils/move_piece.js";
+import { key$ } from "./index.jsx";
 
 const onKeyDown = (event) => {
   key$(event.key);
@@ -13,8 +12,7 @@ export const useGameLoop = () => {
   const board = useSelector((state) => state.game_state.board);
   const requestRef = useRef();
   const lastUpdateTimeRef = useRef(0);
-  const progressTimeRef = useRef(0);
-  const level = 6;
+  // const progressTimeRef = useRef(0);
 
   const update = (time) => {
     requestRef.current = requestAnimationFrame(update);
@@ -22,18 +20,8 @@ export const useGameLoop = () => {
     if (!lastUpdateTimeRef.current) {
       lastUpdateTimeRef.current = time;
     }
-    const deltaTime = time - lastUpdateTimeRef.current;
-    progressTimeRef.current += deltaTime;
-    if (
-      progressTimeRef.current >
-      Math.pow(0.8 - (level - 1) * 0.007, level - 1) * 1000
-    ) {
-      console.log("Game loop");
-      if (piece$()) {
-        move_down(board, dispatch);
-      }
-      progressTimeRef.current = 0;
-    }
+    // const deltaTime = time - lastUpdateTimeRef.current;
+    // progressTimeRef.current += deltaTime;
     lastUpdateTimeRef.current = time;
   };
 
@@ -42,11 +30,11 @@ export const useGameLoop = () => {
       return () => {};
     }
     requestRef.current = requestAnimationFrame(update);
-    document.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keydown", onKeyDown);
 
     return () => {
       cancelAnimationFrame(requestRef.current);
-      document.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keydown", onKeyDown);
     };
   }, [status, board, dispatch]);
 };

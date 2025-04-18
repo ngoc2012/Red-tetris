@@ -3,16 +3,18 @@ import { createLogger } from "redux-logger";
 import { thunk } from "redux-thunk";
 
 import { storeStateMiddleWare } from "./storeStateMiddleWare.js";
-import { BUFFER, LENGTH, WIDTH } from "./utils/utils.js";
+import { BUFFER, LENGTH, WIDTH } from "../common/constants.js";
+import { Mode } from "../common/enums.js";
 
 const initialState = {
   player: {
     id: "",
-    name: "me",
+    name: "player",
   },
   game_state: {
     room_id: -1,
     status: "waiting",
+    mode: Mode.NORMAL,
     board: Array.from({ length: (LENGTH + BUFFER) * WIDTH }).fill(""),
     score: 0,
   },
@@ -24,6 +26,9 @@ const game_stateSlice = createSlice({
   reducers: {
     setStatus: (state, action) => {
       state.status = action.payload;
+    },
+    setMode: (state, action) => {
+      state.mode = action.payload;
     },
     setBoard: (state, action) => {
       state.board = action.payload;
@@ -63,6 +68,6 @@ export const store = configureStore({
 });
 
 // Export actions
-export const { setStatus, setRoomId, setBoard, setScore, resetBoard } =
+export const { setStatus, setMode, setRoomId, setBoard, setScore, resetBoard } =
   game_stateSlice.actions;
 export const { setId, setName } = playerSlice.actions;

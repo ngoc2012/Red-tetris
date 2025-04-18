@@ -1,4 +1,4 @@
-// import glob from 'glob'
+import * as glob from "glob"; // Correct import for CommonJS module
 
 // console.log(__dirname)
 // const files = glob.sync("src/server#<{(||)}>#*.js")
@@ -6,7 +6,6 @@
 //   console.log(file)
 //   require('../' + file)
 // })
-import * as glob from 'glob';  // Correct import for CommonJS module
 
 // // Example usage of glob
 // glob('**/*.js', function (err, files) {

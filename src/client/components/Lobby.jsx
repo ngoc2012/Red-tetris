@@ -65,9 +65,8 @@ export const Lobby = () => {
           dispatch(setName(tempName));
           setIsEditing(false);
         } else {
-          // console.error("Rename failed:", response.message);
           setOnError(true);
-          setErrorMsg(response.message);
+          setErrorMsg("Invalid name");
           setTempName(name);
           setIsEditing(false);
           setTimeout(() => {

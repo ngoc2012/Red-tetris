@@ -3,11 +3,13 @@ import socket from "../socket";
 import { useDispatch, useSelector } from "react-redux";
 import { Board } from "./Board.jsx";
 import { Info } from "./Info.jsx";
-import { setRoomId, setStatus } from "../store.js";
+import { setMode, setRoomId, setStatus } from "../store.js";
 import { add_next_piece, reset } from "../utils/utils.js";
 import { useParams } from "react-router-dom";
 import { NotFound } from "./NotFound.jsx";
 import { next_pieces$, rot$ } from "../index.jsx";
+import { Status } from "../../common/enums.js";
+import { move_down } from "../utils/move_piece.js";
 
 export const Game = () => {
   const { roomid, name } = useParams();
@@ -46,7 +48,8 @@ export const Game = () => {
       if (response.success) {
         setDisplay(true);
         dispatch(setRoomId(roomid));
-        dispatch(setStatus("waiting"));
+        dispatch(setStatus(Status.WAITING));
+        dispatch(setMode(response.room.mode));
       } else {
         setDisplay(false);
       }

@@ -2,17 +2,19 @@ import fs from "fs";
 import debug from "debug";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import { tetrominoes } from "./tetrominoes.js";
 import { createServer } from "http";
 import { Server as SocketIO } from "socket.io";
 import { Player } from "./Player.js";
-import { Room, RoomPlayer, Status } from "./Room.js";
+import { Room } from "./Room.js";
+import { Piece } from "./Piece.js";
+import { Mode, Status } from "../common/enums.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const logerror = debug("tetris:error"),
-  loginfo = debug("tetris:info");
+const logerror = debug("tetris:error");
+export const loginfo = debug("tetris:info");
+const logdebug = debug("tetris:debug");
 
 const initApp = (app, params, cb) => {
   const { host, port } = params;
@@ -58,63 +60,47 @@ const initApp = (app, params, cb) => {
 const initEngine = (io) => {
   const players = new Map(); // Map<string,Player>
   const rooms = new Map();
+
   const join_room = (socket, room_id) => {
     socket.leave("lobby");
     socket.join(room_id);
-    rooms
-      .get(room_id)
-      .players.set(socket.id, new RoomPlayer(players.get(socket.id).name));
+    rooms.get(room_id).add_player(socket.id, players.get(socket.id).name);
     players.get(socket.id).room = room_id;
   };
 
   const leave_room = (socket, room_id) => {
     if (room_id < 0 || !rooms.has(room_id)) return;
-    rooms.get(room_id).players.delete(socket.id);
-    console.log(`${socket.id} has left room ${room_id}`);
+    socket.leave(room_id);
+    rooms.get(room_id).remove_player(socket.id);
     game_end(room_id);
     socket.to(room_id).emit("player_leave", socket.id);
     if (rooms.get(room_id).players.size === 0) {
       // player was the last one in room
       rooms.delete(room_id);
-      console.log(`deleted room ${room_id}`);
+      loginfo(`deleted room ${room_id}`);
       io.to("lobby").emit("room_update");
-    } else if (rooms.get(room_id).owner === socket.id) {
-      // player was owner of the room
-      rooms.get(room_id).owner = rooms.get(room_id).players.keys().next().value;
-      console.log(
-        `transferred ownership of room ${room_id} to ${
-          rooms.get(room_id).owner
-        }`
-      );
     }
   };
 
   const give_pieces = (room_id, count) => {
-    const keys = Object.keys(tetrominoes);
     for (let index = 0; index < count; index++) {
-      io.to(room_id).emit(
-        "next_piece",
-        keys[Math.floor(Math.random() * keys.length)]
-      );
+      const piece = new Piece();
+      io.to(room_id).emit("next_piece", piece.type);
     }
   };
 
   const game_end = (room_id) => {
-    if (rooms.get(room_id).status === Status.WAITING) {
-      return;
-    }
-
-    const players_left = new Map(
-      [...rooms.get(room_id).players].filter(([_, v]) => v.playing === true)
-    );
-    console.log("players_left", players_left);
-    if (players_left.size <= 1) {
-      if (players_left.size === 1) {
-        io.to(players_left.keys().next().value).emit("game_win");
+    if (rooms.get(room_id).is_playing) {
+      const players_left = rooms.get(room_id).players_left;
+      console.log("players_left", players_left);
+      if (players_left.size <= 1) {
+        if (players_left.size === 1) {
+          io.to(players_left.keys().next().value).emit("game_win");
+        }
+        rooms.get(room_id).end_game();
+        io.to(room_id).emit("game_over");
+        io.to("lobby").emit("room_update");
       }
-      rooms.get(room_id).status = Status.WAITING;
-      io.to(room_id).emit("game_over");
-      io.to("lobby").emit("room_update");
     }
   };
 
@@ -132,16 +118,15 @@ const initEngine = (io) => {
         console.log(`${socket.id} renamed to ${new_name}`);
         callback({ success: true });
       } else {
-        callback({ success: false, message: "Invalid name" });
+        callback({ success: false });
       }
     });
 
     socket.on("new_room", (callback) => {
-      const room_id = Room.room_counter.toString();
+      const room_id = Room.count();
       rooms.set(room_id, new Room(socket.id));
       callback({ success: true, room_id: room_id });
       io.to("lobby").emit("room_update");
-      console.log(`Room ${room_id} created by ${socket.id}`);
     });
 
     socket.on("join_room", (room_id, callback) => {
@@ -151,14 +136,13 @@ const initEngine = (io) => {
       }
 
       join_room(socket, room_id);
-      callback({ success: true, room_id: room_id });
-      console.log(`${socket.id} joined room ${room_id}`);
+      callback({ success: true, room: { id: room_id, mode: Mode.NORMAL } });
+      console.log("players", players);
       console.log("rooms", rooms);
     });
 
     socket.on("leave_room", (room_id) => {
-      if (room_id >= 0) {
-        socket.leave(room_id);
+      if (room_id >= 0 && rooms.has(room_id)) {
         leave_room(socket, room_id);
         players.get(socket.id).room = "lobby";
         socket.join("lobby");
@@ -179,13 +163,9 @@ const initEngine = (io) => {
     socket.on("game_start", (room_id, callback) => {
       if (
         rooms.get(room_id).owner === socket.id &&
-        rooms.get(room_id).status === Status.WAITING
+        !rooms.get(room_id).is_playing
       ) {
-        rooms.get(room_id).status = Status.PLAYING;
-        rooms.get(room_id).players.forEach((v) => {
-          v.playing = true;
-          v.score = 0;
-        });
+        rooms.get(room_id).start_game(io);
         io.to(room_id).emit("game_prep");
         io.to("lobby").emit("room_update");
         give_pieces(room_id, 4);
@@ -199,20 +179,7 @@ const initEngine = (io) => {
 
     socket.on("spectrums", (callback) => {
       const room_id = players.get(socket.id).room;
-      const spec = [...rooms.get(room_id).players]
-        .filter(([key]) => ![socket.id].includes(key))
-        .reduce(
-          (acc, [k, v]) => ({
-            ...acc,
-            [k]: {
-              playerId: v.name,
-              score: v.score,
-              spec: v.spectrum,
-              penalty: v.penalty,
-            },
-          }),
-          {}
-        );
+      const spec = rooms.get(room_id).spectrums(socket.id);
       if (rooms.get(room_id).players.size < 2) {
         callback(null);
       }
@@ -222,46 +189,46 @@ const initEngine = (io) => {
     socket.on("board_update", ({ spectrum, penalty, pieces_left }) => {
       const room_id = players.get(socket.id).room;
       give_pieces(room_id, 3 - pieces_left);
-      rooms.get(room_id).players.get(socket.id).spectrum = spectrum;
-      rooms.get(room_id).players.get(socket.id).penalty = penalty;
+      const player = rooms
+        .get(room_id)
+        .update_spectrum(socket.id, spectrum, penalty);
       socket.to(room_id).emit("spectrum", {
         id: socket.id,
         name: players.get(socket.id).name,
-        score: rooms.get(room_id).players.get(socket.id).score,
-        spectrum: spectrum,
-        penalty: penalty,
+        score: player.score,
+        spectrum: player.spectrum,
+        penalty: player.penalty,
       });
     });
 
     socket.on("game_over", (room_id) => {
-      rooms.get(room_id).players.get(socket.id).playing = false;
+      // save score somewhere with the mode (single/multi, normal/invis/accelerating/etc...)
+      rooms.get(room_id).game_over(socket.id);
       game_end(room_id);
+      loginfo(`${socket.id} has topped out`);
       console.log(`room ${room_id}`, rooms.get(room_id));
     });
 
     socket.on("cleared_a_line", (rows_cleared) => {
       const room_id = players.get(socket.id).room;
-      const room_players = rooms.get(room_id).players;
-
-      room_players.get(socket.id).score += Math.max(
-        0,
-        200 * rows_cleared - 100 + 100 * (rows_cleared === 4)
-      );
+      const score = rooms
+        .get(room_id)
+        .update_score(
+          socket.id,
+          Math.max(0, 200 * rows_cleared - 100 + 100 * (rows_cleared === 4))
+        );
 
       io.to(room_id).emit("score_update", {
         id: socket.id,
-        score: room_players.get(socket.id).score,
+        score: score,
       });
-      console.log(
-        `New score for ${socket.id} is ${room_players.get(socket.id).score}`
-      );
 
       if (rows_cleared > 1) {
         socket.to(room_id).emit("penalty", rows_cleared - 1);
-        console.log(
-          `all players except ${socket.id} receive ${
-            rows_cleared - 1
-          } garbage rows`
+        loginfo(
+          `all players receive ${rows_cleared - 1} garbage rows from ${
+            socket.id
+          }`
         );
       }
     });

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Spectrums } from "./Spectrums.jsx";
 import flyd from "flyd";
 import { next_pieces$ } from "../index.jsx";
-import { tetrominoes } from "../../server/tetrominoes.js";
+import { tetrominoes } from "../../common/tetrominoes.js";
 import socket from "../socket.js";
 
 const SmallBoard = ({ tetro }) => {
@@ -63,15 +63,12 @@ export const Info = () => {
       } else {
         console.log("could not start game");
       }
-      // reset(dispatch);
-      // dispatch(setStatus("playing"));
     });
-    document.activeElement.blur();
   };
 
   const end_game = () => {
-    console.log("end game");
-    dispatch(setStatus("game_over"));
+    // console.log("end game");
+    // dispatch(setStatus("game_over"));
   };
 
   return (
@@ -96,7 +93,6 @@ export const Info = () => {
         </button>
       </div>
       <Spectrums />
-      {/* <button className="button join_game">Join game</button> */}
     </div>
   );
 };

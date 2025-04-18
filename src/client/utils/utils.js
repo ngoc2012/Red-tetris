@@ -1,11 +1,14 @@
-import { LEFT, RIGHT, ROT } from "../utils/move_piece.js";
 import { piece$, rot$, pos$, next_pieces$ } from "../index.jsx";
-import { tetrominoes } from "../../server/tetrominoes.js";
+import { tetrominoes } from "../../common/tetrominoes.js";
 import { resetBoard, setScore } from "../store.js";
-
-export const WIDTH = 10;
-export const LENGTH = 20;
-export const BUFFER = 2;
+import {
+  BUFFER,
+  LEFT,
+  LENGTH,
+  RIGHT,
+  ROT,
+  WIDTH,
+} from "../../common/constants.js";
 
 export const reset = (dispatch) => {
   dispatch(resetBoard());
@@ -41,7 +44,7 @@ export const block_to_board = (pos, col, row) => {
 };
 
 export const add_penalty = (board, rows) => {
-  pos$(pos$() - rows * WIDTH);
+  pos$(Math.max(pos$() - rows * WIDTH, pos$()));
   return Array.from([
     ...board.slice(rows * WIDTH),
     ...Array(rows * WIDTH).fill("X"),
