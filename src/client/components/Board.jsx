@@ -21,7 +21,7 @@ import { useGameLoop } from "../game_loop.js";
 import socket from "../socket.js";
 import { setBoard } from "../store.js";
 import { BUFFER, LENGTH, WIDTH } from "../../common/constants.js";
-import { Status } from "../../common/enums.js";
+import { Mode, Status } from "../../common/enums.js";
 
 export const Board = () => {
   const [grid, setGrid] = useState(
@@ -31,6 +31,7 @@ export const Board = () => {
   );
   const dispatch = useDispatch();
   const board = useSelector((state) => state.game_state.board);
+  const mode = useSelector((state) => state.game_state.mode);
   const status = useSelector((state) => state.game_state.status);
   useGameLoop();
 
@@ -105,7 +106,7 @@ export const Board = () => {
               <Square
                 key={i}
                 color={board[i]}
-                filled={board[i] !== ""}
+                filled={board[i] !== "" && mode !== Mode.INVIS}
                 blocked={board[i] === "X"}
               ></Square>
             );
@@ -126,11 +127,9 @@ export const Board = () => {
   useEffect(() => {
     if (status === Status.PLAYING) {
       socket.on("game_loop", game_loop);
-      console.log("listener on");
     }
     return () => {
       socket.off("game_loop", game_loop);
-      console.log("listener off");
     };
   }, [status, dispatch, board]);
 

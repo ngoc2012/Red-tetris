@@ -4,6 +4,8 @@ export const Status = Object.freeze({
 });
 
 export const Mode = Object.freeze({
+  SINGLE: "single",
+  MULTI: "multi",
   NORMAL: "normal",
   INVIS: "invis",
   ACCEL: "accel",

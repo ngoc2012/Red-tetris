@@ -13,17 +13,23 @@ export class RoomPlayer {
 
 export class Room {
   static room_counter = 0;
+  io;
   id;
   mode;
+  gamemode;
   level;
+  rows_cleared;
   status;
   interval;
   owner;
   players; // Map<string,RoomPlayer>
-  constructor(owner) {
+  constructor(io, owner) {
+    this.io = io;
     this.id = Room.room_counter.toString();
     Room.room_counter++;
-    this.mode = Mode.NORMAL;
+    this.mode = Mode.SINGLE;
+    this.gamemode = Mode.NORMAL;
+    this.rows_cleared = 0;
     this.level = 5;
     this.status = Status.WAITING;
     this.interval = null;
@@ -38,10 +44,14 @@ export class Room {
     return this.players;
   }
   get players_left() {
-    return new Map([...this.players].filter(([_, v]) => v.playing === true));
+    return new Map([...this.players].filter(([, v]) => v.playing === true));
   }
   get is_playing() {
     return this.status === Status.PLAYING;
+  }
+
+  get_score(player_id) {
+    return this.players.get(player_id).score;
   }
 
   add_player(id, name) {
@@ -58,14 +68,20 @@ export class Room {
     }
   }
 
-  start_game(io) {
+  start_game() {
+    if (this.players.size > 1) {
+      this.mode = Mode.MULTI;
+    } else {
+      this.mode = Mode.SINGLE;
+    }
     this.status = Status.PLAYING;
     this.players.forEach((v) => {
       v.playing = true;
       v.score = 0;
     });
+    this.level = 5;
     this.interval = setInterval(() => {
-      io.to(this.id).emit("game_loop");
+      this.io.to(this.id).emit("game_loop");
     }, Math.pow(0.8 - (this.level - 1) * 0.007, this.level - 1) * 1000);
   }
 
@@ -108,6 +124,23 @@ export class Room {
       `New score for ${player_id} is ${this.players.get(player_id).score}`
     );
     return this.players.get(player_id).score;
+  }
+
+  level_up() {
+    this.level++;
+    this.rows_cleared %= (10 * (this.players_left.size + 1)) / 2;
+    clearInterval(this.interval);
+    this.interval = setInterval(() => {
+      this.io.to(this.id).emit("game_loop");
+    }, Math.pow(0.8 - (this.level - 1) * 0.007, this.level - 1) * 1000);
+  }
+
+  clear_rows(amount) {
+    if (this.mode !== Mode.ACCEL) return;
+    this.rows_cleared += amount;
+    if (this.rows_cleared > (10 * (this.players_left.size + 1)) / 2)
+      this.level_up();
+    console.log("level", this.level);
   }
 
   static count() {
