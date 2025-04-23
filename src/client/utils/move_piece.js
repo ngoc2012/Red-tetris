@@ -37,6 +37,7 @@ export const move_down = (board, dispatch) => {
     const [newBoard, rowsCleared] = clear_full_rows(add_block_to_board(board));
     if (newBoard.some((v, i) => i < BUFFER * WIDTH && v != "")) {
       dispatch(setStatus("game_over"));
+      return;
     }
     dispatch(setBoard(newBoard));
     pos$((WIDTH + tetrominoes[piece$()].length) / 2);

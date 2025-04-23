@@ -30,7 +30,7 @@ export class Room {
     this.mode = Mode.SINGLE;
     this.gamemode = Mode.NORMAL;
     this.rows_cleared = 0;
-    this.level = 5;
+    this.level = 0;
     this.status = Status.WAITING;
     this.interval = null;
     this.owner = owner;
@@ -136,7 +136,7 @@ export class Room {
   }
 
   clear_rows(amount) {
-    if (this.mode !== Mode.ACCEL) return;
+    if (this.gamemode !== Mode.ACCEL || this.level === 16) return;
     this.rows_cleared += amount;
     if (this.rows_cleared > (10 * (this.players_left.size + 1)) / 2)
       this.level_up();

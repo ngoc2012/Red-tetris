@@ -8,6 +8,7 @@ import {
   add_penalty,
   board_to_block,
   board_to_spectrum,
+  can_move,
 } from "../utils/utils.js";
 import {
   move_down,
@@ -20,7 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGameLoop } from "../game_loop.js";
 import socket from "../socket.js";
 import { setBoard } from "../store.js";
-import { BUFFER, LENGTH, WIDTH } from "../../common/constants.js";
+import { BUFFER, DOWN, LENGTH, WIDTH } from "../../common/constants.js";
 import { Mode, Status } from "../../common/enums.js";
 
 export const Board = () => {
@@ -29,6 +30,8 @@ export const Board = () => {
       <Square key={index} name='cell empty'></Square>
     ))
   );
+
+  const [lock, setLock] = useState(0);
   const dispatch = useDispatch();
   const board = useSelector((state) => state.game_state.board);
   const mode = useSelector((state) => state.game_state.mode);
@@ -43,7 +46,19 @@ export const Board = () => {
   };
 
   const game_loop = () => {
-    move_down(board, dispatch);
+    if (status !== Status.PLAYING) return;
+    if (can_move(board, pos$() + WIDTH, DOWN, rot$())) {
+      move_down(board, dispatch);
+    } else {
+      if (lock === 0) {
+        setLock(
+          setTimeout(() => {
+            setLock(0);
+            move_down(board, dispatch);
+          }, 500)
+        );
+      }
+    }
   };
 
   useEffect(() => {
@@ -131,7 +146,7 @@ export const Board = () => {
     return () => {
       socket.off("game_loop", game_loop);
     };
-  }, [status, dispatch, board]);
+  }, [status, dispatch, board, lock]);
 
   // Gamepad logic
   const [gamepads, setGamepads] = useState({});
