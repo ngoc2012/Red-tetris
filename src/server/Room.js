@@ -1,4 +1,4 @@
-import { Mode, Status } from "../common/enums.js";
+import { Gamemode, Mode, Status } from "../common/enums.js";
 import { loginfo } from "./index.js";
 
 export class RoomPlayer {
@@ -28,7 +28,7 @@ export class Room {
     this.id = Room.room_counter.toString();
     Room.room_counter++;
     this.mode = Mode.SINGLE;
-    this.gamemode = Mode.NORMAL;
+    this.gamemode = Gamemode.NORMAL;
     this.rows_cleared = 0;
     this.level = 0;
     this.status = Status.WAITING;
@@ -37,9 +37,10 @@ export class Room {
     this.players = new Map();
     loginfo(`Room ${this.id} created by ${owner}`);
   }
-  get owner() {
-    return this.owner;
-  }
+  // This creates infinite recursion: this.owner inside the getter calls get owner(), which again tries to return this.owner, and so on...
+  // get owner() {
+  //   return this.owner;
+  // }
   get players() {
     return this.players;
   }

@@ -3,10 +3,13 @@ export const Status = Object.freeze({
   WAITING: "waiting",
 });
 
-export const Mode = Object.freeze({
-  SINGLE: "single",
-  MULTI: "multi",
+export const Gamemode = Object.freeze({
   NORMAL: "normal",
   INVIS: "invis",
   ACCEL: "accel",
+});
+
+export const Mode = Object.freeze({
+  SINGLE: "single",
+  MULTI: "multi",
 });

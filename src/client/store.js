@@ -4,6 +4,7 @@ import { thunk } from "redux-thunk";
 
 import { storeStateMiddleWare } from "./storeStateMiddleWare.js";
 import { BUFFER, LENGTH, WIDTH } from "../common/constants.js";
+import { Mode, Gamemode } from "../common/enums.js";
 
 const initialState = {
   player: {
@@ -13,8 +14,8 @@ const initialState = {
   game_state: {
     room_id: -1,
     status: "waiting",
-    mode: null,
-    gamemode: null,
+    mode: Mode.SINGLE,
+    gamemode: Gamemode.NORMAL,
     board: Array.from({ length: (LENGTH + BUFFER) * WIDTH }).fill(""),
     score: 0,
   },
@@ -31,7 +32,7 @@ const game_stateSlice = createSlice({
       state.mode = action.payload;
     },
     setGamemode: (state, action) => {
-      state.mode = action.payload;
+      state.gamemode = action.payload;
     },
     setBoard: (state, action) => {
       state.board = action.payload;

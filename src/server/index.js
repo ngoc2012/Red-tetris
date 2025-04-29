@@ -150,13 +150,14 @@ const initEngine = (io) => {
     });
 
     socket.on("join_room", (room_id, callback) => {
+      console.log("join_room", room_id);
       if (!rooms.has(room_id) || rooms.get(room_id).status === Status.PLAYING) {
         callback({ success: false });
         return;
       }
-
+      let room = rooms.get(room_id);
       join_room(socket, room_id);
-      callback({ success: true, room: { id: room_id, mode: Mode.MULTI } });
+      callback({ success: true, room: { id: room_id, mode: Mode.MULTI, gamemode: Mode.NORMAL } });
       console.log("players", players);
       console.log("rooms", rooms);
     });

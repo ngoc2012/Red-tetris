@@ -13,7 +13,7 @@
 all: gitd
 
 gitd:
-	git add -A -- :!*.o :!*.swp :!*.env :!*.crt :!*.key
+	git add .
 	git commit -m "$(M)"
 	git push
 	

@@ -5,7 +5,9 @@ import flyd from "flyd";
 import { next_pieces$ } from "../index.jsx";
 import { tetrominoes } from "../../common/tetrominoes.js";
 import socket from "../socket.js";
-import { Mode } from "../../common/enums.js";
+import { Gamemode } from "../../common/enums.js";
+import { setGamemode } from "../store.js";
+
 
 const SmallBoard = ({ tetro }) => {
   return (
@@ -56,7 +58,7 @@ export const Info = () => {
   const status = useSelector((state) => state.game_state.status);
   const score = useSelector((state) => state.game_state.score);
   const room_id = useSelector((state) => state.game_state.room_id);
-  const mode = useSelector((state) => state.game_state.score);
+  const gamemode = useSelector((state) => state.game_state.gamemode);
 
   const start_game = () => {
     socket.emit("game_start", room_id, (response) => {
@@ -68,16 +70,16 @@ export const Info = () => {
     });
   };
 
-  const end_game = () => {
-    // console.log("end game");
-    // dispatch(setStatus("game_over"));
-    socket.emit("game_start", room_id, (response) => {
-      if (response.success) {
-        console.log("game starting");
-      } else {
-        console.log("could not start game");
-      }
-    });
+  const change_gamemode = (e) => {
+    if (!Object.values(Gamemode).includes(e.target.value)) return;
+    dispatch(setGamemode(e.target.value));
+    // socket.emit("game_start", room_id, (response) => {
+    //   if (response.success) {
+    //     console.log("game starting");
+    //   } else {
+    //     console.log("could not start game");
+    //   }
+    // });
   };
 
   return (
@@ -99,12 +101,10 @@ export const Info = () => {
         </button>
         <select
           className='mode'
-          onChange={(e) => {
-            setMode(e.target.value);
-          }}
-          value={mode}
+          onChange={change_gamemode}
+          value={gamemode}
         >
-          {Object.entries(Mode).map(([key, value]) => (
+          {Object.entries(Gamemode).map(([key, value]) => (
           <option key={key} value={value}>
             {value}
           </option>
