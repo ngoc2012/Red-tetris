@@ -1,4 +1,3 @@
-import { setStatus } from "../store";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useState, useEffect } from "react";
 import { Spectrums } from "./Spectrums.jsx";
@@ -6,6 +5,7 @@ import flyd from "flyd";
 import { next_pieces$ } from "../index.jsx";
 import { tetrominoes } from "../../common/tetrominoes.js";
 import socket from "../socket.js";
+import { Mode } from "../../common/enums.js";
 
 const SmallBoard = ({ tetro }) => {
   return (
@@ -26,6 +26,7 @@ const SmallBoard = ({ tetro }) => {
 
 const Pieces = () => {
   let [pieces, setPieces] = useState([]);
+  
 
   useEffect(() => {
     const subscription = flyd.map((next_pieces) => {
@@ -55,6 +56,7 @@ export const Info = () => {
   const status = useSelector((state) => state.game_state.status);
   const score = useSelector((state) => state.game_state.score);
   const room_id = useSelector((state) => state.game_state.room_id);
+  const mode = useSelector((state) => state.game_state.score);
 
   const start_game = () => {
     socket.emit("game_start", room_id, (response) => {
@@ -69,6 +71,13 @@ export const Info = () => {
   const end_game = () => {
     // console.log("end game");
     // dispatch(setStatus("game_over"));
+    socket.emit("game_start", room_id, (response) => {
+      if (response.success) {
+        console.log("game starting");
+      } else {
+        console.log("could not start game");
+      }
+    });
   };
 
   return (
@@ -88,9 +97,19 @@ export const Info = () => {
         >
           Start game
         </button>
-        <button className='button exit_game' onClick={end_game}>
-          End game
-        </button>
+        <select
+          className='mode'
+          onChange={(e) => {
+            setMode(e.target.value);
+          }}
+          value={mode}
+        >
+          {Object.entries(Mode).map(([key, value]) => (
+          <option key={key} value={value}>
+            {value}
+          </option>
+        ))}
+      </select>
       </div>
       <Spectrums />
     </div>
