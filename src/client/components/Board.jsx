@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { pos$, rot$, key$, piece$ } from "../index.jsx";
-import flyd from "flyd";
-import { useGamepads } from "react-gamepads";
+import { useGamepad } from "./GamePad.jsx";
 import { Square } from "./Square.jsx";
-import { tetrominoes } from "../../common/tetrominoes.js";
+import flyd from "flyd";
 import {
   add_penalty,
   board_to_block,
@@ -12,10 +11,10 @@ import {
 } from "../utils/utils.js";
 import {
   move_down,
-  move_down_max,
-  move_left,
-  move_right,
-  rotate_piece,
+  // move_down_max,
+  // move_left,
+  // move_right,
+  // rotate_piece,
 } from "../utils/move_piece.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useGameLoop } from "../game_loop.js";
@@ -23,6 +22,8 @@ import socket from "../socket.js";
 import { setBoard } from "../store.js";
 import { BUFFER, DOWN, LENGTH, WIDTH } from "../../common/constants.js";
 import { Mode, Status } from "../../common/enums.js";
+import { useKeyboard } from "./Keyboard.jsx";
+import { tetrominoes } from "../../common/tetrominoes.js";
 
 export const Board = () => {
   const [grid, setGrid] = useState(
@@ -37,6 +38,8 @@ export const Board = () => {
   const mode = useSelector((state) => state.game_state.mode);
   const status = useSelector((state) => state.game_state.status);
   useGameLoop();
+  useGamepad();
+  useKeyboard(board, setGrid, dispatch);
 
   const handle_penalty = (rows) => {
     if (rows > 0 && status === "playing") {
@@ -63,33 +66,33 @@ export const Board = () => {
 
   useEffect(() => {
     socket.on("penalty", handle_penalty);
-    const subscription = flyd.map((key) => {
-      if (!piece$() || !key) {
-        return;
-      }
-      // Key pressed logic here
-      switch (key) {
-        case "ArrowRight":
-          move_right(board);
-          break;
-        case "ArrowLeft":
-          move_left(board);
-          break;
-        case "ArrowDown":
-          move_down(board, dispatch);
-          break;
-        case "ArrowUp":
-          rotate_piece(board);
-          break;
-        case " ":
-          move_down_max(board, dispatch);
-          break;
-        default:
-          break;
-      }
-      console.log(key);
-      key$("");
-    }, key$);
+    // const subscription = flyd.map((key) => {
+    //   if (!piece$() || !key) {
+    //     return;
+    //   }
+    //   // Key pressed logic here
+    //   switch (key) {
+    //     case "ArrowRight":
+    //       move_right(board);
+    //       break;
+    //     case "ArrowLeft":
+    //       move_left(board);
+    //       break;
+    //     case "ArrowDown":
+    //       move_down(board, dispatch);
+    //       break;
+    //     case "ArrowUp":
+    //       rotate_piece(board);
+    //       break;
+    //     case " ":
+    //       move_down_max(board, dispatch);
+    //       break;
+    //     default:
+    //       break;
+    //   }
+    //   console.log(key);
+    //   key$("");
+    // }, key$);
     const subscription1 = flyd.combine(
       (pos$, rot$, piece$) => {
         setGrid(
@@ -133,8 +136,8 @@ export const Board = () => {
     socket.emit("board_update", board_to_spectrum(board));
 
     return () => {
-      subscription.end(true);
-      subscription1.end(true);
+      // subscription.end(true);
+      // subscription1.end(true);
       socket.off("penalty", handle_penalty);
     };
   }, [dispatch, board]);
@@ -147,43 +150,6 @@ export const Board = () => {
       socket.off("game_loop", game_loop);
     };
   }, [status, dispatch, board, lock]);
-
-  // Gamepad logic
-  const [gamepads, setGamepads] = useState({});
-  useGamepads((gamepads) => setGamepads(gamepads));
-
-  useEffect(() => {
-    if (gamepads[0] !== undefined) {
-      gamepads[0].buttons.forEach((button, index) => {
-        if (button.pressed) {
-          if (index == 1 || index == 2) rotate_piece(board);
-          if (index == 0 || index == 3) move_down_max(board, dispatch);
-          // console.log("Button pressed:", index);
-        }
-      });
-      gamepads[0].axes.forEach((value, index) => {
-        if (value !== 0) {
-          if (index === 0) {
-            if (value === -1) {
-              move_left(board);
-              // console.log("Left pressed");
-            } else if (value === 1) {
-              move_right(board);
-              // console.log("Right pressed");
-            }
-          } else if (index === 1) {
-            if (value === -1) {
-              rotate_piece(board);
-              // console.log("Up pressed");
-            } else if (value === 1) {
-              move_down(board, dispatch);
-              // console.log("Down pressed");
-            }
-          }
-        }
-      });
-    }
-  }, [gamepads[0]]);
 
   return <div className='board'>{grid.slice(BUFFER * WIDTH)}</div>;
 };
