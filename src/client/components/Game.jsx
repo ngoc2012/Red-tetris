@@ -49,7 +49,9 @@ export const Game = () => {
       if (response.success) {
         setDisplay(true);
         dispatch(setRoomId(roomid));
-        dispatch(setStatus(Status.WAITING));
+        dispatch(setStatus(response.room.status));
+        dispatch(setGamemode(response.room.gamemode));
+        dispatch(setMode(response.room.mode));
       } else {
         setDisplay(false);
       }

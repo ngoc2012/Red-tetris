@@ -157,7 +157,7 @@ const initEngine = (io) => {
       }
       let room = rooms.get(room_id);
       join_room(socket, room_id);
-      callback({ success: true, room: { id: room_id, mode: Mode.MULTI, gamemode: Mode.NORMAL } });
+      callback({ success: true, room: room.get_room_info() });
       console.log("players", players);
       console.log("rooms", rooms);
     });

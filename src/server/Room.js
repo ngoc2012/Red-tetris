@@ -37,18 +37,38 @@ export class Room {
     this.players = new Map();
     loginfo(`Room ${this.id} created by ${owner}`);
   }
-  // This creates infinite recursion: this.owner inside the getter calls get owner(), which again tries to return this.owner, and so on...
+  // This creates infinite recursion: this.owner inside the getter calls get owner(), 
+  // which again tries to return this.owner, and so on...
   // get owner() {
   //   return this.owner;
   // }
-  get players() {
-    return this.players;
-  }
+  // get players() {
+  //   return this.players;
+  // }
   get players_left() {
     return new Map([...this.players].filter(([, v]) => v.playing === true));
   }
   get is_playing() {
     return this.status === Status.PLAYING;
+  }
+
+  get_room_info() {
+    return {
+      id: this.id,
+      mode: this.mode,
+      gamemode: this.gamemode,
+      level: this.level,
+      rows_cleared: this.rows_cleared,
+      status: this.status,
+      players: [...this.players].map(([key, value]) => ({
+        id: key,
+        name: value.name,
+        playing: value.playing,
+        score: value.score,
+        penalty: value.penalty,
+        spectrum: value.spectrum,
+      })),
+    };
   }
 
   get_score(player_id) {
