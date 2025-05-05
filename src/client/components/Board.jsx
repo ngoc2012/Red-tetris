@@ -39,7 +39,7 @@ export const Board = () => {
   const status = useSelector((state) => state.game_state.status);
   useGameLoop();
   useGamepad();
-  useKeyboard(board, setGrid, dispatch);
+  useKeyboard();
 
   const handle_penalty = (rows) => {
     if (rows > 0 && status === "playing") {
@@ -66,33 +66,6 @@ export const Board = () => {
 
   useEffect(() => {
     socket.on("penalty", handle_penalty);
-    // const subscription = flyd.map((key) => {
-    //   if (!piece$() || !key) {
-    //     return;
-    //   }
-    //   // Key pressed logic here
-    //   switch (key) {
-    //     case "ArrowRight":
-    //       move_right(board);
-    //       break;
-    //     case "ArrowLeft":
-    //       move_left(board);
-    //       break;
-    //     case "ArrowDown":
-    //       move_down(board, dispatch);
-    //       break;
-    //     case "ArrowUp":
-    //       rotate_piece(board);
-    //       break;
-    //     case " ":
-    //       move_down_max(board, dispatch);
-    //       break;
-    //     default:
-    //       break;
-    //   }
-    //   console.log(key);
-    //   key$("");
-    // }, key$);
     const subscription1 = flyd.combine(
       (pos$, rot$, piece$) => {
         setGrid(
@@ -136,8 +109,7 @@ export const Board = () => {
     socket.emit("board_update", board_to_spectrum(board));
 
     return () => {
-      // subscription.end(true);
-      // subscription1.end(true);
+      subscription1.end(true);
       socket.off("penalty", handle_penalty);
     };
   }, [dispatch, board]);

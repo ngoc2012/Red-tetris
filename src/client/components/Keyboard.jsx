@@ -20,7 +20,7 @@ import { tetrominoes } from "../../common/tetrominoes.js";
 import { useDispatch, useSelector } from "react-redux";
 
 
-export const useKeyboard = (setGrid) => {
+export const useKeyboard = () => {
 
   const board = useSelector((state) => state.game_state.board);
   const dispatch = useDispatch();
@@ -53,51 +53,9 @@ export const useKeyboard = (setGrid) => {
       console.log(key);
       key$("");
     }, key$);
-    // const subscription1 = flyd.combine(
-    //   (pos$, rot$, piece$) => {
-    //     setGrid(
-    //       Array.from({ length: WIDTH * (LENGTH + BUFFER) }).map((_, i) => {
-    //         const row = Math.floor(i / WIDTH);
-    //         const col = (i + WIDTH) % WIDTH;
-    //         const [block_col, block_row] = board_to_block(pos$(), col, row);
-
-    //         if (
-    //           piece$() &&
-    //           block_row >= 0 &&
-    //           block_row <= tetrominoes[piece$()][rot$()].length - 1 &&
-    //           block_col >= 0 &&
-    //           block_col <= tetrominoes[piece$()][rot$()][0].length - 1 &&
-    //           tetrominoes[piece$()][rot$()][block_row][
-    //             (block_col + WIDTH) % WIDTH
-    //           ] == 1
-    //         ) {
-    //           return (
-    //             <Square
-    //               key={i}
-    //               color={piece$()}
-    //               filled={true}
-    //               blocked={false}
-    //             ></Square>
-    //           );
-    //         }
-    //         return (
-    //           <Square
-    //             key={i}
-    //             color={board[i]}
-    //             filled={board[i] !== "" && mode !== Mode.INVIS}
-    //             blocked={board[i] === "X"}
-    //           ></Square>
-    //         );
-    //       })
-    //     );
-    //   },
-    //   [pos$, rot$, piece$]
-    // );
-    // socket.emit("board_update", board_to_spectrum(board));
 
     return () => {
       subscription.end(true);
-      // subscription1.end(true);
     };
   }, []);
 };
