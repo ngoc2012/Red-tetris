@@ -5,14 +5,16 @@ import {
   RIGHT,
   ROT,
   WIDTH,
+  LENGTH,
 } from "../../common/constants.js";
+import { PieceState } from "../../common/enums.js";
 import { tetrominoes } from "../../common/tetrominoes.js";
-import { piece$, pos$, rot$ } from "../index.jsx";
+import { next_pieces$, fall_count$, lock_count$, piece$, pos$, rot$, state$ } from "../index.jsx";
 import socket from "../socket.js";
 import { setBoard, setStatus } from "../store.js";
 import {
+  block_to_board,
   add_block_to_board,
-  can_move,
   clear_full_rows,
   add_next_piece,
   next_rot,
@@ -30,23 +32,34 @@ export const move_right = (board) => {
   }
 };
 
+export const place_piece = (board, dispatch) => {
+  console.log("Placing piece");
+  const [newBoard, rowsCleared] = clear_full_rows(add_block_to_board(board));
+  if (newBoard.some((v, i) => i < BUFFER * WIDTH && v != "")) {
+    dispatch(setStatus("game_over"));
+    return;
+  }
+  dispatch(setBoard(newBoard));
+  piece$(next_pieces$()[0]);
+  console.log("Next piece: ", next_pieces$()[0], piece$());
+  pos$((WIDTH + tetrominoes[piece$()].length) / 2);
+  rot$(0);
+  next_pieces$(next_pieces$().slice(1));
+  
+  // add_next_piece(false);
+  if (rowsCleared > 0) {
+    socket.emit("cleared_a_line", rowsCleared);
+  }
+};
+
 export const move_down = (board, dispatch) => {
   if (can_move(board, pos$() + WIDTH, DOWN, rot$())) {
+    state$(PieceState.FALLING);
+    lock_count$(0);
+    fall_count$(0);
     pos$(pos$() + WIDTH);
-  } else {
-    const [newBoard, rowsCleared] = clear_full_rows(add_block_to_board(board));
-    if (newBoard.some((v, i) => i < BUFFER * WIDTH && v != "")) {
-      dispatch(setStatus("game_over"));
-      return;
-    }
-    dispatch(setBoard(newBoard));
-    pos$((WIDTH + tetrominoes[piece$()].length) / 2);
-    rot$(0);
-    add_next_piece(false);
-    if (rowsCleared > 0) {
-      socket.emit("cleared_a_line", rowsCleared);
-    }
-  }
+  } else
+    place_piece(board, dispatch);
 };
 
 export const rotate_piece = (board) => {
@@ -87,4 +100,34 @@ export const move_down_max = (board, dispatch) => {
   }
   pos$(pos$() + WIDTH * (dist - 1));
   move_down(board, dispatch);
+};
+
+export const can_move = (board, pos, direction, rotation) => {
+  const piece = Array.from(tetrominoes[piece$()][rotation]).flat(1);
+  // console.log(piece);
+  const center_col =
+    ((pos % WIDTH) + tetrominoes[piece$()][rotation].length / 2) % WIDTH;
+  return piece.every((v, i) => {
+    // console.log(v);
+    if (v === 1) {
+      const row = Math.floor(i / tetrominoes[piece$()][rotation].length);
+      const col = i % tetrominoes[piece$()][rotation].length;
+      const [board_col, board_row] = block_to_board(pos, col, row);
+      // console.log(
+      //   `piece: ${piece$()} row: ${row} col: ${col} board_row: ${board_row} board_col: ${board_col}`
+      // );
+      if (
+        board_row >= LENGTH + BUFFER ||
+        board_col < 0 ||
+        (board_col === 0 && direction === RIGHT) ||
+        (board_col === 9 && direction === LEFT) ||
+        (Math.abs(board_col - center_col) > 4 && direction & ROT) ||
+        (board[board_row * WIDTH + board_col] != "" &&
+          board[board_row * WIDTH + board_col] != undefined)
+      ) {
+        return false;
+      }
+    }
+    return true;
+  });
 };

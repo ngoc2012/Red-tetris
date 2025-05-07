@@ -13,3 +13,9 @@ export const Mode = Object.freeze({
   SINGLE: "single",
   MULTI: "multi",
 });
+
+export const PieceState = Object.freeze({
+  FALLING: "falling",
+  LOCKED: "locked",
+});
+

@@ -16,6 +16,7 @@ const initialState = {
     status: "waiting",
     mode: Mode.SINGLE,
     gamemode: Gamemode.NORMAL,
+    level: 0,
     board: Array.from({ length: (LENGTH + BUFFER) * WIDTH }).fill(""),
     score: 0,
   },
@@ -33,6 +34,9 @@ const game_stateSlice = createSlice({
     },
     setGamemode: (state, action) => {
       state.gamemode = action.payload;
+    },
+    setLevel: (state, action) => {
+      state.level = action.payload;
     },
     setBoard: (state, action) => {
       state.board = action.payload;
@@ -76,6 +80,7 @@ export const {
   setStatus,
   setMode,
   setGamemode,
+  setLevel,
   setRoomId,
   setBoard,
   setScore,

@@ -3,10 +3,10 @@ import { tetrominoes } from "../../common/tetrominoes.js";
 import { resetBoard, setScore } from "../store.js";
 import {
   BUFFER,
-  LEFT,
-  LENGTH,
-  RIGHT,
-  ROT,
+  // LEFT,
+  // LENGTH,
+  // RIGHT,
+  // ROT,
   WIDTH,
 } from "../../common/constants.js";
 
@@ -112,28 +112,4 @@ export const add_block_to_board = (board) => {
   return new_board;
 };
 
-export const can_move = (board, pos, direction, rotation) => {
-  const piece = Array.from(tetrominoes[piece$()][rotation]).flat(1);
-  const center_col =
-    ((pos % WIDTH) + tetrominoes[piece$()][rotation].length / 2) % WIDTH;
-  return piece.every((v, i) => {
-    if (v != "") {
-      const row = Math.floor(i / tetrominoes[piece$()][rotation].length);
-      const col = i % tetrominoes[piece$()][rotation].length;
-      const [board_col, board_row] = block_to_board(pos, col, row);
 
-      if (
-        board_row >= LENGTH + BUFFER ||
-        board_col < 0 ||
-        (board_col === 0 && direction === RIGHT) ||
-        (board_col === 9 && direction === LEFT) ||
-        (Math.abs(board_col - center_col) > 4 && direction & ROT) ||
-        (board[board_row * WIDTH + board_col] != "" &&
-          board[board_row * WIDTH + board_col] != undefined)
-      ) {
-        return false;
-      }
-    }
-    return true;
-  });
-};

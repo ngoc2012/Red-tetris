@@ -6,7 +6,7 @@ import { next_pieces$ } from "../index.jsx";
 import { tetrominoes } from "../../common/tetrominoes.js";
 import socket from "../socket.js";
 import { Gamemode } from "../../common/enums.js";
-import { setGamemode } from "../store.js";
+import { setGamemode, setStatus } from "../store.js";
 
 
 const SmallBoard = ({ tetro }) => {
@@ -64,6 +64,7 @@ export const Info = () => {
     socket.emit("game_start", room_id, (response) => {
       if (response.success) {
         console.log("game starting");
+        // dispatch(setStatus("playing"));
       } else {
         console.log("could not start game");
       }

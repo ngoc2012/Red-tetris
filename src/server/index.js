@@ -86,6 +86,7 @@ const initEngine = (io) => {
   const give_pieces = (room_id, count) => {
     for (let index = 0; index < count; index++) {
       const piece = new Piece();
+      console.log("piece", piece, room_id);
       io.to(room_id).emit("next_piece", piece.type);
     }
   };
@@ -135,8 +136,8 @@ const initEngine = (io) => {
     socket.emit("connected", { id: socket.id });
     socket.join("lobby");
     players.set(socket.id, new Player());
-    console.log("players", players);
-    console.log("rooms", rooms);
+    // console.log("players", players);
+    // console.log("rooms", rooms);
 
     socket.on("rename", ({ new_name }, callback) => {
       callback({ success: players.get(socket.id).rename(new_name) });
@@ -157,7 +158,7 @@ const initEngine = (io) => {
       }
       const room = rooms.get(room_id);
       join_room(socket, room_id);
-      callback({ success: true, room: room.get_room_info() });
+      callback({ success: true, room: room.get_info() });
       console.log("players", players);
       console.log("rooms", rooms);
     });
@@ -189,11 +190,8 @@ const initEngine = (io) => {
         io.to("lobby").emit("room_update");
         give_pieces(room_id, 4);
         callback({ success: true });
-        io.to(room_id).emit("game_start", {
-          mode: room.mode,
-          gamemode: room.gamemode,
-        });
-        debug_print_room(room);
+        io.to(room_id).emit("game_start", room.get_info());
+        // debug_print_room(room);
       } else {
         callback({ success: false });
       }
@@ -209,6 +207,7 @@ const initEngine = (io) => {
     });
 
     socket.on("board_update", ({ spectrum, penalty, pieces_left }) => {
+      console.log("board_update", spectrum, penalty, pieces_left);
       const room_id = players.get(socket.id).room;
       give_pieces(room_id, 3 - pieces_left);
       const player = rooms
@@ -231,7 +230,7 @@ const initEngine = (io) => {
       game_end(room_id);
       loginfo(`${socket.id} has topped out with score ${score}`);
       save_score(socket.id, score, room_id);
-      debug_print_room(room);
+      // debug_print_room(room);
       console.log("history", history);
     });
 
