@@ -8,17 +8,19 @@ import { reset } from "../utils/utils.js";
 import { useParams } from "react-router-dom";
 import { NotFound } from "./NotFound.jsx";
 import { useGameConnect } from "./GameConnect.jsx";
-import { useGameLoop } from "../game_loop.js";
-import { useGameStatus } from "./GameStatus.jsx";
+import { useGameLoop } from "./GameLoop.jsx";
+import { useGamepad } from "./GamePad.jsx";
+import { useKeyboard } from "./Keyboard.jsx";
+import { store } from "../store.js";
+
 
 export const Game = () => {
 
   console.log("Game rendered");
 
   const { roomid, name } = useParams();
-  const [display, setDisplay] = useState(null);
-  const dispatch = useDispatch();
-  useGameStatus();
+  const [found, setFound] = useState(false);
+  const [loading, setLoading] = useState(true);
   useGameConnect();
   useGamepad();
   useKeyboard();
@@ -27,30 +29,33 @@ export const Game = () => {
   useEffect(() => {
     socket.emit("join_room", roomid, (response) => {
       if (response.success) {
-        setDisplay(true);
-        dispatch(setRoomId(roomid));
-        dispatch(setStatus(response.room.status));
-        dispatch(setGamemode(response.room.gamemode));
-        dispatch(setMode(response.room.mode));
-        dispatch(setLevel(response.room.level));
+        setFound(true);
+        store.dispatch(setRoomId(roomid));
+        store.dispatch(setStatus(response.room.status));
+        store.dispatch(setGamemode(response.room.gamemode));
+        store.dispatch(setMode(response.room.mode));
+        store.dispatch(setLevel(response.room.level));
       } else {
-        setDisplay(false);
+        setFound(false);
       }
+      setLoading(false);
     });
     return () => {
-      reset(dispatch);
+      reset();
       socket.emit("leave_room", roomid);
     };
   }, [roomid, name]);
 
-  if (display === null) {
-    return;
-  }
+  useEffect(() => {
+    return () => {
+      console.log("Game unmounted");
+    };
+  }, []);
 
-  return display ? (
+  return loading ? <h1>Loading</h1> : (found ? (
     <div className='main'>
       <Board />
       <Info />
     </div>
-  ) : (<NotFound />);
+  ) : (<NotFound />));
 };

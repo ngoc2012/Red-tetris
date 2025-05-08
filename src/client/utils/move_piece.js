@@ -35,8 +35,6 @@ export const move_right = () => {
 
 export const place_piece = () => {
   console.log("Placing piece");
-
-  
   add_block_to_board();
   const rowsCleared = clear_full_rows();
 
@@ -52,11 +50,9 @@ export const place_piece = () => {
   pos$((WIDTH + tetrominoes[piece$()].length) / 2);
   rot$(0);
   next_pieces$(next_pieces$().slice(1));
-  
+  socket.emit("next_piece");
   // add_next_piece(false);
-  if (rowsCleared > 0) {
-    socket.emit("cleared_a_line", rowsCleared);
-  }
+  if (rowsCleared > 0) socket.emit("cleared_a_line", rowsCleared);
 };
 
 export const move_down = () => {

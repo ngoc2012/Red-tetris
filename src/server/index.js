@@ -159,8 +159,8 @@ const initEngine = (io) => {
       const room = rooms.get(room_id);
       join_room(socket, room_id);
       callback({ success: true, room: room.get_info() });
-      console.log("players", players);
-      console.log("rooms", rooms);
+      // console.log("players", players);
+      // console.log("rooms", rooms);
     });
 
     socket.on("leave_room", (room_id) => {
@@ -168,8 +168,8 @@ const initEngine = (io) => {
         leave_room(socket, room_id);
         players.get(socket.id).room = "lobby";
         socket.join("lobby");
-        console.log("rooms", rooms);
-        console.log("players", players);
+        // console.log("rooms", rooms);
+        // console.log("players", players);
       }
     });
 
@@ -207,9 +207,9 @@ const initEngine = (io) => {
     });
 
     socket.on("board_update", ({ spectrum, penalty, pieces_left }) => {
-      console.log("board_update", spectrum, penalty, pieces_left);
+      console.log("board_update");
       const room_id = players.get(socket.id).room;
-      give_pieces(room_id, 3 - pieces_left);
+      // give_pieces(room_id, 3 - pieces_left);
       const player = rooms
         .get(room_id)
         .update_spectrum(socket.id, spectrum, penalty);
@@ -259,10 +259,9 @@ const initEngine = (io) => {
       }
     });
 
-    socket.on("next_piece", ({ room_id }) => {
-      if (!rooms.has(room_id) || !rooms.get(room_id).players.has(socket.id)) {
-        return;
-      }
+    socket.on("next_piece", () => {
+      const room_id = players.get(socket.id).room;
+      if (!room_id) return;
       console.log("next_piece", room_id);
       give_pieces(room_id, 1);
     });
