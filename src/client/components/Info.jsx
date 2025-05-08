@@ -5,7 +5,7 @@ import flyd from "flyd";
 import { next_pieces$ } from "../index.jsx";
 import { tetrominoes } from "../../common/tetrominoes.js";
 import socket from "../socket.js";
-import { Gamemode } from "../../common/enums.js";
+import { Gamemode, Status } from "../../common/enums.js";
 import { setGamemode, setStatus } from "../store.js";
 
 
@@ -64,7 +64,7 @@ export const Info = () => {
     socket.emit("game_start", room_id, (response) => {
       if (response.success) {
         console.log("game starting");
-        // dispatch(setStatus("playing"));
+        dispatch(setStatus(Status.PLAYING));
       } else {
         console.log("could not start game");
       }

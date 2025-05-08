@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import flyd from "flyd";
 import {
   move_down,
@@ -10,17 +10,11 @@ import {
   place_piece,
 } from "../utils/move_piece.js";
 import { lock_count$, fall_count$, state$, pos$, rot$, key$, piece$ } from "../index.jsx";
-import { Square } from "./Square.jsx";
-import { BUFFER, DOWN, LENGTH, WIDTH } from "../../common/constants.js";
-import { tetrominoes } from "../../common/tetrominoes.js";
-import { useDispatch, useSelector } from "react-redux";
+import { DOWN, WIDTH } from "../../common/constants.js";
 import {PieceState} from "../../common/enums.js";
 
 
 export const useKeyboard = () => {
-
-  const board = useSelector((state) => state.game_state.board);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const subscription = flyd.map((key) => {
@@ -30,29 +24,28 @@ export const useKeyboard = () => {
       // Key pressed logic here
       switch (key) {
         case "ArrowRight":
-          move_right(board);
+          move_right();
           break;
         case "ArrowLeft":
-          move_left(board);
+          move_left();
           break;
         case "ArrowDown":
           // move_down(board, dispatch);
-          if (can_move(board, pos$() + WIDTH, DOWN, rot$())) {
+          if (can_move(pos$() + WIDTH, DOWN, rot$())) {
             state$(PieceState.FALLING);
             lock_count$(0);
             fall_count$(0);
             pos$(pos$() + WIDTH);
           } else {
             console.log("ArrowDown, Placing piece");
-            place_piece(board, dispatch);
+            place_piece();
           }
-            
           break;
         case "ArrowUp":
-          rotate_piece(board);
+          rotate_piece();
           break;
         case " ":
-          move_down_max(board, dispatch);
+          move_down_max();
           break;
         default:
           break;

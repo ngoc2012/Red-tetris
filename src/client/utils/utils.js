@@ -1,18 +1,12 @@
 import { piece$, rot$, pos$, next_pieces$ } from "../index.jsx";
 import { tetrominoes } from "../../common/tetrominoes.js";
-import { resetBoard, setScore } from "../store.js";
-import {
-  BUFFER,
-  // LEFT,
-  // LENGTH,
-  // RIGHT,
-  // ROT,
-  WIDTH,
-} from "../../common/constants.js";
+import { store, setBoard, resetBoard, setScore } from "../store.js";
+import { BUFFER, WIDTH } from "../../common/constants.js";
+import { Status } from "../../common/enums.js";
 
-export const reset = (dispatch) => {
-  dispatch(resetBoard());
-  dispatch(setScore(0));
+export const reset = () => {
+  store.dispatch(resetBoard());
+  store.dispatch(setScore(0));
   next_pieces$([]);
   piece$("");
 };
@@ -43,16 +37,19 @@ export const block_to_board = (pos, col, row) => {
   ];
 };
 
-export const add_penalty = (board, rows) => {
+export const add_penalty = (rows) => {
+  if (rows <= 0 || store.getState().game_state.status !== Status.PLAYING) return;
   pos$(Math.max(pos$() - rows * WIDTH, pos$()));
-  return Array.from([
+  const board = store.getState().game_state.board;
+  store.dispatch(setBoard(Array.from([
     ...board.slice(rows * WIDTH),
     ...Array(rows * WIDTH).fill("X"),
-  ]);
+  ])));
 };
 
-export const board_to_spectrum = (board) => {
+export const board_to_spectrum = () => {
   const spectrum = Array.from({ length: 10 }).fill(0);
+  const board = store.getState().game_state.board;
 
   for (let index = BUFFER * WIDTH; index < board.length; index++) {
     if (board[index] === "X") {
@@ -69,9 +66,10 @@ export const board_to_spectrum = (board) => {
   return { spectrum: spectrum, penalty: 0, pieces_left: next_pieces$().length };
 };
 
-export const clear_full_rows = (board) => {
+export const clear_full_rows = () => {
   let full_row = false;
   let full_row_count = 0;
+  const board = store.getState().game_state.board;
   const new_board = board.slice().filter((v, i) => {
     if (i % WIDTH === 0) {
       full_row = false;
@@ -87,10 +85,10 @@ export const clear_full_rows = (board) => {
     }
     return full_row === false;
   });
-  return [
-    Array.from([...Array(full_row_count * WIDTH).fill(""), ...new_board]),
-    full_row_count,
-  ];
+  store.dispatch(setBoard(Array.from(
+    [...Array(full_row_count * WIDTH).fill(""), ...new_board]
+  )));
+  return full_row_count;
 };
 
 export const add_block_to_board = (board) => {
