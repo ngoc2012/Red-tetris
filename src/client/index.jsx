@@ -18,7 +18,7 @@ root.render(
 );
 
 export const key$ = flyd.stream();
-export const pos$ = flyd.stream(0);
+export const pos$ = flyd.stream(3);
 export const rot$ = flyd.stream(0);
 export const fall_count$ = flyd.stream(0);
 export const lock_count$ = flyd.stream(0);

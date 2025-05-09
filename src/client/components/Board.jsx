@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import flyd from "flyd";
 import { pos$, rot$, piece$ } from "../index.jsx";
 import { Square } from "./Square.jsx";
 import { board_to_block, board_to_spectrum } from "../utils/utils.js";
@@ -10,7 +11,7 @@ import { tetrominoes } from "../../common/tetrominoes.js";
 
 
 export const Board = () => {
-  console.log("Board rendered");
+  // console.log("Board rendered");
 
   const [grid, setGrid] = useState(
     Array.from({ length: WIDTH * (LENGTH + BUFFER) }).map((_, index) => (
@@ -20,7 +21,19 @@ export const Board = () => {
   const board = useSelector((state) => state.game_state.board);
   const mode = useSelector((state) => state.game_state.mode);
 
-  useEffect(() => {
+  const boardRef = useRef(board);
+  const modeRef = useRef(mode);
+
+  // Keep boardRef and modeRef up to date
+  // useEffect(() => {
+    
+  // }, [board, mode]);
+
+  const board_update = () => {
+    // console.log("Board updated");
+    const currentBoard = boardRef.current;
+    const currentMode = modeRef.current;
+
     setGrid(
       Array.from({ length: WIDTH * (LENGTH + BUFFER) }).map((_, i) => {
         const row = Math.floor(i / WIDTH);
@@ -50,14 +63,30 @@ export const Board = () => {
         return (
           <Square
             key={i}
-            color={board[i]}
-            filled={board[i] !== "" && mode !== Mode.INVIS}
-            blocked={board[i] === "X"}
+            color={currentBoard[i]}
+            filled={currentBoard[i] !== "" && mode !== Mode.INVIS}
+            blocked={currentBoard[i] === "X"}
           ></Square>
         );
       })
     );
+  };
 
+  useEffect(() => {
+    const subscription = flyd.combine(() => {
+      board_update();
+    }, [pos$, rot$, piece$]);
+
+    return () => {
+      subscription.end(true);
+    };
+  }, []);
+
+
+  useEffect(() => {
+    boardRef.current = board;
+    modeRef.current = mode;
+    board_update();
     return () => {};
   }, [board, mode]);
 

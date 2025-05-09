@@ -4,8 +4,9 @@ import { pos$, rot$ } from "../index.jsx";
 import { can_move, place_piece } from "../utils/move_piece.js";
 import { DOWN, WIDTH, tetrisGravityFrames, LOCK } from "../../common/constants.js";
 import { Status, PieceState } from "../../common/enums.js";
-import { state$, fall_count$, lock_count$ } from "../index.jsx";
+import { piece$, next_pieces$, state$, fall_count$, lock_count$ } from "../index.jsx";
 import { store } from "../store.js";
+import socket from "../socket.js";
 
 
 export const useGameLoop = () => {
@@ -22,35 +23,34 @@ export const useGameLoop = () => {
       cancelAnimationFrame(frameRef.current);
       return;
     }
-    if (now - lastFrameTime >= 1000) {
+    if (now - lastFrameTime >= 100) {
       lastFrameTime = now;
 
 
-      console.log("drawFrame", state$());
+      // console.log("drawFrame", state$());
       if (state$() === PieceState.LOCKED) {
         lock_count$(lock_count$() + 1);
-        console.log("lock_count", lock_count$());
-        if (lock_count$() === LOCK) {
-          lock_count$(0);
-          fall_count$(0);
-          state$(PieceState.FALLING);
-          place_piece()
-        }
+        // console.log("lock_count", lock_count$());
+        if (lock_count$() === LOCK)
+          place_piece();
       }
         
       if (state$() === PieceState.FALLING) {
         fall_count$(fall_count$() + 1);
-        console.log("fall_count", fall_count$());
+        // console.log("fall_count", fall_count$());
         const frames = tetrisGravityFrames[store.getState().game_state.level];
         if (fall_count$() === frames) {
           if (can_move(pos$() + WIDTH, DOWN, rot$())) {
             fall_count$(0);
             pos$(pos$() + WIDTH);
-          } else {
-            state$(PieceState.LOCKED);
-            console.log("LOCKED");
-            lock_count$(0);
-          }
+            // console.log("Falling", pos$());
+            if (!can_move(pos$() + WIDTH, DOWN, rot$())) {
+              state$(PieceState.LOCKED);
+              // console.log("LOCKED");
+              lock_count$(0);
+            }
+          } else
+            place_piece();
         }
       }
     }
@@ -73,8 +73,11 @@ export const useGameLoop = () => {
       socket.emit("game_over", roomid);
     }
     if (status === Status.PLAYING) {
+      console.log("Game started", pos$());
       fall_count$(0);
       lock_count$(0);
+      piece$(next_pieces$()[0]);
+      next_pieces$(next_pieces$().slice(1));
       frameRef.current = requestAnimationFrame(drawFrame);
     } else if (frameRef.current) {
       cancelAnimationFrame(frameRef.current);

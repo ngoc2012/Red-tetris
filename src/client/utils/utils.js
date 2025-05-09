@@ -11,13 +11,13 @@ export const reset = () => {
   piece$("");
 };
 
-export const add_next_piece = (start = true) => {
-  if (!piece$() || !start) {
-    piece$(next_pieces$()[0]);
-    next_pieces$(next_pieces$().slice(1));
-    pos$(Math.floor((WIDTH - tetrominoes[piece$()][rot$()].length) / 2));
-  }
-};
+// export const add_next_piece = (start = true) => {
+//   if (!piece$() || !start) {
+//     piece$(next_pieces$()[0]);
+//     next_pieces$(next_pieces$().slice(1));
+//     pos$(Math.floor((WIDTH - tetrominoes[piece$()][rot$()].length) / 2));
+//   }
+// };
 
 export const next_rot = () => {
   return (rot$() + 1) % tetrominoes[piece$()].length;
@@ -91,7 +91,8 @@ export const clear_full_rows = () => {
   return full_row_count;
 };
 
-export const add_block_to_board = (board) => {
+export const add_block_to_board = () => {
+  const board = store.getState().game_state.board;
   const new_board = board.map((v, i) => {
     const row = Math.floor(i / WIDTH);
     const col = (i + WIDTH) % WIDTH;
@@ -107,7 +108,7 @@ export const add_block_to_board = (board) => {
     }
     return v;
   });
-  return new_board;
+  store.dispatch(setBoard(new_board));
 };
 
 

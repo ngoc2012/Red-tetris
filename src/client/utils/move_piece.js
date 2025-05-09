@@ -37,21 +37,26 @@ export const place_piece = () => {
   console.log("Placing piece");
   add_block_to_board();
   const rowsCleared = clear_full_rows();
-
   const board = store.getState().game_state.board;
-  if (newBoard.some((v, i) => i < BUFFER * WIDTH && v != "")) {
+  if (board.some((v, i) => i < BUFFER * WIDTH && v != "")) {
     store.dispatch(setStatus("game_over"));
     return;
   }
-  // dispatch(setBoard(newBoard));
-  store.dispatch(setBoard(newBoard));
   piece$(next_pieces$()[0]);
-  console.log("Next piece: ", next_pieces$()[0], piece$());
-  pos$((WIDTH + tetrominoes[piece$()].length) / 2);
+  console.log(pos$(), "Next piece: ", next_pieces$()[0], piece$());
+  lock_count$(0);
+  fall_count$(0);
+  state$(PieceState.FALLING);
+  // pos$(Math.round((WIDTH + tetrominoes[piece$()][0].length) / 2));
+  // console.log(piece$(), "pos: ", pos$(), tetrominoes[piece$()].length);
+  // pos$(3);
   rot$(0);
+  // pos$(Math.floor((WIDTH - tetrominoes[piece$()][rot$()].length) / 2));
+  pos$(3);
+  console.log(piece$(), "pos: ", pos$(), tetrominoes[piece$()].length);
+  
   next_pieces$(next_pieces$().slice(1));
   socket.emit("next_piece");
-  // add_next_piece(false);
   if (rowsCleared > 0) socket.emit("cleared_a_line", rowsCleared);
 };
 

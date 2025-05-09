@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import socket from "../socket.js";
 import { setGamemode, setLevel, setMode, setStatus } from "../store.js";
-import { add_next_piece, reset } from "../utils/utils.js";
-import { next_pieces$ } from "../index.jsx";
+import { reset } from "../utils/utils.js";
+import { piece$, next_pieces$ } from "../index.jsx";
 import { add_penalty } from "../utils/utils.js";
 import { store } from "../store.js";
 
@@ -31,13 +31,10 @@ export const useGameConnect = () => {
   };
 
   const receive_next_piece = (new_piece) => {
-    // console.log("Received new piece: ", new_piece, status);
-    // if (status !== "playing" && status !== "starting") {
-    //   return;
-    // }
     console.log("New piece received: ", new_piece);
     next_pieces$(next_pieces$().concat(new_piece));
-    add_next_piece();
+    // piece$(next_pieces$()[0]);
+    // next_pieces$(next_pieces$().slice(1));
   };
 
   useEffect(() => {
