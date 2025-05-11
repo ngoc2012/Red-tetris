@@ -13,8 +13,8 @@ import socket from "../socket.js";
 import { pollGamepadInput } from "./GamePad.jsx";
 
 
-const GAMEPADLOCK_MS1 = 40;
-const GAMEPADLOCK_MS2 = 200;
+const GAMEPADLOCK_MS1 = 100;
+const GAMEPADLOCK_MS2 = 250;
 
 const apply_key = () => {
   if (keys$().length > 0) {

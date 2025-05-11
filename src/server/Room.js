@@ -64,6 +64,8 @@ export class Room {
   }
 
   get_score(player_id) {
+    const player = this.players.get(player_id);
+    if (!player) return null;
     return this.players.get(player_id).score;
   }
 
@@ -122,13 +124,17 @@ export class Room {
   }
 
   update_spectrum(player_id, spectrum, penalty) {
-    this.players.get(player_id).spectrum = spectrum;
-    this.players.get(player_id).penalty = penalty;
-    return this.players.get(player_id);
+    const player = this.players.get(player_id);
+    if (!player) return null;
+    player.spectrum = spectrum;
+    player.penalty = penalty;
+    return player;
   }
 
   update_score(player_id, amount) {
-    this.players.get(player_id).score += amount;
+    const player = this.players.get(player_id);
+    if (!player) return null;
+    player.score += amount;
     loginfo(
       `New score for ${player_id} is ${this.players.get(player_id).score}`
     );

@@ -218,9 +218,9 @@ const initEngine = (io) => {
       console.log("board_update");
       const room_id = players.get(socket.id).room;
       // give_pieces(room_id, 3 - pieces_left);
-      const player = rooms
-        .get(room_id)
-        .update_spectrum(socket.id, spectrum, penalty);
+      const room = rooms.get(room_id);
+      if (!room) return;
+      const player = room.update_spectrum(socket.id, spectrum, penalty);
       socket.to(room_id).emit("spectrum", {
         id: socket.id,
         name: players.get(socket.id).name,
@@ -233,6 +233,7 @@ const initEngine = (io) => {
     socket.on("game_over", (room_id) => {
       // save score somewhere with the mode (single/multi, normal/invis/accelerating/etc...)
       const room = rooms.get(room_id);
+      if (!room) return;
       const score = room.get_score(socket.id);
       room.game_over(socket.id);
       game_end(room_id);
