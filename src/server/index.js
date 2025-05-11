@@ -1,3 +1,6 @@
+import http from "http";
+import express from "express";
+import path from "path";
 import fs from "fs";
 import debug from "debug";
 import { fileURLToPath } from "url";
@@ -16,51 +19,68 @@ export const logerror = debug("tetris:error");
 export const loginfo = debug("tetris:info");
 const logdebug = debug("tetris:debug");
 
-const initApp = (app, params, cb) => {
+
+
+const initApp = (server, app, params, cb) => {
   const { host, port } = params;
 
-  const handler = (req, res) => {
-    loginfo(req.url);
-    if (req.url === "/favicon.ico") {
-      res.writeHead(200, { "Content-Type": "image/x-icon" });
-      var file = "/../../public/favicon.ico";
-    } else if (req.url === "/bundle.js") {
-      res.writeHead(200, { "Content-Type": "application/javascript" });
-      var file = "/../../build/bundle.js";
-    } else if (req.url === "/style.css") {
-      res.writeHead(200, { "Content-Type": "text/css" });
-      var file = "/../../public/style.css";
-    } else if (req.url === "/Halstatt.jpg") {
-      res.writeHead(200, { "Content-Type": "image/jpg" });
-      var file = "/../../public/Halstatt.jpg";
-    } else {
-      res.writeHead(200, { "Content-Type": "text/html" });
-      var file = "/../../public/index.html";
-    }
+  app.use(express.static(path.join(__dirname, "../../public")));
 
-    fs.readFile(__dirname + file, (err, data) => {
-      if (err) {
-        logerror(err);
-        res.writeHead(500);
-        return res.end("Error loading index.html");
-      }
-      // res.writeHead(200);
-      res.end(data);
-    });
-  };
+  app.use(express.static(path.join(__dirname, "../../bundle")));
 
-  app.on("request", handler);
+  // const handler = (req, res) => {
+  //   loginfo(req.url);
+  //   if (req.url === "/favicon.ico") {
+  //     res.writeHead(200, { "Content-Type": "image/x-icon" });
+  //     var file = "/../../public/favicon.ico";
+  //   } else if (req.url === "/bundle.js") {
+  //     res.writeHead(200, { "Content-Type": "application/javascript" });
+  //     var file = "/../../build/bundle.js";
+  //   } else if (req.url === "/style.css") {
+  //     res.writeHead(200, { "Content-Type": "text/css" });
+  //     var file = "/../../public/style.css";
+  //   } else if (req.url === "/Halstatt.jpg") {
+  //     res.writeHead(200, { "Content-Type": "image/jpg" });
+  //     var file = "/../../public/Halstatt.jpg";
+  //   } else {
+  //     res.writeHead(200, { "Content-Type": "text/html" });
+  //     var file = "/../../public/index.html";
+  //   }
 
-  app.listen({ host, port }, () => {
-    loginfo(`tetris listen on ${params.url}`);
+  //   fs.readFile(__dirname + file, (err, data) => {
+  //     if (err) {
+  //       logerror(err);
+  //       res.writeHead(500);
+  //       return res.end("Error loading index.html");
+  //     }
+  //     // res.writeHead(200);
+  //     res.end(data);
+  //   });
+  // };
+
+  app.get("/api/history", (req, res) => {
+    const data = JSON.parse(fs.readFileSync(__dirname + "/history.json", "utf-8"));
+    res.json(data);
+  });
+
+  // app.on("request", handler);
+
+  // app.listen({ host, port }, () => {
+  //   loginfo(`tetris listen on ${params.url}`);
+  //   cb();
+  // });
+
+  server.listen(port, () => {
+    console.log(`Server running on http://${host}:${port}`);
     cb();
   });
+  
 };
 
 const initEngine = (io) => {
   const players = new Map(); // Map<string,Player>
   const rooms = new Map();
-  const history = [];
+  // const history = [];
 
   const join_room = (socket, room_id) => {
     socket.leave("lobby");
@@ -91,15 +111,25 @@ const initEngine = (io) => {
     }
   };
 
-  const save_score = (socket, score, room_id) => {
-    if (score > 0)
-      history.push({
+  const save_score = (socket, score, room_id, result) => {
+    if (score > 0) {
+      const data = JSON.parse(fs.readFileSync(__dirname + "/history.json", "utf-8"));
+      data.push({
         room: room_id,
         name: players.get(socket).name,
         score: score,
-        mode: rooms.get(room_id).mode,
-        gamemode: rooms.get(room_id).gamemode,
+        result: result,
       });
+      fs.writeFileSync(__dirname + "/history.json", JSON.stringify(data, null, 2));
+    }
+      // history.push({
+      //   room: room_id,
+      //   name: players.get(socket).name,
+      //   score: score,
+      //   result: result,
+      //   // mode: rooms.get(room_id).mode,
+      //   // gamemode: rooms.get(room_id).gamemode,
+      // });
   };
 
   const game_end = (room_id) => {
@@ -110,7 +140,7 @@ const initEngine = (io) => {
         if (players_left.size === 1) {
           const socket = players_left.keys().next().value;
           io.to(socket).emit("game_win");
-          save_score(socket, rooms.get(room_id).get_score(socket), room_id);
+          save_score(socket, rooms.get(room_id).get_score(socket), room_id, "game_win");
         }
         rooms.get(room_id).end_game();
         io.to(room_id).emit("game_over");
@@ -238,9 +268,9 @@ const initEngine = (io) => {
       room.game_over(socket.id);
       game_end(room_id);
       loginfo(`${socket.id} has topped out with score ${score}`);
-      save_score(socket.id, score, room_id);
+      save_score(socket.id, score, room_id, "game_over");
       // debug_print_room(room);
-      console.log("history", history);
+      // console.log("history", history);
     });
 
     socket.on("cleared_a_line", (rows_cleared) => {
@@ -290,9 +320,19 @@ const initEngine = (io) => {
 export function create(params) {
   const promise = new Promise((resolve, reject) => {
     try {
-      const app = createServer();
-      initApp(app, params, () => {
-        const io = new SocketIO(app, {
+      const app = express();
+
+      const server = http.createServer(app);
+
+      // const io = new SocketIO(server, {
+      //   cors: {
+      //     origin: "*",
+      //   },
+      // });
+
+      // const app = createServer();
+      initApp(server, app, params, () => {
+        const io = new SocketIO(server, {
           cors: {
             origin: "*",
           },

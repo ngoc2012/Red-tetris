@@ -17,6 +17,7 @@ const App = () => {
     <Routes>
       <Route path='/' element={<Lobby />} />
       <Route path='/:roomid/:name' element={<Game />} />
+      <Route path='/history' element={<History />} />
       <Route path='*' element={<NotFound />} />
     </Routes>
   );
