@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { initSocket } from "../socket.js";
 import { Lobby } from "./Lobby.jsx";
 import { Game } from "./Game.jsx";
+import { History } from "./History.jsx";
 import { Routes, Route } from "react-router-dom";
 import { NotFound } from "./NotFound.jsx";
 

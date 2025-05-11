@@ -48,7 +48,9 @@ export const Lobby = () => {
     });
   };
 
-  const history = () => {};
+  const history = () => {
+    nav("/history");
+  };
 
   const handleNameClick = () => {
     setIsEditing(true);

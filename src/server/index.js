@@ -26,49 +26,12 @@ const initApp = (server, app, params, cb) => {
 
   app.use(express.static(path.join(__dirname, "../../public")));
 
-  app.use(express.static(path.join(__dirname, "../../bundle")));
-
-  // const handler = (req, res) => {
-  //   loginfo(req.url);
-  //   if (req.url === "/favicon.ico") {
-  //     res.writeHead(200, { "Content-Type": "image/x-icon" });
-  //     var file = "/../../public/favicon.ico";
-  //   } else if (req.url === "/bundle.js") {
-  //     res.writeHead(200, { "Content-Type": "application/javascript" });
-  //     var file = "/../../build/bundle.js";
-  //   } else if (req.url === "/style.css") {
-  //     res.writeHead(200, { "Content-Type": "text/css" });
-  //     var file = "/../../public/style.css";
-  //   } else if (req.url === "/Halstatt.jpg") {
-  //     res.writeHead(200, { "Content-Type": "image/jpg" });
-  //     var file = "/../../public/Halstatt.jpg";
-  //   } else {
-  //     res.writeHead(200, { "Content-Type": "text/html" });
-  //     var file = "/../../public/index.html";
-  //   }
-
-  //   fs.readFile(__dirname + file, (err, data) => {
-  //     if (err) {
-  //       logerror(err);
-  //       res.writeHead(500);
-  //       return res.end("Error loading index.html");
-  //     }
-  //     // res.writeHead(200);
-  //     res.end(data);
-  //   });
-  // };
+  app.use(express.static(path.join(__dirname, "../../build")));
 
   app.get("/api/history", (req, res) => {
     const data = JSON.parse(fs.readFileSync(__dirname + "/history.json", "utf-8"));
     res.json(data);
   });
-
-  // app.on("request", handler);
-
-  // app.listen({ host, port }, () => {
-  //   loginfo(`tetris listen on ${params.url}`);
-  //   cb();
-  // });
 
   server.listen(port, () => {
     console.log(`Server running on http://${host}:${port}`);
