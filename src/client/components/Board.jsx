@@ -11,7 +11,6 @@ import { tetrominoes } from "../../common/tetrominoes.js";
 
 
 export const Board = () => {
-  // console.log("Board rendered");
 
   const [grid, setGrid] = useState(
     Array.from({ length: WIDTH * (LENGTH + BUFFER) }).map((_, index) => (
@@ -23,11 +22,6 @@ export const Board = () => {
 
   const boardRef = useRef(board);
   const modeRef = useRef(mode);
-
-  // Keep boardRef and modeRef up to date
-  // useEffect(() => {
-    
-  // }, [board, mode]);
 
   const board_update = () => {
     // console.log("Board updated");

@@ -1,6 +1,5 @@
 import {
   BUFFER,
-  DOWN,
   LEFT,
   RIGHT,
   ROT,
@@ -11,7 +10,7 @@ import { PieceState } from "../../common/enums.js";
 import { tetrominoes } from "../../common/tetrominoes.js";
 import { next_pieces$, fall_count$, lock_count$, piece$, pos$, rot$, state$ } from "../index.jsx";
 import socket from "../socket.js";
-import { setBoard, setStatus } from "../store.js";
+import { setStatus } from "../store.js";
 import {
   block_to_board,
   add_block_to_board,
@@ -20,17 +19,16 @@ import {
 } from "./utils.js";
 import { store } from "../store.js";
 
-
-export const move_left = () => {
-  if (can_move(pos$() - 1, LEFT, rot$())) {
-    pos$(pos$() - 1);
-  }
-};
-
-export const move_right = () => {
-  if (can_move(pos$() + 1, RIGHT, rot$())) {
-    pos$(pos$() + 1);
-  }
+export const init_new_piece = () => {
+  fall_count$(0);
+  lock_count$(0);
+  pos$(3);
+  rot$(0);
+  piece$(next_pieces$()[0]);
+  next_pieces$(next_pieces$().slice(1));
+  state$(PieceState.FALLING);
+  socket.emit("next_piece");
+  // console.log("New piece falling: ", pos$(), next_pieces$()[0], piece$());
 };
 
 export const place_piece = () => {
@@ -42,32 +40,8 @@ export const place_piece = () => {
     store.dispatch(setStatus("game_over"));
     return;
   }
-  piece$(next_pieces$()[0]);
-  console.log(pos$(), "Next piece: ", next_pieces$()[0], piece$());
-  lock_count$(0);
-  fall_count$(0);
-  state$(PieceState.FALLING);
-  // pos$(Math.round((WIDTH + tetrominoes[piece$()][0].length) / 2));
-  // console.log(piece$(), "pos: ", pos$(), tetrominoes[piece$()].length);
-  // pos$(3);
-  rot$(0);
-  // pos$(Math.floor((WIDTH - tetrominoes[piece$()][rot$()].length) / 2));
-  pos$(3);
-  console.log(piece$(), "pos: ", pos$(), tetrominoes[piece$()].length);
-  
-  next_pieces$(next_pieces$().slice(1));
-  socket.emit("next_piece");
   if (rowsCleared > 0) socket.emit("cleared_a_line", rowsCleared);
-};
-
-export const move_down = () => {
-  if (can_move(pos$() + WIDTH, DOWN, rot$())) {
-    state$(PieceState.FALLING);
-    lock_count$(0);
-    fall_count$(0);
-    pos$(pos$() + WIDTH);
-  } else
-    place_piece();
+  init_new_piece();
 };
 
 export const rotate_piece = () => {
@@ -101,15 +75,6 @@ export const rotate_piece = () => {
   }
 };
 
-export const move_down_max = () => {
-  let dist = 0;
-  while (can_move(pos$() + WIDTH * dist, DOWN, rot$())) {
-    ++dist;
-  }
-  pos$(pos$() + WIDTH * (dist - 1));
-  move_down();
-};
-
 export const can_move = (pos, direction, rotation) => {
   const board = store.getState().game_state.board;
   const piece = Array.from(tetrominoes[piece$()][rotation]).flat(1);
@@ -123,7 +88,8 @@ export const can_move = (pos, direction, rotation) => {
       const col = i % tetrominoes[piece$()][rotation].length;
       const [board_col, board_row] = block_to_board(pos, col, row);
       // console.log(
-      //   `piece: ${piece$()} row: ${row} col: ${col} board_row: ${board_row} board_col: ${board_col}`
+      //   `piece: ${piece$()} row: ${row} col: ${col} 
+      // board_row: ${board_row} board_col: ${board_col}`
       // );
       if (
         board_row >= LENGTH + BUFFER ||

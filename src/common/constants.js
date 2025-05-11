@@ -7,7 +7,7 @@ export const LEFT = 2;
 export const DOWN = 4;
 export const FALL = 5;
 export const ROT = 8;
-export const LOCK = 3; // 15 frames
+export const LOCK = 15; // 15 frames
 export const tetrisGravityFrames = {
   0: 48,
   1: 43,

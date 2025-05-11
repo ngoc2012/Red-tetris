@@ -1,51 +1,38 @@
 import { useEffect } from "react";
 import flyd from "flyd";
-import {
-  move_down,
-  move_down_max,
-  move_left,
-  move_right,
-  rotate_piece,
-  can_move,
-  place_piece,
-} from "../utils/move_piece.js";
-import { lock_count$, fall_count$, state$, pos$, rot$, key$, piece$ } from "../index.jsx";
-import { DOWN, WIDTH } from "../../common/constants.js";
-import {PieceState} from "../../common/enums.js";
+import { piece$, keys$ } from "../index.jsx";
+import { DOWN, LEFT, RIGHT, ROT, FALL } from "../../common/constants.js";
 
 
 export const useKeyboard = () => {
+  console.log("useKeyboard");
 
   useEffect(() => {
+    const key$ = flyd.stream();
+
     const subscription = flyd.map((key) => {
       if (!piece$() || !key) {
         return;
       }
-      // Key pressed logic here
       switch (key) {
         case "ArrowRight":
-          move_right();
+          // move_right();
+          keys$(keys$().concat(RIGHT));
           break;
         case "ArrowLeft":
-          move_left();
+          // move_left();
+          keys$(keys$().concat(LEFT));
           break;
         case "ArrowDown":
-          // move_down(board, dispatch);
-          if (can_move(pos$() + WIDTH, DOWN, rot$())) {
-            state$(PieceState.FALLING);
-            lock_count$(0);
-            fall_count$(0);
-            pos$(pos$() + WIDTH);
-          } else {
-            console.log("ArrowDown, Placing piece");
-            place_piece();
-          }
+          keys$(keys$().concat(DOWN));
           break;
         case "ArrowUp":
-          rotate_piece();
+          keys$(keys$().concat(ROT));
+          // rotate_piece();
           break;
         case " ":
-          move_down_max();
+          keys$(keys$().concat(FALL));
+          // move_down_max();
           break;
         default:
           break;

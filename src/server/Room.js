@@ -30,21 +30,13 @@ export class Room {
     this.mode = Mode.SINGLE;
     this.gamemode = Gamemode.NORMAL;
     this.rows_cleared = 0;
-    this.level = 10;
+    this.level = 5;
     this.status = Status.WAITING;
     this.interval = null;
     this.owner = owner;
     this.players = new Map();
     loginfo(`Room ${this.id} created by ${owner}`);
   }
-  // This creates infinite recursion: this.owner inside the getter calls get owner(), 
-  // which again tries to return this.owner, and so on...
-  // get owner() {
-  //   return this.owner;
-  // }
-  // get players() {
-  //   return this.players;
-  // }
   get players_left() {
     return new Map([...this.players].filter(([, v]) => v.playing === true));
   }
@@ -100,10 +92,6 @@ export class Room {
       v.playing = true;
       v.score = 0;
     });
-    // this.level = 5;
-    // this.interval = setInterval(() => {
-    //   this.io.to(this.id).emit("game_loop");
-    // }, Math.pow(0.8 - (this.level - 1) * 0.007, this.level - 1) * 1000);
   }
 
   end_game() {
@@ -150,10 +138,6 @@ export class Room {
   level_up() {
     this.level++;
     this.rows_cleared %= (10 * (this.players_left.size + 1)) / 2;
-    // clearInterval(this.interval);
-    // this.interval = setInterval(() => {
-    //   this.io.to(this.id).emit("game_loop");
-    // }, Math.pow(0.8 - (this.level - 1) * 0.007, this.level - 1) * 1000);
   }
 
   clear_rows(amount) {

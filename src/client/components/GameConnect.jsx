@@ -31,7 +31,7 @@ export const useGameConnect = () => {
   };
 
   const receive_next_piece = (new_piece) => {
-    console.log("New piece received: ", new_piece);
+    // console.log("New piece received: ", new_piece);
     next_pieces$(next_pieces$().concat(new_piece));
     // piece$(next_pieces$()[0]);
     // next_pieces$(next_pieces$().slice(1));
