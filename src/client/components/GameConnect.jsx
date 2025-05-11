@@ -15,7 +15,6 @@ export const useGameConnect = () => {
   };
 
   const game_start = (room) => {
-    // rot$(0);
     store.dispatch(setMode(room.mode));
     store.dispatch(setGamemode(room.gamemode));
     store.dispatch(setLevel(room.level));
@@ -31,10 +30,11 @@ export const useGameConnect = () => {
   };
 
   const receive_next_piece = (new_piece) => {
-    // console.log("New piece received: ", new_piece);
     next_pieces$(next_pieces$().concat(new_piece));
-    // piece$(next_pieces$()[0]);
-    // next_pieces$(next_pieces$().slice(1));
+  };
+
+  const change_gamemode = (gamemode) => {
+    store.dispatch(setGamemode(gamemode));
   };
 
   useEffect(() => {
@@ -44,6 +44,7 @@ export const useGameConnect = () => {
     socket.on("game_win", game_win);
     socket.on("next_piece", receive_next_piece);
     socket.on("penalty", add_penalty);
+    socket.on("gamemode", change_gamemode);
     return () => {
       socket.off("game_prep", game_prep);
       socket.off("game_start", game_start);
@@ -51,6 +52,7 @@ export const useGameConnect = () => {
       socket.off("game_win", game_win);
       socket.off("next_piece", receive_next_piece);
       socket.off("penalty", add_penalty);
+      socket.off("gamemode", change_gamemode);
     };
   }, []);
 

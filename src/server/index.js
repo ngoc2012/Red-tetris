@@ -197,6 +197,14 @@ const initEngine = (io) => {
       }
     });
 
+    socket.on("gamemode", (gamemode, room_id) => {
+      const room = rooms.get(room_id);
+      if (room.owner === socket.id) {
+        room.gamemode = gamemode;
+        io.to(room_id).emit("gamemode", gamemode);
+      }
+    });
+
     socket.on("spectrums", (callback) => {
       const room_id = players.get(socket.id).room;
       const spec = rooms.get(room_id).spectrums(socket.id);

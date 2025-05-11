@@ -28,7 +28,6 @@ export const init_new_piece = () => {
   next_pieces$(next_pieces$().slice(1));
   state$(PieceState.FALLING);
   socket.emit("next_piece");
-  // console.log("New piece falling: ", pos$(), next_pieces$()[0], piece$());
 };
 
 export const place_piece = () => {

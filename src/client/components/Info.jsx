@@ -75,14 +75,7 @@ export const Info = () => {
 
   const change_gamemode = (e) => {
     if (!Object.values(Gamemode).includes(e.target.value)) return;
-    dispatch(setGamemode(e.target.value));
-    // socket.emit("game_start", room_id, (response) => {
-    //   if (response.success) {
-    //     console.log("game starting");
-    //   } else {
-    //     console.log("could not start game");
-    //   }
-    // });
+    socket.emit("gamemode", e.target.value, room_id);
   };
 
   return (

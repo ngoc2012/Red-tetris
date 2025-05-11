@@ -6,7 +6,7 @@ import { board_to_block, board_to_spectrum } from "../utils/utils.js";
 import { useSelector } from "react-redux";
 import socket from "../socket.js";
 import { BUFFER, LENGTH, WIDTH } from "../../common/constants.js";
-import { Mode, Status } from "../../common/enums.js";
+import { Gamemode } from "../../common/enums.js";
 import { tetrominoes } from "../../common/tetrominoes.js";
 
 
@@ -18,15 +18,15 @@ export const Board = () => {
     ))
   );
   const board = useSelector((state) => state.game_state.board);
-  const mode = useSelector((state) => state.game_state.mode);
+  const gamemode = useSelector((state) => state.game_state.gamemode);
 
   const boardRef = useRef(board);
-  const modeRef = useRef(mode);
+  const gamemodeRef = useRef(gamemode);
 
   const board_update = () => {
     // console.log("Board updated");
     const currentBoard = boardRef.current;
-    const currentMode = modeRef.current;
+    const currentMode = gamemodeRef.current;
 
     setGrid(
       Array.from({ length: WIDTH * (LENGTH + BUFFER) }).map((_, i) => {
@@ -58,7 +58,8 @@ export const Board = () => {
           <Square
             key={i}
             color={currentBoard[i]}
-            filled={currentBoard[i] !== "" && mode !== Mode.INVIS}
+            filled={currentBoard[i] !== "" 
+              && gamemodeRef.current !== Gamemode.INVIS}
             blocked={currentBoard[i] === "X"}
           ></Square>
         );
@@ -79,10 +80,10 @@ export const Board = () => {
 
   useEffect(() => {
     boardRef.current = board;
-    modeRef.current = mode;
+    gamemodeRef.current = gamemode;
     board_update();
     return () => {};
-  }, [board, mode]);
+  }, [board, gamemode]);
 
   useEffect(() => {
     socket.emit("board_update", board_to_spectrum());
