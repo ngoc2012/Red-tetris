@@ -7,7 +7,7 @@
     "srv-dev": "DEBUG=tetris:* babel-watch -w src src/server/main.js",
     "srv-prod": "node src/server/main.js",
     "srv-dist": "DEBUG=tetris:* babel src --out-dir dist",
-    "test": "mocha --require @babel/register test/**/*.js",
+    "test": "mocha --require @babel/register --reporter spec",
     "coverage": "NODE_ENV=test nyc --include src --all -r text -r lcov -r text mocha --require @babel/register"
   },
   "dependencies": {
@@ -30,7 +30,6 @@
     "@babel/preset-env": "^7.26.7",
     "@babel/preset-react": "^7.26.3",
     "@babel/register": "^7.25.9",
-    "@testing-library/react": "^16.3.0",
     "babel-loader": "^9.2.1",
     "babel-watch": "^7.8.1",
     "chai": "^5.1.2",
