@@ -5,12 +5,12 @@ import fs from "fs";
 import debug from "debug";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import { createServer } from "http";
 import { Server as SocketIO } from "socket.io";
 import { Player } from "./Player.js";
 import { Room } from "./Room.js";
 import { Piece } from "./Piece.js";
 import { Mode, Status } from "../common/enums.js";
+import { time } from "console";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,7 +18,6 @@ const __dirname = dirname(__filename);
 export const logerror = debug("tetris:error");
 export const loginfo = debug("tetris:info");
 const logdebug = debug("tetris:debug");
-
 
 
 const initApp = (server, app, params, cb) => {
@@ -43,7 +42,6 @@ const initApp = (server, app, params, cb) => {
 const initEngine = (io) => {
   const players = new Map(); // Map<string,Player>
   const rooms = new Map();
-  // const history = [];
 
   const join_room = (socket, room_id) => {
     socket.leave("lobby");
@@ -77,7 +75,12 @@ const initEngine = (io) => {
   const save_score = (socket, score, room_id, result) => {
     if (score > 0) {
       const data = JSON.parse(fs.readFileSync(__dirname + "/history.json", "utf-8"));
+      const now = new Date();
+      const formatted = now.toLocaleString("en-GB", {
+        hour12: false,
+      });
       data.push({
+        time: formatted,
         room: room_id,
         name: players.get(socket).name,
         score: score,
@@ -85,14 +88,6 @@ const initEngine = (io) => {
       });
       fs.writeFileSync(__dirname + "/history.json", JSON.stringify(data, null, 2));
     }
-      // history.push({
-      //   room: room_id,
-      //   name: players.get(socket).name,
-      //   score: score,
-      //   result: result,
-      //   // mode: rooms.get(room_id).mode,
-      //   // gamemode: rooms.get(room_id).gamemode,
-      // });
   };
 
   const game_end = (room_id) => {
@@ -129,8 +124,6 @@ const initEngine = (io) => {
     socket.emit("connected", { id: socket.id });
     socket.join("lobby");
     players.set(socket.id, new Player());
-    // console.log("players", players);
-    // console.log("rooms", rooms);
 
     socket.on("rename", ({ new_name }, callback) => {
       callback({ success: players.get(socket.id).rename(new_name) });
@@ -152,8 +145,6 @@ const initEngine = (io) => {
       const room = rooms.get(room_id);
       join_room(socket, room_id);
       callback({ success: true, room: room.get_info() });
-      // console.log("players", players);
-      // console.log("rooms", rooms);
     });
 
     socket.on("leave_room", (room_id) => {
@@ -161,8 +152,6 @@ const initEngine = (io) => {
         leave_room(socket, room_id);
         players.get(socket.id).room = "lobby";
         socket.join("lobby");
-        // console.log("rooms", rooms);
-        // console.log("players", players);
       }
     });
 
@@ -184,7 +173,6 @@ const initEngine = (io) => {
         give_pieces(room_id, 4);
         callback({ success: true });
         io.to(room_id).emit("game_start", room.get_info());
-        // debug_print_room(room);
       } else {
         callback({ success: false });
       }
@@ -210,7 +198,6 @@ const initEngine = (io) => {
     socket.on("board_update", ({ spectrum, penalty, pieces_left }) => {
       console.log("board_update");
       const room_id = players.get(socket.id).room;
-      // give_pieces(room_id, 3 - pieces_left);
       const room = rooms.get(room_id);
       if (!room) return;
       const player = room.update_spectrum(socket.id, spectrum, penalty);
@@ -224,7 +211,6 @@ const initEngine = (io) => {
     });
 
     socket.on("game_over", (room_id) => {
-      // save score somewhere with the mode (single/multi, normal/invis/accelerating/etc...)
       const room = rooms.get(room_id);
       if (!room) return;
       const score = room.get_score(socket.id);
@@ -232,8 +218,6 @@ const initEngine = (io) => {
       game_end(room_id);
       loginfo(`${socket.id} has topped out with score ${score}`);
       save_score(socket.id, score, room_id, "game_over");
-      // debug_print_room(room);
-      // console.log("history", history);
     });
 
     socket.on("cleared_a_line", (rows_cleared) => {
