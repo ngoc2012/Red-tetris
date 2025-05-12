@@ -88,6 +88,8 @@ export class Room {
     } else {
       this.mode = Mode.SINGLE;
     }
+    this.level = 0;
+    this.rows_cleared = 0;
     this.status = Status.PLAYING;
     this.players.forEach((v) => {
       v.playing = true;

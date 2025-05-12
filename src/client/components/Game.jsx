@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import { NotFound } from "./NotFound.jsx";
 import { useGameConnect } from "./GameConnect.jsx";
 import { useGameLoop } from "./GameLoop.jsx";
+import { useGamepad } from "./GamePad.jsx";
 import { useKeyboard } from "./Keyboard.jsx";
 import { store } from "../store.js";
 
@@ -18,6 +19,7 @@ export const Game = () => {
   const [found, setFound] = useState(false);
   const [loading, setLoading] = useState(true);
   useGameConnect();
+  useGamepad();
   useKeyboard();
   useGameLoop();
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { pos$, rot$ } from "../index.jsx";
+import { gamepad$, pos$, rot$ } from "../index.jsx";
 import { can_move, place_piece,  init_new_piece, rotate_piece }
   from "../utils/move_piece.js";
 import { DOWN, WIDTH, tetrisGravityFrames, LOCK, RIGHT, LEFT, ROT, FALL }
@@ -10,11 +10,9 @@ import { keys$, state$, fall_count$, lock_count$ }
   from "../index.jsx";
 import { store } from "../store.js";
 import socket from "../socket.js";
-import { pollGamepadInput } from "./GamePad.jsx";
 
 
-const GAMEPADLOCK_MS1 = 100;
-const GAMEPADLOCK_MS2 = 250;
+const GAMEPADLOCK_MS = 50;
 
 const apply_key = () => {
   if (keys$().length > 0) {
@@ -95,18 +93,10 @@ export const useGameLoop = () => {
       keys$([]);
       return;
     }
-    const gamepadInput = pollGamepadInput();
-    if ([ROT, FALL].includes(gamepadInput) && (now - lastGamepadInputTimeRef.current > GAMEPADLOCK_MS2)) {
-      if (gamepadInput !== -1) {
-        keys$(keys$().concat(gamepadInput));
-        lastGamepadInputTimeRef.current = now;
-      }
-    }
-    if ([DOWN, LEFT, RIGHT].includes(gamepadInput) && (now - lastGamepadInputTimeRef.current > GAMEPADLOCK_MS1)) {
-      if (gamepadInput !== -1) {
-        keys$(keys$().concat(gamepadInput));
-        lastGamepadInputTimeRef.current = now;
-      }
+
+    if ([DOWN, LEFT, RIGHT].includes(gamepad$()) && (now - lastGamepadInputTimeRef.current > GAMEPADLOCK_MS)) {
+      lastGamepadInputTimeRef.current = now;
+      keys$(keys$().concat(gamepad$()));
     }
     apply_key();
     
@@ -120,7 +110,6 @@ export const useGameLoop = () => {
 
   useEffect(() => {
     return () => {
-      console.log("GameLoop unmounted");
       if (frameRef.current) {
         cancelAnimationFrame(frameRef.current);
         keys$([]);

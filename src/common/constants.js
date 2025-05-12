@@ -9,7 +9,7 @@ export const FALL = 5;
 export const ROT = 8;
 export const LEVEL_UP = 3;  // lines cleared
 export const MAX_LEVEL = 16;
-export const LOCK = 15;  // frames
+export const LOCK = 60;  // frames
 export const tetrisGravityFrames = {
   0: 48,
   1: 43,

@@ -5,7 +5,7 @@ import { DOWN, LEFT, RIGHT, ROT, FALL } from "../../common/constants.js";
 
 
 export const useKeyboard = () => {
-  console.log("useKeyboard");
+  // console.log("useKeyboard");
 
   useEffect(() => {
     const key$ = flyd.stream();

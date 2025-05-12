@@ -54,7 +54,7 @@ const Pieces = () => {
 };
 
 export const Info = () => {
-  console.log("Info rendered");
+  // console.log("Info rendered");
   
   const dispatch = useDispatch();
   const status = useSelector((state) => state.game_state.status);
