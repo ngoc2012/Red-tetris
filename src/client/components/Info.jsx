@@ -61,6 +61,7 @@ export const Info = () => {
   const score = useSelector((state) => state.game_state.score);
   const room_id = useSelector((state) => state.game_state.room_id);
   const gamemode = useSelector((state) => state.game_state.gamemode);
+  const level = useSelector((state) => state.game_state.level);
 
   const start_game = () => {
     socket.emit("game_start", room_id, (response) => {
@@ -83,7 +84,7 @@ export const Info = () => {
       <Pieces />
       <div className='game_info'>
         <div title='score' className='score'>
-          {score}
+          {score} / {level}
         </div>
         <div title='status' className='status'>
           {status}

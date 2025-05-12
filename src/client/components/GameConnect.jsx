@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import socket from "../socket.js";
 import { setGamemode, setLevel, setMode, setStatus } from "../store.js";
 import { reset } from "../utils/utils.js";
-import { piece$, next_pieces$ } from "../index.jsx";
+import { next_pieces$ } from "../index.jsx";
 import { add_penalty } from "../utils/utils.js";
 import { store } from "../store.js";
 
@@ -37,6 +37,11 @@ export const useGameConnect = () => {
     store.dispatch(setGamemode(gamemode));
   };
 
+  const update_level = (level) => {
+    console.log("Level changed", level);
+    store.dispatch(setLevel(level));
+  }
+
   useEffect(() => {
     socket.on("game_prep", game_prep);
     socket.on("game_start", game_start);
@@ -44,6 +49,7 @@ export const useGameConnect = () => {
     socket.on("game_win", game_win);
     socket.on("next_piece", receive_next_piece);
     socket.on("penalty", add_penalty);
+    socket.on("level", update_level);
     socket.on("gamemode", change_gamemode);
     return () => {
       socket.off("game_prep", game_prep);
@@ -52,6 +58,7 @@ export const useGameConnect = () => {
       socket.off("game_win", game_win);
       socket.off("next_piece", receive_next_piece);
       socket.off("penalty", add_penalty);
+      socket.off("level", update_level);
       socket.off("gamemode", change_gamemode);
     };
   }, []);

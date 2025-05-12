@@ -11,14 +11,6 @@ export const reset = () => {
   piece$("");
 };
 
-// export const add_next_piece = (start = true) => {
-//   if (!piece$() || !start) {
-//     piece$(next_pieces$()[0]);
-//     next_pieces$(next_pieces$().slice(1));
-//     pos$(Math.floor((WIDTH - tetrominoes[piece$()][rot$()].length) / 2));
-//   }
-// };
-
 export const next_rot = () => {
   return (rot$() + 1) % tetrominoes[piece$()].length;
 };
@@ -56,14 +48,13 @@ export const board_to_spectrum = () => {
       return {
         spectrum: spectrum,
         penalty: (220 - index) / WIDTH,
-        pieces_left: next_pieces$().length,
       };
     }
     if (board[index] !== "" && spectrum[index % WIDTH] === 0) {
       spectrum[index % WIDTH] = (220 - (index - (index % WIDTH))) / WIDTH;
     }
   }
-  return { spectrum: spectrum, penalty: 0, pieces_left: next_pieces$().length };
+  return { spectrum: spectrum, penalty: 0 };
 };
 
 export const clear_full_rows = () => {

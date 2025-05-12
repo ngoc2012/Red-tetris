@@ -1,4 +1,5 @@
 import { Gamemode, Mode, Status } from "../common/enums.js";
+import { LEVEL_UP, MAX_LEVEL } from "../common/constants.js";
 import { loginfo } from "./index.js";
 
 export class RoomPlayer {
@@ -20,7 +21,6 @@ export class Room {
   level;
   rows_cleared;
   status;
-  interval;
   owner;
   players; // Map<string,RoomPlayer>
   constructor(io, owner) {
@@ -30,9 +30,8 @@ export class Room {
     this.mode = Mode.SINGLE;
     this.gamemode = Gamemode.NORMAL;
     this.rows_cleared = 0;
-    this.level = 5;
+    this.level = 0;
     this.status = Status.WAITING;
-    this.interval = null;
     this.owner = owner;
     this.players = new Map();
     loginfo(`Room ${this.id} created by ${owner}`);
@@ -98,8 +97,6 @@ export class Room {
 
   end_game() {
     this.status = Status.WAITING;
-    clearInterval(this.interval);
-    this.interval = null;
   }
 
   spectrums(player_id) {
@@ -120,7 +117,9 @@ export class Room {
   }
 
   game_over(player_id) {
-    this.players.get(player_id).playing = false;
+    const player = this.players.get(player_id);
+    if (!player) return null;
+    player.playing = false;
   }
 
   update_spectrum(player_id, spectrum, penalty) {
@@ -141,17 +140,14 @@ export class Room {
     return this.players.get(player_id).score;
   }
 
-  level_up() {
-    this.level++;
-    this.rows_cleared %= (10 * (this.players_left.size + 1)) / 2;
-  }
-
   clear_rows(amount) {
-    if (this.gamemode !== Mode.ACCEL || this.level === 16) return;
+    if (this.gamemode !== Gamemode.ACCEL || this.level >= MAX_LEVEL) return;
     this.rows_cleared += amount;
-    if (this.rows_cleared > (10 * (this.players_left.size + 1)) / 2)
-      this.level_up();
-    console.log("level", this.level);
+    if (this.rows_cleared >= LEVEL_UP) {
+      this.rows_cleared -= LEVEL_UP;
+      this.level++;
+      this.io.to(this.id).emit("level", this.level);
+    }
   }
 
   static count() {

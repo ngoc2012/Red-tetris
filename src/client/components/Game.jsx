@@ -8,20 +8,16 @@ import { useParams } from "react-router-dom";
 import { NotFound } from "./NotFound.jsx";
 import { useGameConnect } from "./GameConnect.jsx";
 import { useGameLoop } from "./GameLoop.jsx";
-// import { useGamepad } from "./GamePad.jsx";
 import { useKeyboard } from "./Keyboard.jsx";
 import { store } from "../store.js";
 
 
 export const Game = () => {
 
-  console.log("Game rendered");
-
   const { roomid, name } = useParams();
   const [found, setFound] = useState(false);
   const [loading, setLoading] = useState(true);
   useGameConnect();
-  // useGamepad();
   useKeyboard();
   useGameLoop();
 
@@ -44,12 +40,6 @@ export const Game = () => {
       socket.emit("leave_room", roomid);
     };
   }, [roomid, name]);
-
-  useEffect(() => {
-    return () => {
-      console.log("Game unmounted");
-    };
-  }, []);
 
   return loading ? <h1>Loading</h1> : (found ? (
     <div className='main'>

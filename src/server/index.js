@@ -9,22 +9,19 @@ import { Server as SocketIO } from "socket.io";
 import { Player } from "./Player.js";
 import { Room } from "./Room.js";
 import { Piece } from "./Piece.js";
-import { Mode, Status } from "../common/enums.js";
-import { time } from "console";
+import { Status } from "../common/enums.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export const logerror = debug("tetris:error");
 export const loginfo = debug("tetris:info");
-const logdebug = debug("tetris:debug");
 
 
 const initApp = (server, app, params, cb) => {
   const { host, port } = params;
 
   app.use(express.static(path.join(__dirname, "../../public")));
-
   app.use(express.static(path.join(__dirname, "../../build")));
 
   app.get("/api/history", (req, res) => {
@@ -67,7 +64,6 @@ const initEngine = (io) => {
   const give_pieces = (room_id, count) => {
     for (let index = 0; index < count; index++) {
       const piece = new Piece();
-      console.log("piece", piece, room_id);
       io.to(room_id).emit("next_piece", piece.type);
     }
   };
@@ -105,18 +101,6 @@ const initEngine = (io) => {
         io.to("lobby").emit("room_update");
       }
     }
-  };
-  const debug_print_room = (room) => {
-    console.log(`room ${room.id}`, {
-      id: room.id,
-      mode: room.mode,
-      gamemode: room.gamemode,
-      level: room.level,
-      rows_cleared: room.rows_cleared,
-      status: room.status,
-      owner: room.owner,
-      players: room.players,
-    });
   };
 
   io.on("connection", (socket) => {
@@ -195,8 +179,7 @@ const initEngine = (io) => {
       callback(spec);
     });
 
-    socket.on("board_update", ({ spectrum, penalty, pieces_left }) => {
-      console.log("board_update");
+    socket.on("board_update", ({ spectrum, penalty }) => {
       const room_id = players.get(socket.id).room;
       const room = rooms.get(room_id);
       if (!room) return;
@@ -248,7 +231,6 @@ const initEngine = (io) => {
     socket.on("next_piece", () => {
       const room_id = players.get(socket.id).room;
       if (!room_id) return;
-      console.log("next_piece", room_id);
       give_pieces(room_id, 1);
     });
 
@@ -268,16 +250,8 @@ export function create(params) {
   const promise = new Promise((resolve, reject) => {
     try {
       const app = express();
-
       const server = http.createServer(app);
 
-      // const io = new SocketIO(server, {
-      //   cors: {
-      //     origin: "*",
-      //   },
-      // });
-
-      // const app = createServer();
       initApp(server, app, params, () => {
         const io = new SocketIO(server, {
           cors: {

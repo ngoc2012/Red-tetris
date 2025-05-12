@@ -1,1 +1,58 @@
-[]
+[
+  {
+    "time": "12/05/2025, 14:13:19",
+    "room": "3",
+    "name": "Ngoc",
+    "score": 400,
+    "result": "game_over"
+  },
+  {
+    "time": "12/05/2025, 14:17:18",
+    "room": "4",
+    "name": "Ngoc",
+    "score": 2800,
+    "result": "game_win"
+  },
+  {
+    "time": "12/05/2025, 14:17:18",
+    "room": "4",
+    "name": "a",
+    "score": 1100,
+    "result": "game_over"
+  },
+  {
+    "time": "12/05/2025, 14:18:15",
+    "room": "4",
+    "name": "a",
+    "score": 100,
+    "result": "game_win"
+  },
+  {
+    "time": "12/05/2025, 14:20:01",
+    "room": "4",
+    "name": "Ngoc",
+    "score": 2500,
+    "result": "game_win"
+  },
+  {
+    "time": "12/05/2025, 14:20:01",
+    "room": "4",
+    "name": "a",
+    "score": 700,
+    "result": "game_over"
+  },
+  {
+    "time": "12/05/2025, 14:32:22",
+    "room": "0",
+    "name": "player",
+    "score": 2700,
+    "result": "game_over"
+  },
+  {
+    "time": "12/05/2025, 15:28:17",
+    "room": "1",
+    "name": "player",
+    "score": 3300,
+    "result": "game_over"
+  }
+]
