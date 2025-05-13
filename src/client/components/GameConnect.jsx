@@ -38,7 +38,6 @@ export const useGameConnect = () => {
   };
 
   const update_level = (level) => {
-    console.log("Level changed", level);
     store.dispatch(setLevel(level));
   }
 

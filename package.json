@@ -11,7 +11,9 @@
     "coverage": "NODE_ENV=test nyc --include src --all -r text -r lcov -r text mocha --require @babel/register"
   },
   "dependencies": {
+    "@ngrok/ngrok": "^1.5.1",
     "@reduxjs/toolkit": "^2.5.1",
+    "dotenv": "^16.5.0",
     "flyd": "^0.2.8",
     "gamepad.js": "github:neogeek/gamepad.js",
     "react-dom": "^19.0.0",

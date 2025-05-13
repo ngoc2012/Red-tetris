@@ -37,7 +37,6 @@ export const useKeyboard = () => {
         default:
           break;
       }
-      console.log(key);
       key$("");
     }, key$);
 

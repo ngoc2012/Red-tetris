@@ -31,7 +31,6 @@ export const init_new_piece = () => {
 };
 
 export const place_piece = () => {
-  console.log("Placing piece");
   add_block_to_board();
   const rowsCleared = clear_full_rows();
   const board = store.getState().game_state.board;

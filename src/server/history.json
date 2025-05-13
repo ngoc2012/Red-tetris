@@ -166,5 +166,12 @@
     "name": "player",
     "score": 600,
     "result": "game_over"
+  },
+  {
+    "time": "13/05/2025, 22:43:34",
+    "room": "1",
+    "name": "player",
+    "score": 4500,
+    "result": "game_over"
   }
 ]
