@@ -37,11 +37,6 @@ export const Lobby = () => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log("rooms", rooms);
-    return () => {};
-  }, [rooms]);
-
   const new_room = () => {
     socket.emit("new_room", (response) => {
       if (response.success) nav(`${response.room_id}/${name}`);
