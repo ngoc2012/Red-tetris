@@ -3,7 +3,7 @@ import { DOWN, RIGHT, LEFT, ROT, FALL }
 import { keys$ } from "../index.jsx";
 
 const SERIELIMIT_MS = 20;
-const GAMEPADLOCK_MS = 10;
+const GAMEPADLOCK_MS = 20;
 
 let moveCount = 0;
 let serieState = false;
