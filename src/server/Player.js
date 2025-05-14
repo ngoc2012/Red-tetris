@@ -9,22 +9,6 @@ export class Player {
     this.room = room;
   }
 
-  get name() {
-    return this.name;
-  }
-
-  set name(value) {
-    this.name = value;
-  }
-
-  get room() {
-    return this.room;
-  }
-
-  set room(value) {
-    this.room = value;
-  }
-
   rename(new_name) {
     const ret = check_name(new_name);
     if (ret) {

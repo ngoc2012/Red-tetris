@@ -3,8 +3,6 @@ import express from "express";
 import path from "path";
 import fs from "fs";
 import debug from "debug";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 import { Server as SocketIO } from "socket.io";
 import { Player } from "./Player.js";
 import { Room } from "./Room.js";
@@ -12,18 +10,16 @@ import { Piece } from "./Piece.js";
 import { Status } from "../common/enums.js";
 
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = process.cwd()
 
 export const logerror = debug("tetris:error");
 export const loginfo = debug("tetris:info");
 
-
 const initApp = (server, app, params, cb) => {
   const { host, port } = params;
 
-  app.use(express.static(path.join(__dirname, "../../public")));
-  app.use(express.static(path.join(__dirname, "../../build")));
+  app.use(express.static(path.join(__dirname, "/public")));
+  app.use(express.static(path.join(__dirname, "/build")));
 
   app.get("/api/history", (req, res) => {
     const data = JSON.parse(fs.readFileSync(__dirname + "/history.json", "utf-8"));
