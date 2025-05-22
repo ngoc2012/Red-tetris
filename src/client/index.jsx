@@ -7,15 +7,19 @@ import flyd from "flyd";
 import { BrowserRouter } from "react-router-dom";
 import { PieceState } from "../common/enums.js";
 
+const container = document.getElementById("tetris");
+if (container) {
+  const root = createRoot(container);
+  root.render(
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
+  );
+} else
+  console.error("❌ Failed to find root container #tetris. App not rendered.");
 
-const root = createRoot(document.getElementById("tetris"));
-root.render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </Provider>
-);
 
 
 export const pos$ = flyd.stream(3);

@@ -1,4 +1,4 @@
-import { loginfo } from "./index.js";
+import { loginfo, logerror } from "./index.js";
 
 export class Player {
   name;
