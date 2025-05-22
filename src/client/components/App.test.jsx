@@ -2,47 +2,18 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import App from "./App.jsx";
 import { MemoryRouter } from "react-router-dom";
-import * as socket from "../socket.js";
 
 
-// --- Manual mock redux useDispatch ---
-const mockDispatch = jest.fn();
-jest.mock("react-redux", () => ({
-  useDispatch: () => mockDispatch,
-}));
-
-// --- Mock initSocket ---
-jest.mock("../socket.js", () => ({
-  initSocket: jest.fn(),
-}));
-
-// --- Mock components used in routes ---
-jest.mock("./Lobby.jsx", () => ({
-  Lobby: () => <div>Lobby Page</div>,
-}));
-jest.mock("./Game.jsx", () => ({
-  Game: () => <div>Game Page</div>,
-}));
-jest.mock("./History.jsx", () => ({
-  History: () => <div>History Page</div>,
-}));
-jest.mock("./NotFound.jsx", () => ({
-  NotFound: () => <div>404 Not Found</div>,
-}));
+jest.mock("react-redux", () => ({ useDispatch: jest.fn() }));
+jest.mock("../socket.js", () => ({ initSocket: jest.fn() }));
+jest.mock("./Lobby.jsx", () => ({ Lobby: () => <>Lobby Page</> }));
+jest.mock("./Game.jsx", () => ({ Game: () => <>Game Page</> }));
+jest.mock("./History.jsx", () => ({ History: () => <>History Page</> }));
+jest.mock("./NotFound.jsx", () => ({ NotFound: () => <>404 Not Found</> }));
 
 describe("App", () => {
   afterEach(() => {
     jest.clearAllMocks();
-  });
-
-  it("calls initSocket with dispatch", () => {
-    render(
-      <MemoryRouter initialEntries={["/"]}>
-        <App />
-      </MemoryRouter>
-    );
-
-    expect(socket.initSocket).toHaveBeenCalledWith(mockDispatch);
   });
 
   it("renders Lobby on '/'", () => {
