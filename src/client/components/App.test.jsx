@@ -55,9 +55,9 @@ describe("App", () => {
     expect(screen.getByText("Lobby Page")).toBeInTheDocument();
   });
 
-  it("renders Game on '/room123/player1'", () => {
+  it("renders Game on '/0/player1'", () => {
     render(
-      <MemoryRouter initialEntries={["/room123/player1"]}>
+      <MemoryRouter initialEntries={["/0/player1"]}>
         <App />
       </MemoryRouter>
     );
