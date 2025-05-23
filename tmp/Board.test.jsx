@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { useSelector } from "react-redux";
-// import { Board } from "./Board.jsx";
+import { Board } from "./Board.jsx";
 import * as flyd from "flyd";
 import * as indexModule from "../index.jsx";
 import * as utils from "../utils/utils.js";
@@ -9,6 +9,25 @@ import socket from "../socket.js";
 import { BUFFER, LENGTH, WIDTH } from "../../common/constants.js";
 import { Gamemode } from "../../common/enums.js";
 import { tetrominoes } from "../../common/tetrominoes.js";
+
+// import * as flyd from "flyd";
+// import * as indexModule from "../index.jsx";
+
+// Tell Jest to mock the module
+jest.mock("../index.jsx");
+
+// Create mock streams (they're functions!)
+const mockPos$ = flyd.stream(0);
+const mockRot$ = flyd.stream(0);
+const mockPiece$ = flyd.stream("I");
+
+beforeAll(() => {
+  // Assign mocks directly to the module's exports
+  indexModule.pos$ = mockPos$;
+  indexModule.rot$ = mockRot$;
+  indexModule.piece$ = mockPiece$;
+});
+
 
 
 // Mock Redux
@@ -27,40 +46,8 @@ jest.mock("../utils/utils.js", () => ({
   board_to_spectrum: jest.fn(),
 }));
 
-// Mock flyd
-jest.spyOn(flyd, "combine").mockImplementation((fn) => {
-  fn(); // simulate immediate call
-  return { end: jest.fn() };
-});
-
-// Mock flyd signals
-const mockPos = jest.fn(() => [0, 0]);
-const mockRot = jest.fn(() => 0);
-const mockPiece = jest.fn(() => "I");
-
-jest.spyOn(indexModule, "pos$").mockImplementation(mockPos);
-jest.spyOn(indexModule, "rot$").mockImplementation(mockRot);
-jest.spyOn(indexModule, "piece$").mockImplementation(mockPiece);
-
 // Constants
 const BOARD_SIZE = WIDTH * (LENGTH + BUFFER);
-
-// // Tetromino mock
-// const tetrominoesMock = {
-//   I: [
-//     [[1, 1, 1, 1]],
-//     [[1], [1], [1], [1]],
-//   ],
-// };
-
-// jest.mock("../../common/tetrominoes.js", () => ({
-//   tetrominoes: {
-//     I: [
-//       [[1, 1, 1, 1]],
-//       [[1], [1], [1], [1]],
-//     ],
-//   },
-// }));
 
 describe("Board Component", () => {
   beforeEach(() => {

@@ -7,6 +7,7 @@ import flyd from "flyd";
 import { BrowserRouter } from "react-router-dom";
 import { PieceState } from "../common/enums.js";
 
+
 const container = document.getElementById("tetris");
 if (container) {
   const root = createRoot(container);
@@ -17,7 +18,9 @@ if (container) {
       </BrowserRouter>
     </Provider>
   );
-} else
+} else if (process.env.NODE_ENV === "test")
+  console.log("🧩 Test environment");
+else
   console.error("❌ Failed to find root container #tetris. App not rendered.");
 
 
