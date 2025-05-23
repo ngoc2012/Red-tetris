@@ -12,5 +12,10 @@ server.create(params.server).then( () => {
     authtoken_from_env: true,
     domain: 'pet-vocal-piranha.ngrok-free.app',
   })
-  .then(listener => console.log(`Ingress established at: ${listener.url()}`));
+  .then(listener => console.log(`Ingress established at: ${listener.url()}`))
+  .catch(err => {
+    console.error('Error establishing ingress:\n', err);
+    // process.exit(1);
+  });
+  console.log('server started');
 });

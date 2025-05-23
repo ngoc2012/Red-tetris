@@ -10,7 +10,7 @@ import { Piece } from "./Piece.js";
 import { Status } from "../common/enums.js";
 
 
-const __dirname = process.cwd()
+const __dirname = process.cwd();
 
 export const logerror = debug("tetris:error");
 export const loginfo = debug("tetris:info");
@@ -23,7 +23,7 @@ const initApp = (server, app, params, cb) => {
 
   app.get("/api/history", (req, res) => {
     const data = JSON.parse(fs.readFileSync(__dirname + "/history.json", "utf-8"));
-    res.json(data);
+    res.json(data.reverse());
   });
 
   server.listen(port, () => {

@@ -13,6 +13,14 @@
 </head>
 <body>
     <div id="tetris"></div>
+    <audio id="bg-music" src="/tetris.mp3" autoplay loop muted></audio>
+    <script>
+        document.addEventListener('click', () => {
+            const audio = document.getElementById('bg-music');
+            audio.muted = false;
+            audio.play().catch(e => console.log("Audio play failed:", e));
+        });
+    </script>
     <script src="/bundle.js"></script>
 </body>
 </html>

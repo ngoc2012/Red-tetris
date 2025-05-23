@@ -25,6 +25,7 @@ const config = {
     "src/**/*.{js,jsx}",         // Include all JS/JSX in src/
     // "!src/**/index.js",          // (optional) exclude entry points
     "!**/node_modules/**",       // Exclude node_modules
+    "!**/dist/**",              // Exclude node_modules
     "!**/*.test.{js,jsx}",       // Exclude test files themselves
   ],
 
@@ -165,9 +166,10 @@ const config = {
   // ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  // testPathIgnorePatterns: [
-  //   "/node_modules/"
-  // ],
+  testPathIgnorePatterns: [
+    "/node_modules/",
+    "/dist/"
+  ],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
   // testRegex: [],

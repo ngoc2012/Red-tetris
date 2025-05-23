@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { useSelector } from "react-redux";
-import { Board } from "./Board.jsx";
+// import { Board } from "./Board.jsx";
 import * as flyd from "flyd";
 import * as indexModule from "../index.jsx";
 import * as utils from "../utils/utils.js";
