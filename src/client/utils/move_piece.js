@@ -8,7 +8,8 @@ import {
 } from "../../common/constants.js";
 import { PieceState } from "../../common/enums.js";
 import { tetrominoes } from "../../common/tetrominoes.js";
-import { next_pieces$, fall_count$, lock_count$, piece$, pos$, rot$, state$ } from "../index.jsx";
+import { next_pieces$, fall_count$, lock_count$,
+  piece$, pos$, rot$, state$ } from "../streams.js";
 import socket from "../socket.js";
 import { setStatus } from "../store.js";
 import {
@@ -38,7 +39,12 @@ export const place_piece = () => {
     store.dispatch(setStatus("game_over"));
     return;
   }
-  if (rowsCleared > 0) socket.emit("cleared_a_line", rowsCleared);
+  if (rowsCleared > 0) {
+    const audio = document.getElementById('cl-music');
+    audio.muted = false;
+    audio.play().catch(e => console.log("Audio play failed:", e));
+    socket.emit("cleared_a_line", rowsCleared);
+  }
   init_new_piece();
 };
 

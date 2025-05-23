@@ -1,6 +1,6 @@
 import { DOWN, RIGHT, LEFT, ROT, FALL }
   from "../../common/constants.js";
-import { keys$ } from "../index.jsx";
+import { keys$ } from "../streams.js";
 
 const SERIELIMIT_MS = 20;
 const GAMEPADLOCK_MS = 20;

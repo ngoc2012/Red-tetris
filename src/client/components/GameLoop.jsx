@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { pos$, rot$ } from "../index.jsx";
+import { pos$, rot$ } from "../streams.js";
 import { can_move, place_piece,  init_new_piece, rotate_piece }
   from "../utils/move_piece.js";
 import { DOWN, WIDTH, tetrisGravityFrames, LOCK, RIGHT, LEFT, ROT, FALL }
   from "../../common/constants.js";
 import { Status, PieceState } from "../../common/enums.js";
 import { keys$, state$, fall_count$, lock_count$ }
-  from "../index.jsx";
+  from "../streams.js";
 import { store } from "../store.js";
 import socket from "../socket.js";
 import { pollGamepads } from "../utils/gamepad.js";

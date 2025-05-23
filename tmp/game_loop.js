@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { key$ } from "./index.jsx";
+import { key$ } from "./streams.js";
 
 const onKeyDown = (event) => {
   key$(event.key);

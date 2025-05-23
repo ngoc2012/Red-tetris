@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import socket from "../socket.js";
 import { setGamemode, setLevel, setMode, setStatus } from "../store.js";
 import { reset } from "../utils/utils.js";
-import { next_pieces$ } from "../index.jsx";
+import { next_pieces$ } from "../streams.js";
 import { add_penalty } from "../utils/utils.js";
 import { store } from "../store.js";
 

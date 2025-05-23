@@ -1,4 +1,4 @@
-import { piece$, rot$, pos$, next_pieces$ } from "../index.jsx";
+import { piece$, rot$, pos$, next_pieces$ } from "../streams.js";
 import { tetrominoes } from "../../common/tetrominoes.js";
 import { store, setBoard, resetBoard, setScore } from "../store.js";
 import { BUFFER, WIDTH } from "../../common/constants.js";

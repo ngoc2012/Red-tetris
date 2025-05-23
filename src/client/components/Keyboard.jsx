@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import flyd from "flyd";
-import { piece$, keys$ } from "../index.jsx";
+import { piece$, keys$ } from "../streams.js";
 import { DOWN, LEFT, RIGHT, ROT, FALL } from "../../common/constants.js";
 
 

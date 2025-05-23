@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import flyd from "flyd";
-import { pos$, rot$, piece$ } from "../index.jsx";
+import { pos$, rot$, piece$ } from "../streams.js";
 import { Square } from "./Square.jsx";
 import { board_to_block, board_to_spectrum } from "../utils/utils.js";
 import { useSelector } from "react-redux";

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import socket from "../socket.js";
 import { useSelector } from "react-redux";
-import { fall_count$, lock_count$ } from "../index.jsx";
+import { fall_count$, lock_count$ } from "../streams.js";
 import { Status } from "../../common/enums.js";
 
 export const useGameStatus = () => {
