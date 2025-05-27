@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import { Link } from "react-router-dom";
 
 export const History = () => {
   const [history, setHistory] = useState([]);
@@ -14,6 +13,7 @@ export const History = () => {
       })
       .catch((error) => {
         console.error("Error fetching history data:", error);
+        setLoading(false);
       });
   }
   , []);
@@ -67,7 +67,6 @@ export const History = () => {
 const thStyle = {
   border: "1px solid #ccc",
   padding: "8px",
-  // backgroundColor: "#f2f2f2",
   textAlign: "center",
 };
 

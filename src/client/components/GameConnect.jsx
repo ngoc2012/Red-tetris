@@ -18,7 +18,6 @@ export const useGameConnect = () => {
     store.dispatch(setMode(room.mode));
     store.dispatch(setGamemode(room.gamemode));
     store.dispatch(setLevel(room.level));
-    console.log("Game started", room.level);
     store.dispatch(setStatus("playing"));
   };
 
