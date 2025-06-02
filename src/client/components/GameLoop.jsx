@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { pos$, rot$ } from "../streams.js";
 import { can_move, place_piece,  init_new_piece, rotate_piece }
   from "../utils/move_piece.js";
@@ -80,7 +80,10 @@ const falling_state = () => {
 };
 
 export const useGameLoop = () => {
+  const dispatch = useDispatch();
   const status = useSelector((state) => state.game_state.status);
+  const room_id = useSelector((state) => state.game_state.room_id);
+  
   const frameRef = useRef();
   const gamepadRef = useRef(-1);
   const lastGamepadInputTimeRef = useRef(performance.now());
@@ -93,7 +96,7 @@ export const useGameLoop = () => {
       keys$([]);
       return;
     }
-    pollGamepads(gamepadRef, now, lastGamepadInputTimeRef);
+    pollGamepads(gamepadRef, now, lastGamepadInputTimeRef, dispatch, room_id);
     apply_key();
     
     if (now - lastFrameTime >= 1) {

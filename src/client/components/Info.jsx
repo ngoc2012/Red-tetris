@@ -6,7 +6,7 @@ import { next_pieces$ } from "../streams.js";
 import { tetrominoes } from "../../common/tetrominoes.js";
 import socket from "../socket.js";
 import { Gamemode, Status } from "../../common/enums.js";
-import { setGamemode, setStatus } from "../store.js";
+import { setStatus } from "../store.js";
 
 
 const SmallBoard = ({ tetro }) => {

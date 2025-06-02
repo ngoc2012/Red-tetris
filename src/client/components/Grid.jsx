@@ -1,8 +1,12 @@
 import React from "react";
 import { Square } from "./Square.jsx";
 import { WIDTH, LENGTH, BUFFER } from "../../common/constants.js";
+import { board_to_block } from "../utils/utils.js";
+import { tetrominoes } from "../../common/tetrominoes.js";
+import { Gamemode } from "../../common/enums.js";
 
-export const Grid = ({ board, gamemode, piece, pos, rot, tetrominoes, board_to_block, Gamemode }) => {
+
+export const Grid = ({ board, gamemode, piece, pos, rot }) => {
   const gridSquares = Array.from({ length: WIDTH * (LENGTH + BUFFER) }).map((_, i) => {
     const row = Math.floor(i / WIDTH);
     const col = (i + WIDTH) % WIDTH;

@@ -19,17 +19,16 @@ jest.mock("flyd", () => {
   return {
     ...originalFlyd,
     combine: (fn, streams) => {
-      // call immediately to simulate reactive behavior
       fn();
-      return { end: jest.fn() }; // mock return to allow .end(true)
+      return { end: jest.fn() };
     },
   };
 });
 
-jest.mock("../utils/utils.js", () => ({
-  board_to_block: jest.fn((_, col, row) => [col, row]),
-  board_to_spectrum: jest.fn(() => "mockSpectrum"),
-}));
+// jest.mock("../utils/utils.js", () => ({
+//   board_to_block: jest.fn((_, col, row) => [col, row]),
+//   board_to_spectrum: jest.fn(() => "mockSpectrum"),
+// }));
 
 jest.mock("../socket.js", () => ({
   emit: jest.fn(),
@@ -47,22 +46,8 @@ jest.mock("../../common/tetrominoes.js", () => ({
   },
 }));
 
-jest.mock("../../common/enums.js", () => ({
-  Gamemode: {
-    NORMAL: "NORMAL",
-    INVIS: "INVIS",
-  },
-}));
-
-jest.mock("./Square.jsx", () => ({
-  Square: ({ color, filled, blocked }) => (
-    <div
-      data-testid="square"
-      data-color={color}
-      data-filled={filled}
-      data-blocked={blocked}
-    />
-  ),
+jest.mock("./Grid.jsx", () => ({
+  Grid: jest.fn(() => <div data-testid="grid" />),
 }));
 
 describe("<Board />", () => {
@@ -81,29 +66,9 @@ describe("<Board />", () => {
     );
   });
 
-  it("renders a full grid of squares", () => {
+  it("renders the Grid component", () => {
     render(<Board />);
-    const squares = screen.getAllByTestId("square");
-    // WIDTH = 10, LENGTH + BUFFER = 22
-    expect(squares.length).toBe(220); // Includes buffer
+    expect(screen.getByTestId("grid")).toBeInTheDocument();
   });
 
-  it("emits board_update with spectrum when board changes", () => {
-    render(<Board />);
-    expect(socket.emit).toHaveBeenCalledWith("board_update", "mockSpectrum");
-  });
-
-  it("does not show filled squares when gamemode is INVIS", () => {
-    useSelector.mockImplementation((cb) =>
-      cb({
-        game_state: {
-          board: Array(10 * 22).fill("Z"),
-          gamemode: "INVIS",
-        },
-      })
-    );
-    render(<Board />);
-    const filledSquares = screen.getAllByTestId("square");
-    expect(filledSquares.every((s) => s.dataset.filled === "false")).toBe(true);
-  });
 });

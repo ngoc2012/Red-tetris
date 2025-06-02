@@ -1,6 +1,10 @@
 import { DOWN, RIGHT, LEFT, ROT, FALL }
   from "../../common/constants.js";
 import { keys$ } from "../streams.js";
+import socket from "../socket.js";
+import { setStatus } from "../store.js";
+import { Status } from "../../common/enums.js";
+
 
 const SERIELIMIT_MS = 20;
 const GAMEPADLOCK_MS = 20;
@@ -10,16 +14,30 @@ let serieState = false;
 let buttonPressed = -1;
 let last_pressed = -1;
 
-export const pollGamepads = (gamepadRef, now, lastGamepadInputTimeRef) => {
+export const pollGamepads = (gamepadRef, now, lastGamepadInputTimeRef, dispatch, room_id) => {
   const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
   const gp = gamepads[0];
   if (!gp) return;
 
   gp.buttons.forEach((button, index) => {
     if (button.pressed) {
-      if (index === 1 || index === 2) {
+      // console.log("gamepad start pressed", index, buttonPressed);
+      if (index === 1) {
         if (buttonPressed !== index) {
           keys$(keys$().concat(ROT));
+          buttonPressed = index;
+        }
+      }
+      else if (index === 2) {
+        if (buttonPressed !== index) {
+          socket.emit("game_start", room_id, (response) => {
+            if (response.success) {
+              console.log("game starting");
+              dispatch(setStatus(Status.PLAYING));
+            } else {
+              console.log("could not start game");
+            }
+          });
           buttonPressed = index;
         }
       }
