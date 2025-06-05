@@ -3,18 +3,17 @@ import { render, screen } from "@testing-library/react";
 import { Grid } from "./Grid";
 import { WIDTH, LENGTH, BUFFER } from "../../common/constants.js";
 import { Gamemode } from "../../common/enums.js";
-// import { Square } from "./Square.jsx";
 
 // Mock Square to track props
-// jest.mock("./Square.jsx", () => ({
-//   Square: jest.fn(({ color, filled, blocked }) => (
-//     <div data-testid="square" data-color={color} data-filled={filled} data-blocked={blocked}></div>
-//   )),
-// }));
+jest.mock("./Square.jsx", () => ({
+  Square: jest.fn(({ color, filled, blocked }) => (
+    <div data-testid="square" data-color={color} data-filled={filled} data-blocked={blocked}></div>
+  )),
+}));
 
 describe("Grid component", () => {
   const board = Array(WIDTH * (LENGTH + BUFFER)).fill("");
-  const pos = WIDTH / 2 + 2 * WIDTH; // Center position for the piece
+  const pos = WIDTH / 2 + 2 * WIDTH;
   const rot = 0;
   const piece = "I";
   const tetrominoes = {
@@ -44,7 +43,7 @@ describe("Grid component", () => {
       />
     );
 
-    const squares = screen.getAllByTestId("cell");
+    const squares = screen.getAllByTestId("square");
     expect(squares).toHaveLength(WIDTH * LENGTH); // excludes BUFFER rows
   });
 
@@ -63,7 +62,7 @@ describe("Grid component", () => {
     );
 
     const pieceSquares = screen
-      .getAllByTestId("cell")
+      .getAllByTestId("square")
       .filter((el) => el.dataset.filled === "true" && el.dataset.blocked === "false");
 
     // The I tetromino should render 4 filled blocks
@@ -75,13 +74,13 @@ describe("Grid component", () => {
 
   it("respects gamemode INVIS by hiding filled state", () => {
     const invisBoard = [...board];
-    invisBoard[0] = "Z";
+    invisBoard[2 * WIDTH] = "Z";
 
     render(
       <Grid
         board={invisBoard}
         gamemode={Gamemode.INVIS}
-        piece={null}
+        piece={false}
         pos={pos}
         rot={rot}
         tetrominoes={tetrominoes}
@@ -90,10 +89,8 @@ describe("Grid component", () => {
       />
     );
 
-    const squares = screen.getAllByTestId("cell");
+    const squares = screen.getAllByTestId("square");
     const square0 = squares[0];
-
-    // console.log(square0);
 
     expect(square0.dataset.color).toBe("Z");
     expect(square0.dataset.filled).toBe("false");
@@ -101,7 +98,7 @@ describe("Grid component", () => {
 
   it("renders blocked squares", () => {
     const blockedBoard = [...board];
-    blockedBoard[5] = "X";
+    blockedBoard[2* WIDTH + 5] = "X";
 
     render(
       <Grid
@@ -116,7 +113,7 @@ describe("Grid component", () => {
       />
     );
 
-    const blockedSquare = screen.getAllByTestId("cell")[5];
+    const blockedSquare = screen.getAllByTestId("square")[5];
     expect(blockedSquare.dataset.blocked).toBe("true");
   });
 });
