@@ -18,6 +18,11 @@ export const loginfo = debug("tetris:info");
 const initApp = (server, app, params, cb) => {
   const { host, port } = params;
 
+  app.use((req, res, next) => {
+    res.setHeader("ngrok-skip-browser-warning", "true");
+    next();
+  });
+
   app.use(express.static(path.join(__dirname, "/public")));
   app.use(express.static(path.join(__dirname, "/build")));
 
