@@ -9,7 +9,7 @@ import { Gamemode, Status } from "../../common/enums.js";
 import { setStatus } from "../store.js";
 
 
-const SmallBoard = ({ tetro }) => {
+export const SmallBoard = ({ tetro }) => {
   return (
     <div className='small_board'>
       {Array.from({ length: 2 * 4 }).map((_, i) => {
@@ -26,7 +26,7 @@ const SmallBoard = ({ tetro }) => {
   );
 };
 
-const Pieces = () => {
+export const Pieces = () => {
   let [pieces, setPieces] = useState([]);
   
 

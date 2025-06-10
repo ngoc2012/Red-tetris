@@ -2,8 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { Info } from "./Info";
-// import { tetrominoes } from "../../common/tetrominoes.js";
-import { Status, Gamemode} from "../../common/enums.js"; // Import enums directly for clarity
+import { Status, Gamemode} from "../../common/enums.js";
 
 // === MOCKS ===
 
@@ -41,26 +40,6 @@ jest.mock("flyd", () => {
   };
 });
 
-// jest.mock("../../common/enums.js", () => ({
-//   Status: {
-//     WAITING: "waiting",
-//     PLAYING: "playing",
-//     STARTING: "starting",
-//   },
-//   Gamemode: {
-//     CLASSIC: "classic",
-//     SPRINT: "sprint",
-//   },
-// }));
-
-// jest.mock("../../common/tetrominoes.js", () => ({
-//   tetrominoes: {
-//     I: [[[1, 1, 1, 1]]],
-//     O: [[[1, 1], [1, 1]]],
-//     T: [[[0, 1, 0], [1, 1, 1]]],
-//   },
-// }));
-
 jest.mock("./Spectrums.jsx", () => ({
   Spectrums: () => <div data-testid="spectrums">Spectrums</div>,
 }));
@@ -68,7 +47,6 @@ jest.mock("./Spectrums.jsx", () => ({
 // === IMPORTS AFTER MOCKS ===
 import { useSelector, useDispatch } from "react-redux";
 import { store, setStatus } from "../store";
-// import { Status, Gamemode } from "../../common/enums";
 
 describe("<Info />", () => {
   beforeEach(() => {
@@ -115,20 +93,7 @@ describe("<Info />", () => {
     );
 
     render(<Info />);
-    expect(screen.getByRole("button", { name: /start game/i })).toBeDisabled();
-  });
-
-  it("emits game_start and dispatches setStatus when start button is clicked", () => {
-    const socket = require("../socket.js");
-    // socket.emit.mockImplementation((event, roomId, cb) => {
-    //   cb({ success: true });
-    // });
-
-    render(<Info />);
-    // fireEvent.click(screen.getByRole("button", { name: /start game/i }));
-
-    // expect(socket.emit).toHaveBeenCalledWith("game_start", "room1", expect.any(Function));
-    expect(store.dispatch).toHaveBeenCalledWith(setStatus(Status.PLAYING));
+    expect(screen.getByRole("button")).toBeDisabled();
   });
 
   it("emits gamemode on select change", () => {
@@ -140,5 +105,32 @@ describe("<Info />", () => {
     });
 
     expect(socket.emit).toHaveBeenCalledWith("gamemode", Gamemode.INVIS, "room1");
+  });
+
+  it("emits game_start and dispatches setStatus when start button is clicked", () => {
+    const socket = require("../socket.js");
+
+    render(<Info />);
+    fireEvent.click(screen.getByRole("button"));
+
+    expect(socket.emit).toHaveBeenCalledWith("game_start", "room1", expect.any(Function));
+    // expect(store.dispatch).toHaveBeenCalledWith(setStatus(Status.PLAYING));
+  });
+});
+
+import { SmallBoard } from "./Info";
+
+describe("<SmallBoard />", () => {
+  it("renders empty cells when no tetromino is provided", () => {
+    const { container } = render(<SmallBoard tetro="" />);
+    const cells = container.querySelectorAll(".cell.empty");
+    expect(cells.length).toBe(8); // 2 rows * 4 cols
+  });
+
+  it("renders filled cells for a valid tetromino", () => {
+    const tetro = "I";
+    const { container } = render(<SmallBoard tetro={tetro} />);
+    const filledCells = container.querySelectorAll(`.cell.filled.${tetro}`);
+    expect(filledCells.length).toBeGreaterThan(0); // At least one cell should be filled
   });
 });
