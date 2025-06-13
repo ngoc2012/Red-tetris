@@ -13,7 +13,7 @@ import socket from "../socket.js";
 import { pollGamepads } from "../utils/gamepad.js";
 
 
-const apply_key = () => {
+export const apply_key = () => {
   if (keys$().length > 0) {
     const key = keys$()[0];
     keys$(keys$().slice(1));
