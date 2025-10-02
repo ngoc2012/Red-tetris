@@ -8,7 +8,9 @@
     "srv-prod": "node src/server/main.js",
     "srv-dist": "DEBUG=tetris:* babel src --out-dir dist",
     "test": "jest",
-    "coverage": "NODE_ENV=test nyc --include src --all -r text -r lcov -r text mocha --require @babel/register"
+    "coverage": "NODE_ENV=test nyc --include src --all -r text -r lcov -r text mocha --require @babel/register",
+    "dev": "concurrently \"npm run client-dev\" \"npm run srv-dev\"",
+    "dist": "concurrently \"npm run client-dist\" \"npm run srv-dist\" \"npm run srv-prod\""
   },
   "dependencies": {
     "@ngrok/ngrok": "^1.5.1",
@@ -36,6 +38,7 @@
     "babel-loader": "^9.2.1",
     "babel-watch": "^7.8.1",
     "chai": "^5.1.2",
+    "concurrently": "^9.2.1",
     "eslint": "^9.19.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
