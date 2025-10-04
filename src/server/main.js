@@ -1,9 +1,7 @@
 import params  from '../../params.js';
 import * as server from './index.js';
 import ngrok from "@ngrok/ngrok";
-import dotenv from 'dotenv';
 
-dotenv.config();
 
 server.create(params.server).then( () => {
   console.log('not yet ready to play tetris with U ...');

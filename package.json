@@ -10,12 +10,12 @@
     "test": "jest",
     "coverage": "NODE_ENV=test nyc --include src --all -r text -r lcov -r text mocha --require @babel/register",
     "dev": "concurrently \"npm run client-dev\" \"npm run srv-dev\"",
-    "dist": "concurrently \"npm run client-dist\" \"npm run srv-dist\" \"npm run srv-prod\""
+    "dist": "concurrently \"npm run client-dist\" \"npm run srv-dist\" \"npm run srv-prod\"",
+    "build": "NODE_ENV=production webpack --progress --color && npm run srv-dist"
   },
   "dependencies": {
     "@ngrok/ngrok": "^1.5.1",
     "@reduxjs/toolkit": "^2.5.1",
-    "dotenv": "^16.5.0",
     "flyd": "^0.2.8",
     "gamepad.js": "github:neogeek/gamepad.js",
     "react-dom": "^19.0.0",
