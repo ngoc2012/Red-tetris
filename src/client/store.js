@@ -72,7 +72,7 @@ export const store = configureStore({
     player: playerSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(thunk, createLogger(), storeStateMiddleWare),
+    getDefaultMiddleware().concat(createLogger(), storeStateMiddleWare),
 });
 
 // Export actions

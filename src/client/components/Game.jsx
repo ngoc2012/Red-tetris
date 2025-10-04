@@ -22,7 +22,9 @@ export const Game = () => {
   useGameLoop();
 
   useEffect(() => {
+    console.log("joining room", roomid, name);
     socket.emit("join_room", roomid, (response) => {
+      console.log("join_room", response,response.success);
       if (response.success) {
         setFound(true);
         store.dispatch(setRoomId(roomid));

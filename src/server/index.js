@@ -24,7 +24,7 @@ const initApp = (server, app, params, cb) => {
   });
 
   app.use(express.static(path.join(__dirname, "/public")));
-  app.use(express.static(path.join(__dirname, "/build")));
+  app.use(express.static(path.join(__dirname, "/dist")));
 
   app.get("/api/history", (req, res) => {
     const data = JSON.parse(fs.readFileSync(__dirname + "/history.json", "utf-8"));
@@ -51,15 +51,26 @@ const initEngine = (io) => {
 
   const leave_room = (socket, room_id) => {
     if (room_id < 0 || !rooms.has(room_id)) return;
+    
+    const room = rooms.get(room_id);
     socket.leave(room_id);
-    rooms.get(room_id).remove_player(socket.id);
+    room.remove_player(socket.id);
     game_end(room_id);
     socket.to(room_id).emit("player_leave", socket.id);
-    if (rooms.get(room_id).players.size === 0) {
-      // player was the last one in room
-      rooms.delete(room_id);
-      loginfo(`deleted room ${room_id}`);
-      io.to("lobby").emit("room_update");
+
+    if (room.players.size === 0) {
+      room.deleteTimeout = setTimeout(() => {
+        const currentRoom = rooms.get(room_id);
+        if (currentRoom && currentRoom.players.size === 0) {
+          console.log("deleting room", room_id);
+          rooms.delete(room_id);
+          loginfo(`deleted room ${room_id}`);
+          io.to("lobby").emit("room_update");
+        }
+
+        // ✅ clear the reference (self-cleaning)
+        if (currentRoom) delete currentRoom.deleteTimeout;
+      }, 200);
     }
   };
 
@@ -71,8 +82,12 @@ const initEngine = (io) => {
   };
 
   const save_score = (socket, score, room_id, result) => {
+    console.log("save_score", socket, score, room_id, result);
     if (score > 0) {
-      const data = JSON.parse(fs.readFileSync(__dirname + "/history.json", "utf-8"));
+      let data = [];
+      if (fs.existsSync(__dirname + "/history.json")) {
+        data = JSON.parse(fs.readFileSync(__dirname + "/history.json", "utf-8"));
+      }
       const now = new Date();
       const formatted = now.toLocaleString("en-GB", {
         hour12: false,
@@ -117,13 +132,15 @@ const initEngine = (io) => {
 
     socket.on("new_room", (callback) => {
       const room_id = Room.count();
+      // console.log("new_room", room_id);
       rooms.set(room_id, new Room(io, socket.id));
+      // console.log("rooms", rooms);
       callback({ success: true, room_id: room_id });
       io.to("lobby").emit("room_update");
     });
 
     socket.on("join_room", (room_id, callback) => {
-      console.log("join_room", room_id);
+      // console.log("join_room", room_id);
       if (!rooms.has(room_id) || rooms.get(room_id).status === Status.PLAYING) {
         callback({ success: false });
         return;
@@ -134,6 +151,7 @@ const initEngine = (io) => {
     });
 
     socket.on("leave_room", (room_id) => {
+      // console.log("leave_room", room_id);
       if (room_id >= 0 && rooms.has(room_id)) {
         leave_room(socket, room_id);
         players.get(socket.id).room = "lobby";
@@ -173,7 +191,15 @@ const initEngine = (io) => {
     });
 
     socket.on("spectrums", (callback) => {
+      if (!players.has(socket.id)) {
+        callback(null);
+        return;
+      }
       const room_id = players.get(socket.id).room;
+      if (room_id < 0 || !rooms.has(room_id)) {
+        callback(null);
+        return;
+      }
       const spec = rooms.get(room_id).spectrums(socket.id);
       if (rooms.get(room_id).players.size < 2) {
         callback(null);

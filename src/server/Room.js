@@ -23,6 +23,7 @@ export class Room {
   status;
   owner;
   players; // Map<string,RoomPlayer>
+  deleteTimeout;
   constructor(io, owner) {
     this.io = io;
     this.id = Room.room_counter.toString();
@@ -34,7 +35,9 @@ export class Room {
     this.status = Status.WAITING;
     this.owner = owner;
     this.players = new Map();
+    this.deleteTimeout = null;
     loginfo(`Room ${this.id} created by ${owner}`);
+    console.log(`Room ${this.id} created by ${owner}`);
   }
   get players_left() {
     return new Map([...this.players].filter(([, v]) => v.playing === true));
@@ -76,7 +79,7 @@ export class Room {
   remove_player(id) {
     this.players.delete(id);
     loginfo(`${id} left room ${this.id}`);
-    if (this.owner === id) {
+    if (this.owner === id && this.players.keys().next().value) {
       this.owner = this.players.keys().next().value;
       loginfo(`transferred ownership of room ${this.id} to ${this.owner}`);
     }

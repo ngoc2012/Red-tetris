@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from 'react'
 import { useDispatch } from "react-redux";
 import { initSocket } from "../socket.js";
 import { Lobby } from "./Lobby.jsx";
@@ -6,8 +6,9 @@ import { Game } from "./Game.jsx";
 import { History } from "./History.jsx";
 import { Routes, Route } from "react-router-dom";
 import { NotFound } from "./NotFound.jsx";
+// import './App.css'
 
-const App = () => {
+function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -21,7 +22,7 @@ const App = () => {
       <Route path='/history' element={<History />} />
       <Route path='*' element={<NotFound />} />
     </Routes>
-  );
-};
+  )
+}
 
-export default App;
+export default App
