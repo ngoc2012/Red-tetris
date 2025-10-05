@@ -66,16 +66,16 @@ export const useKeyboard = () => {
       const deltaY = touche$().end.y - touche$().start.y;
       if (Math.abs(deltaX) > Math.abs(deltaY)) {
         // Horizontal swipe
-        if (deltaX > 5) {
+        if (deltaX > 1) {
           keys$(keys$().concat(RIGHT));
-        } else if (deltaX < -5) {
+        } else if (deltaX < -1) {
           keys$(keys$().concat(LEFT));
         }
       } else {
         // Vertical swipe
-        if (deltaY > 5) {
+        if (deltaY > 1) {
           keys$(keys$().concat(DOWN));
-        } else if (deltaY < -5) {
+        } else if (deltaY < -1) {
           keys$(keys$().concat(ROT));
         }
       }
