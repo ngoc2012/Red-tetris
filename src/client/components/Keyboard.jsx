@@ -82,9 +82,9 @@ export const useKeyboard = () => {
       touche$({start: {x:0, y:0}, end: {x:0, y:0}});
     };
     window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("touchstart", onTouchStart);
-    window.addEventListener("touchmove", onTouchMove);
-    window.addEventListener("touchend", onTouchEnd);
+    window.addEventListener("touchstart", onTouchStart, { passive: false });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd, { passive: false });
 
     return () => {
       subscription.end(true);
