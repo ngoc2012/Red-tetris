@@ -7,10 +7,15 @@ import { store } from "./client/store.js";
 import { BrowserRouter } from "react-router-dom";
 
 
+let basename = "/";
+if (import.meta.env.VITE_ENV === "production") {
+  basename = "/red/";
+}
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <App />
       </BrowserRouter>
     </Provider>

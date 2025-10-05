@@ -1,9 +1,19 @@
 import { io } from "socket.io-client";
 import { setScore, setId } from "./store.js";
 
-// const socket = io(window.location.origin); // Server URL
-// const socket = io("http://localhost:3004"); // Server URL
-const socket = io(`${window.location.protocol}//${window.location.hostname}:3004`);
+let socket = null;
+if (import.meta.env.VITE_ENV === "production") {
+    socket = io(`${window.location.protocol}//${window.location.hostname}`, {
+    path: '/red/socket.io',
+    transports: ['websocket']
+  });
+} else {
+    socket = io(`${window.location.protocol}//${window.location.hostname}:3004`, {
+    transports: ['websocket']
+  });
+}
+
+
 
 
 export const initSocket = (dispatch) => {

@@ -122,6 +122,7 @@ const initEngine = (io) => {
 
   io.on("connection", (socket) => {
     loginfo("Socket connected: " + socket.id);
+    console.log("Socket connected: " + socket.id);
     socket.emit("connected", { id: socket.id });
     socket.join("lobby");
     players.set(socket.id, new Player());
@@ -285,6 +286,7 @@ export function create(params) {
           cors: {
             origin: "*",
           },
+          transports: ['websocket'],  // Only use WebSocket
         });
 
         const stop = (cb) => {
