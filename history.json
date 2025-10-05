@@ -19,5 +19,12 @@
     "name": "player",
     "score": 100,
     "result": "game_over"
+  },
+  {
+    "time": "05/10/2025, 14:53:15",
+    "room": "14",
+    "name": "player",
+    "score": 200,
+    "result": "game_win"
   }
 ]
