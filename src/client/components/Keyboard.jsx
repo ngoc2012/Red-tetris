@@ -34,7 +34,9 @@ export const useKeyboard = () => {
     }, key$);
 
     const onKeyDown = (event) => { key$(event.key); };
-    const onTouchStart = (event) => { touche$(
+    const onTouchStart = (event) => {
+      event.preventDefault();
+      touche$(
       {
         start: {
           x: event.touches[0].clientX,
@@ -45,7 +47,9 @@ export const useKeyboard = () => {
           y: touche$().end.y
         }
       }); };
-    const onTouchMove = (event) => { touche$(
+    const onTouchMove = (event) => { 
+      event.preventDefault();
+      touche$(
       {
         start: {
           x: touche$().start.x,
@@ -57,6 +61,7 @@ export const useKeyboard = () => {
         }
       }); };
     const onTouchEnd = (event) => {
+      event.preventDefault();
       const deltaX = touche$().end.x - touche$().start.x;
       const deltaY = touche$().end.y - touche$().start.y;
       if (Math.abs(deltaX) > Math.abs(deltaY)) {
