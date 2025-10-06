@@ -10,3 +10,4 @@ export const piece$ = flyd.stream("");
 export const next_pieces$ = flyd.stream([]);
 export const keys$ = flyd.stream([]);
 export const touche$ = flyd.stream({start: {x:0, y:0}, end: {x:0, y:0}});
+export const basename$ = flyd.stream('/');

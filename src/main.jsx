@@ -5,17 +5,17 @@ import App from './client/components/App.jsx'
 import { Provider } from "react-redux";
 import { store } from "./client/store.js";
 import { BrowserRouter } from "react-router-dom";
+import { basename$ } from './client/streams.js';
 
 
-let basename = "/";
 if (import.meta.env.VITE_ENV === "production") {
-  basename = "/red/";
+  basename$("/red/");
 }
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
-      <BrowserRouter basename={basename}>
+      <BrowserRouter basename={basename$()}>
         <App />
       </BrowserRouter>
     </Provider>

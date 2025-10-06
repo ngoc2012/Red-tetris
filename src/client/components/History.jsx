@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { basename$ } from "../streams";
+
 
 export const History = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/history")
+    fetch(basename$() + "api/history")
       .then((response) => response.json())
       .then((data) => {
         setHistory(data);
