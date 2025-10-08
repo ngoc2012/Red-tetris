@@ -106,7 +106,6 @@ const initEngine = (io) => {
   const game_end = (room_id) => {
     if (rooms.get(room_id).is_playing) {
       const players_left = rooms.get(room_id).players_left;
-      console.log("players_left", players_left);
       if (players_left.size <= 1) {
         if (players_left.size === 1) {
           const socket = players_left.keys().next().value;
