@@ -286,6 +286,7 @@ export function create(params) {
           cors: {
             origin: "*",
           },
+          path: '/ws/red/socket.io',
           transports: ['websocket'],  // Only use WebSocket
         });
 
