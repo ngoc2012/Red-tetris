@@ -1,18 +1,16 @@
 import { io } from "socket.io-client";
 import { setScore, setId } from "./store.js";
 
+let link = `${window.location.protocol}//${window.location.hostname}:3004`;
 let socket = null;
 if (import.meta.env.VITE_ENV === "production") {
-    socket = io(`${window.location.protocol}//${window.location.hostname}`, {
-    path: '/ws/red/socket.io',
-    transports: ['websocket']
-  });
-} else {
-    socket = io(`${window.location.protocol}//${window.location.hostname}:3004`, {
-    path: '/ws/red/socket.io',
-    transports: ['websocket']
-  });
+    link =`${window.location.protocol}//${window.location.hostname}`;
 }
+
+socket = io(link, {
+  path: '/ws/red/socket.io',
+  transports: ['websocket']
+});
 
 
 
