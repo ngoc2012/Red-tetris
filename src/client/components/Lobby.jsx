@@ -39,7 +39,7 @@ export const Lobby = () => {
 
   const new_room = () => {
     socket.emit("new_room", (response) => {
-      if (response.success) nav(`${response.room_id}/${name}`);
+      if (response.success) nav(`/room/${response.room_id}/${name}`);
     });
   };
 
@@ -106,13 +106,13 @@ export const Lobby = () => {
       <div className='rooms'>
         {rooms.map((r, i) =>
           r.status == "waiting" ? (
-            <Link key={i} to={`/${r.id}/${name}`} className='waiting'>
+            <Link key={i} to={`/room/${r.id}/${name}`} className='waiting'>
               {r.id}
             </Link>
           ) : (
             <Link
               key={i}
-              to={`/${r.id}/${name}`}
+              to={`/room/${r.id}/${name}`}
               onClick={(e) => {
                 e.preventDefault();
               }}

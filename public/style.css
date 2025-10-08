@@ -6,7 +6,7 @@
 }
 
 body {
-  background-image: url('/Halstatt.jpg'); /* Replace with your image URL */
+  background-image: url('https://i.postimg.cc/CS8yhhCt/Halstatt.jpg'); /* Replace with your image URL */
   background-size: cover; /* Cover the entire page */
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Prevent repeating */
