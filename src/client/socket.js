@@ -7,7 +7,7 @@ import { setScore, setId } from "./store.js";
 //     link =`${window.location.protocol}//${window.location.hostname}`;
 // }
 
-socket = io(`${window.location.protocol}//${window.location.hostname}` + (window.location.port ? `:${window.location.port}` : ''), {
+let socket = io(`${window.location.protocol}//${window.location.hostname}` + (window.location.port ? `:${window.location.port}` : ''), {
   path: '/ws/red/socket.io',
   transports: ['websocket']
 });
