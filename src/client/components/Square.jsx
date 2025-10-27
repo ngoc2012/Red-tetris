@@ -1,5 +1,3 @@
-import React from "react";
-
 export const Square = ({ color, blocked, filled }) => {
   return (
     <div

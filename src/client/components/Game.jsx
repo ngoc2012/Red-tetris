@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import socket from "../socket";
 import { Board } from "./Board.jsx";
 import { Info } from "./Info.jsx";
@@ -13,7 +13,6 @@ import { store } from "../store.js";
 
 
 export const Game = () => {
-
   const { roomid, name } = useParams();
   const [found, setFound] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -22,9 +21,7 @@ export const Game = () => {
   useGameLoop();
 
   useEffect(() => {
-    console.log("joining room", roomid, name);
     socket.emit("join_room", roomid, (response) => {
-      console.log("join_room", response,response.success);
       if (response.success) {
         setFound(true);
         store.dispatch(setRoomId(roomid));

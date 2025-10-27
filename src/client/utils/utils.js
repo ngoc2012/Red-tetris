@@ -11,9 +11,7 @@ export const reset = () => {
   piece$("");
 };
 
-export const next_rot = () => {
-  return (rot$() + 1) % tetrominoes[piece$()].length;
-};
+export const next_rot = () => (rot$() + 1) % tetrominoes[piece$()].length;
 
 export const board_to_block = (pos, col, row) => {
   return [

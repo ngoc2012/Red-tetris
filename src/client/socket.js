@@ -1,19 +1,11 @@
 import { io } from "socket.io-client";
 import { setScore, setId } from "./store.js";
 
-// let link = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
-// let socket = null;
-// if (import.meta.env.VITE_ENV === "production") {
-//     link =`${window.location.protocol}//${window.location.hostname}`;
-// }
 
 let socket = io(`${window.location.protocol}//${window.location.hostname}` + (window.location.port ? `:${window.location.port}` : ''), {
   path: '/ws/red/socket.io',
   transports: ['websocket']
 });
-
-
-
 
 export const initSocket = (dispatch) => {
   socket.on("connected", ({ id }) => {

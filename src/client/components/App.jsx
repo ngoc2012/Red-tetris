@@ -6,7 +6,7 @@ import { Game } from "./Game.jsx";
 import { History } from "./History.jsx";
 import { Routes, Route } from "react-router-dom";
 import { NotFound } from "./NotFound.jsx";
-// import './App.css'
+
 
 function App() {
   const dispatch = useDispatch();

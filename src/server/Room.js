@@ -1,16 +1,7 @@
 import { Gamemode, Mode, Status } from "../common/enums.js";
 import { LEVEL_UP, MAX_LEVEL } from "../common/constants.js";
 import { loginfo } from "./index.js";
-
-export class RoomPlayer {
-  constructor(name) {
-    this.name = name;
-    this.playing = false;
-    this.spectrum = Array.from({ length: 10 }).fill(0);
-    this.penalty = 0;
-    this.score = 0;
-  }
-}
+import { RoomPlayer } from "./RoomPlayer.js";
 
 export class Room {
   static room_counter = 0;

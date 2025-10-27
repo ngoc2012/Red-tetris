@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { pos$, rot$, piece$ } from "../streams.js";
 import { board_to_spectrum } from "../utils/utils.js";
 import { useSelector } from "react-redux";
@@ -7,7 +7,6 @@ import { Grid } from "./Grid.jsx";
 import { useFlyd } from "../useFlyd.js";
 
 export const Board = () => {
-
   const board = useSelector((state) => state.game_state.board);
   const gamemode = useSelector((state) => state.game_state.gamemode);
   const pos = useFlyd(pos$);

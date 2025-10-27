@@ -1,12 +1,11 @@
 import { useSelector, useDispatch } from "react-redux";
-import React, { useState, useEffect } from "react";
 import { Spectrums } from "./Spectrums.jsx";
-import flyd from "flyd";
 import { next_pieces$ } from "../streams.js";
 import { tetrominoes } from "../../common/tetrominoes.js";
 import socket from "../socket.js";
 import { Gamemode, Status } from "../../common/enums.js";
 import { setStatus } from "../store.js";
+import { useFlyd } from "../useFlyd.js";
 
 
 export const SmallBoard = ({ tetro }) => {
@@ -27,18 +26,7 @@ export const SmallBoard = ({ tetro }) => {
 };
 
 export const Pieces = () => {
-  let [pieces, setPieces] = useState([]);
-  
-
-  useEffect(() => {
-    const subscription = flyd.map((next_pieces) => {
-      setPieces(next_pieces);
-    }, next_pieces$);
-
-    return () => {
-      subscription.end(true);
-    };
-  }, []);
+  const pieces = useFlyd(next_pieces$);
 
   return (
     <div className='next_pieces'>
@@ -53,9 +41,7 @@ export const Pieces = () => {
   );
 };
 
-export const Info = () => {
-  // console.log("Info rendered");
-  
+export const Info = () => {  
   const dispatch = useDispatch();
   const status = useSelector((state) => state.game_state.status);
   const score = useSelector((state) => state.game_state.score);
