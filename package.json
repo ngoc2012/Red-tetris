@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "npx vitest --coverage",
-    "test-ui": "npx vitest --ui"
+    "test-ui": "npx vitest --ui",
+    "server": "node src/server/index.js"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.0",

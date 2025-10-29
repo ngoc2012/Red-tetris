@@ -1,7 +1,8 @@
 import { Gamemode, Mode, Status } from "../common/enums.js";
 import { LEVEL_UP, MAX_LEVEL } from "../common/constants.js";
-import { loginfo } from "./index.js";
+import { loginfo } from "./log.js";
 import { RoomPlayer } from "./RoomPlayer.js";
+
 
 export class Room {
   static room_counter = 0;
@@ -13,7 +14,7 @@ export class Room {
   rows_cleared;
   status;
   owner;
-  players; // Map<string,RoomPlayer>
+  players; // Map<socket_id,RoomPlayer>
   deleteTimeout;
   constructor(io, owner) {
     this.io = io;
@@ -96,8 +97,8 @@ export class Room {
   }
 
   spectrums(player_id) {
-    return [...this.players]
-      .filter(([key]) => ![player_id].includes(key))
+    return [...this.players] // [["id1", player1], ["id2", player2]]
+      .filter(([key]) => key !== player_id)
       .reduce(
         (acc, [k, v]) => ({
           ...acc,
