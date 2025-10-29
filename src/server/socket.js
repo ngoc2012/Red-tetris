@@ -10,6 +10,7 @@ import { game_end } from "./game.js";
 
 
 export function socket_init(io) {
+  console.log("Initializing socket.io...");
   io.on("connection", (socket) => {
     loginfo("Socket connected: " + socket.id);
     console.log("Socket connected: " + socket.id);
