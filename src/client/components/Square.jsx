@@ -1,3 +1,7 @@
+// src/client/components/Square.jsx
+import React from 'react';
+
+
 export const Square = ({ color, blocked, filled }) => {
   return (
     <div

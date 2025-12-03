@@ -1,3 +1,4 @@
+// vitest.config.js
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
@@ -5,7 +6,6 @@ export default defineConfig({
   test: {
     exclude: ['node_modules', 'dist', 'tmp', 'setupTests.js'],
     environment: 'jsdom', // Needed for React component tests
-    setupFiles: ['./setupTests.js'],
     plugins: [react()],
     coverage: {
       provider: 'v8', // or 'istanbul'

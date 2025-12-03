@@ -1,45 +1,9 @@
 import { useSelector, useDispatch } from "react-redux";
 import { Spectrums } from "./Spectrums.jsx";
-import { next_pieces$ } from "../streams.js";
-import { tetrominoes } from "../../common/tetrominoes.js";
 import socket from "../socket.js";
 import { Gamemode, Status } from "../../common/enums.js";
 import { setStatus } from "../store.js";
-import { useFlyd } from "../useFlyd.js";
 
-
-export const SmallBoard = ({ tetro }) => {
-  return (
-    <div className='small_board'>
-      {Array.from({ length: 2 * 4 }).map((_, i) => {
-        if (tetro === "") {
-          return <div key={i} className='cell empty'></div>;
-        }
-        const row = Math.floor(i / 4);
-        const col = i % 4;
-        if (tetrominoes[tetro][0][row][col] === 1)
-          return <div key={i} className={"cell filled " + tetro}></div>;
-        else return <div key={i} className='cell empty'></div>;
-      })}
-    </div>
-  );
-};
-
-export const Pieces = () => {
-  const pieces = useFlyd(next_pieces$);
-
-  return (
-    <div className='next_pieces'>
-      {Array.from({ length: 3 }).map((_, index) => {
-        if (index < pieces.length) {
-          return <SmallBoard key={index} tetro={pieces[index]} />;
-        } else {
-          return <SmallBoard key={index} tetro='' />;
-        }
-      })}
-    </div>
-  );
-};
 
 export const Info = () => {  
   const dispatch = useDispatch();
